@@ -64,8 +64,7 @@ def is_hiragana_char(character: str) -> bool:
     return u'\u3040' <= character <= u'\u309F'
 
 
-if __name__ == '__main__':
-
+def main() -> None:
     # Get and encode a random news url; parsing the HTML content
     url = get_news_url()
     print(url)
@@ -158,3 +157,7 @@ if __name__ == '__main__':
     # TODO: generate a test for students
 
     # TODO: database for all past news
+
+
+if __name__ == '__main__':
+    main()
