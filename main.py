@@ -31,6 +31,7 @@ https://sartras.or.jp/seido/
 sys.setrecursionlimit(50)
 PATH = 'https://www3.nhk.or.jp/news/easy/'
 TXT_FILE_LOCATION = r'./news_article.txt'
+EXAM_FILE_LOCATION = r'./sample_test.txt'
 
 
 def get_news_url() -> str:
@@ -81,7 +82,7 @@ def main() -> None:
     soup = BeautifulSoup(html_content, 'html.parser')
 
     # Article url (アドレス)
-    with open(r'./news_article.txt', 'w') as f:
+    with open(TXT_FILE_LOCATION, 'w') as f:
         f.write(url + '\n\n')
 
     # Article publishing date (掲載日)
@@ -121,7 +122,7 @@ def main() -> None:
         vocabulary_dict[word] = furigana
 
     for key, value in vocabulary_dict.items():
-        with open(r'./news_article.txt', 'a', encoding='utf-8') as f:
+        with open(TXT_FILE_LOCATION, 'a', encoding='utf-8') as f:
             f.write(f'{key}: {value}\n')
 
     # Reformat word: 話し合う: はな あ -> 話(はな)し合(あ)う
@@ -151,10 +152,16 @@ def main() -> None:
             formatted_word_list.append(formatted_word)
 
     for word in formatted_word_list:
-        with open(r'./news_article.txt', 'a', encoding='utf-8') as f:
+        with open(TXT_FILE_LOCATION, 'a', encoding='utf-8') as f:
             f.write(f'\n{word}')
 
     # TODO: generate a test for students
+    with open(EXAM_FILE_LOCATION, 'w', encoding='utf-8') as f:
+        f.write("今日のクイズ\n\n")
+        f.write('スマホで簡単な日本語で単語・漢字の読み方と意味を書いてください。\n\n')
+    for word in vocabulary_dict.keys():
+        with open(EXAM_FILE_LOCATION, 'a', encoding='utf-8') as f:
+            f.write(word + ': \n')
 
     # TODO: database for all past news
 
