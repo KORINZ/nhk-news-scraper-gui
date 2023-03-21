@@ -42,7 +42,6 @@ SAMPLE_TEST_LOCATION = r'./sample_test.txt'
 
 def get_news_url() -> str:
     """Retrieve up-to-date news url links"""
-
     opt = webdriver.ChromeOptions()
     opt.add_argument('headless')
     driver = webdriver.Chrome(options=opt)
@@ -62,7 +61,6 @@ def get_news_url() -> str:
 
 def write_text_data(content, action='a', location=NEWS_ARTICLE_TXT_LOCATION, encoder='utf-8') -> None:
     """Write text (BeautifulSoup | NavigableString) content to a file"""
-
     if content is not None:
         with open(location, action, encoding=encoder) as file:
             file.write(content.text.strip() + '\n\n')
@@ -70,7 +68,6 @@ def write_text_data(content, action='a', location=NEWS_ARTICLE_TXT_LOCATION, enc
 
 def is_hiragana_char(character: str) -> bool:
     """Check if a character is hiragana or not"""
-
     return u'\u3040' <= character <= u'\u309F'
 
 
@@ -82,7 +79,6 @@ def get_day_of_week_jp(date) -> List:
 
 def generate_quiz(word_dict: Dict[str, str]) -> None:
     """Generate a test for students"""
-
     now = datetime.datetime.now()
     today = now.strftime('%Y年%m月%d日 %H時%M分')
     with open(SAMPLE_TEST_LOCATION, 'w', encoding='utf-8') as f:
@@ -98,7 +94,6 @@ def generate_quiz(word_dict: Dict[str, str]) -> None:
 
 def main() -> None:
     """Establish request connection and scrap the Japanese news article's content and vocabularies"""
-
     # Get and encode a random news url; parsing the HTML content
     url = get_news_url()
     response = requests.get(url)
