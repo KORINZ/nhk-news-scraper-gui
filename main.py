@@ -3,6 +3,7 @@ import locale
 import requests
 import random
 import sys
+import os
 
 from bs4 import BeautifulSoup
 from collections import deque
@@ -84,7 +85,6 @@ def generate_quiz(word_dict: Dict[str, str]) -> None:
 def main() -> None:
     # Get and encode a random news url; parsing the HTML content
     url = get_news_url()
-    print(url)
     response = requests.get(url)
     response.encoding = response.apparent_encoding
 
@@ -173,8 +173,19 @@ def main() -> None:
 
     generate_quiz(vocabulary_dict)
 
+    # Printing news title, date, and url
+    if title and date is not None:
+        print(f'{title.text.rstrip()} {date.text}')
+        print(f'{url}\n')
+
     # TODO: database for all past news and tests
 
 
 if __name__ == '__main__':
+    # Linux
+    if sys.platform.startswith('linux'):
+        os.system('clear')
+    # Windows
+    elif sys.platform.startswith('win32'):
+        os.system('cls')
     main()
