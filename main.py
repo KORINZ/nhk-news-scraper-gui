@@ -35,6 +35,7 @@ https://sartras.or.jp/seido/
 sys.setrecursionlimit(50)
 locale.setlocale(locale.LC_CTYPE, "Japanese_Japan.932")
 PATH = 'https://www3.nhk.or.jp/news/easy/'
+NEWS_ARTICLE_IDENTIFIER = 'k1001'
 TXT_FILE_LOCATION = r'./news_article.txt'
 EXAM_FILE_LOCATION = r'./sample_test.txt'
 
@@ -48,7 +49,7 @@ def get_news_url() -> str:
 
     links = driver.find_elements(By.XPATH, "//a[@href]")
     news_links = [link.get_attribute("href")
-                  for link in links if 'k1001' in link.get_attribute("href")]
+                  for link in links if NEWS_ARTICLE_IDENTIFIER in link.get_attribute("href")]
     news_current = list(set(news_links[1:9]))
 
     try:
