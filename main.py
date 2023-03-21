@@ -146,11 +146,11 @@ if __name__ == '__main__':
                     word += char
         if word:
             formatted_word_list.append(word)
-
-        formatted_word = f'{key}({value})'
-        if '()' in formatted_word:
-            formatted_word = formatted_word.replace('()', '')
-        formatted_word_list.append(formatted_word)
+        else:
+            formatted_word = f'{key}({value})'
+            if '()' in formatted_word:
+                formatted_word = formatted_word.replace('()', '')
+            formatted_word_list.append(formatted_word)
 
     for word in formatted_word_list:
         with open(r'./news_article.txt', 'a', encoding='utf-8') as f:
