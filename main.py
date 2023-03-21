@@ -9,7 +9,7 @@ from bs4 import BeautifulSoup
 from collections import deque
 from selenium import webdriver
 from selenium.webdriver.common.by import By
-from typing import Dict
+from typing import Dict, List
 
 '''
 NEWS WEB EASY
@@ -42,6 +42,7 @@ SAMPLE_TEST_LOCATION = r'./sample_test.txt'
 
 def get_news_url() -> str:
     """Retrieve up-to-date news url links"""
+
     opt = webdriver.ChromeOptions()
     opt.add_argument('headless')
     driver = webdriver.Chrome(options=opt)
@@ -61,6 +62,7 @@ def get_news_url() -> str:
 
 def write_text_data(content, action='a', location=NEWS_ARTICLE_TXT_LOCATION, encoder='utf-8') -> None:
     """Write text (BeautifulSoup | NavigableString) content to a file"""
+
     if content is not None:
         with open(location, action, encoding=encoder) as file:
             file.write(content.text.strip() + '\n\n')
@@ -68,14 +70,24 @@ def write_text_data(content, action='a', location=NEWS_ARTICLE_TXT_LOCATION, enc
 
 def is_hiragana_char(character: str) -> bool:
     """Check if a character is hiragana or not"""
+
     return u'\u3040' <= character <= u'\u309F'
+
+
+def get_day_of_week_jp(date) -> List:
+    """Return day of the week in Japanese"""
+    week_list = ['月曜日', '火曜日', '水曜日', '木曜日', '金曜日', '土曜日', '日曜日']
+    return week_list[date.weekday()]
 
 
 def generate_quiz(word_dict: Dict[str, str]) -> None:
     """Generate a test for students"""
-    dt_now = datetime.datetime.now().strftime('%Y年%m月%d日 %H時%M分')
+
+    now = datetime.datetime.now()
+    today = now.strftime('%Y年%m月%d日 %H時%M分')
     with open(SAMPLE_TEST_LOCATION, 'w', encoding='utf-8') as f:
-        f.write(f'語彙力クイズ {dt_now}\n\n')
+        f.write(
+            f'語彙力クイズ {today} {get_day_of_week_jp(now)}\n\n')
         f.write(f'今日読んだニュースを復習して、辞書を見せずにスマホで簡単な日本語で単語・漢字の読み方と意味を書いてください。\n' +
                 f'カタカナは意味のみ書いてください。難しい場合は英語でもいいです。({len(word_dict)}ポイント)\n\n')
         f.write('お名前: \n学生番号: \n\n')
@@ -85,6 +97,8 @@ def generate_quiz(word_dict: Dict[str, str]) -> None:
 
 
 def main() -> None:
+    """Establish request connection and scrap the Japanese news article's content and vocabularies"""
+
     # Get and encode a random news url; parsing the HTML content
     url = get_news_url()
     response = requests.get(url)
