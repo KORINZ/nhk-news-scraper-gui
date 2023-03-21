@@ -35,9 +35,9 @@ https://sartras.or.jp/seido/
 sys.setrecursionlimit(50)
 locale.setlocale(locale.LC_CTYPE, "Japanese_Japan.932")
 PATH = 'https://www3.nhk.or.jp/news/easy/'
-NEWS_ARTICLE_IDENTIFIER = 'k1001'
-TXT_FILE_LOCATION = r'./news_article.txt'
-EXAM_FILE_LOCATION = r'./sample_test.txt'
+NEWS_ARTICLE_URL_IDENTIFIER = 'k1001'
+NEWS_ARTICLE_TXT_LOCATION = r'./news_article.txt'
+SAMPLE_TEST_LOCATION = r'./sample_test.txt'
 
 
 def get_news_url() -> str:
@@ -49,7 +49,7 @@ def get_news_url() -> str:
 
     links = driver.find_elements(By.XPATH, "//a[@href]")
     news_links = [link.get_attribute("href")
-                  for link in links if NEWS_ARTICLE_IDENTIFIER in link.get_attribute("href")]
+                  for link in links if NEWS_ARTICLE_URL_IDENTIFIER in link.get_attribute("href")]
     news_current = list(set(news_links[1:9]))
 
     try:
@@ -59,7 +59,7 @@ def get_news_url() -> str:
     return new_url
 
 
-def write_text_data(content, action='a', location=TXT_FILE_LOCATION, encoder='utf-8') -> None:
+def write_text_data(content, action='a', location=NEWS_ARTICLE_TXT_LOCATION, encoder='utf-8') -> None:
     """Write text (BeautifulSoup | NavigableString) content to a file"""
     if content is not None:
         with open(location, action, encoding=encoder) as file:
@@ -74,13 +74,13 @@ def is_hiragana_char(character: str) -> bool:
 def generate_quiz(word_dict: Dict[str, str]) -> None:
     """Generate a test for students"""
     dt_now = datetime.datetime.now().strftime('%Y年%m月%d日 %H時%M分')
-    with open(EXAM_FILE_LOCATION, 'w', encoding='utf-8') as f:
+    with open(SAMPLE_TEST_LOCATION, 'w', encoding='utf-8') as f:
         f.write(f'語彙力クイズ {dt_now}\n\n')
         f.write(f'今日読んだニュースを復習して、辞書を見せずにスマホで簡単な日本語で単語・漢字の読み方と意味を書いてください。\n' +
                 f'カタカナは意味のみ書いてください。難しい場合は英語でもいいです。({len(word_dict)}ポイント)\n\n')
         f.write('お名前: \n学生番号: \n\n')
     for i, word in enumerate(word_dict.keys(), start=1):
-        with open(EXAM_FILE_LOCATION, 'a', encoding='utf-8') as f:
+        with open(SAMPLE_TEST_LOCATION, 'a', encoding='utf-8') as f:
             f.write(f'{i}. {word}: \n')
 
 
@@ -100,7 +100,7 @@ def main() -> None:
     soup = BeautifulSoup(html_content, 'html.parser')
 
     # Article url (アドレス)
-    with open(TXT_FILE_LOCATION, 'w') as f:
+    with open(NEWS_ARTICLE_TXT_LOCATION, 'w') as f:
         f.write(f'{url}\n\n')
 
     # Article publishing date (掲載日)
@@ -140,7 +140,7 @@ def main() -> None:
         vocabulary_dict[word] = furigana
 
     for key, value in vocabulary_dict.items():
-        with open(TXT_FILE_LOCATION, 'a', encoding='utf-8') as f:
+        with open(NEWS_ARTICLE_TXT_LOCATION, 'a', encoding='utf-8') as f:
             f.write(f'{key}: {value}\n')
 
     # Reformat word: 話し合う: はな あ -> 話(はな)し合(あ)う
@@ -170,7 +170,7 @@ def main() -> None:
             formatted_word_list.append(formatted_word)
 
     for word in formatted_word_list:
-        with open(TXT_FILE_LOCATION, 'a', encoding='utf-8') as f:
+        with open(NEWS_ARTICLE_TXT_LOCATION, 'a', encoding='utf-8') as f:
             f.write(f'\n{word}')
 
     generate_quiz(vocabulary_dict)
