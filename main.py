@@ -77,6 +77,7 @@ def generate_quiz(word_dict: Dict[str, str]) -> None:
         f.write(f'語彙力クイズ {dt_now}\n\n')
         f.write(f'今日読んだニュースを復習して、辞書を見せずにスマホで簡単な日本語で単語・漢字の読み方と意味を書いてください。\n' +
                 f'カタカナは意味のみ書いてください。難しい場合は英語でもいいです。({len(word_dict)}ポイント)\n\n')
+        f.write('お名前: \n学生番号: \n\n')
     for i, word in enumerate(word_dict.keys(), start=1):
         with open(EXAM_FILE_LOCATION, 'a', encoding='utf-8') as f:
             f.write(f'{i}. {word}: \n')
