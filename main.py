@@ -8,6 +8,7 @@ from bs4 import BeautifulSoup
 from collections import deque
 from selenium import webdriver
 from selenium.webdriver.common.by import By
+from typing import Dict
 
 '''
 NEWS WEB EASY
@@ -68,6 +69,18 @@ def is_hiragana_char(character: str) -> bool:
     return u'\u3040' <= character <= u'\u309F'
 
 
+def generate_quiz(word_dict: Dict[str, str]) -> None:
+    """Generate a test for students"""
+    dt_now = datetime.datetime.now().strftime('%Y年%m月%d日 %H時%M分')
+    with open(EXAM_FILE_LOCATION, 'w', encoding='utf-8') as f:
+        f.write(f'語彙力クイズ {dt_now}\n\n')
+        f.write(f'今日読んだニュースを復習して、辞書を見せずにスマホで簡単な日本語で単語・漢字の読み方と意味を書いてください。\n' +
+                f'カタカナは意味のみ書いてください。難しい場合は英語でもいいです。({len(word_dict)}ポイント)\n\n')
+    for i, word in enumerate(word_dict.keys(), start=1):
+        with open(EXAM_FILE_LOCATION, 'a', encoding='utf-8') as f:
+            f.write(f'{i}. {word}: \n')
+
+
 def main() -> None:
     # Get and encode a random news url; parsing the HTML content
     url = get_news_url()
@@ -86,7 +99,7 @@ def main() -> None:
 
     # Article url (アドレス)
     with open(TXT_FILE_LOCATION, 'w') as f:
-        f.write(url + '\n\n')
+        f.write(f'{url}\n\n')
 
     # Article publishing date (掲載日)
     date = soup.find('p', class_='article-main__date')
@@ -158,15 +171,7 @@ def main() -> None:
         with open(TXT_FILE_LOCATION, 'a', encoding='utf-8') as f:
             f.write(f'\n{word}')
 
-    # Generate a test for students
-    dt_now = datetime.datetime.now().strftime('%Y年%m月%d日 %H時%M分')
-    with open(EXAM_FILE_LOCATION, 'w', encoding='utf-8') as f:
-        f.write(f'今日のクイズ {dt_now}\n\n')
-        f.write(
-            f'スマホで簡単な日本語で単語・漢字の読み方と意味を書いてください。難しい場合は英語でもいいです。({len(vocabulary_dict)}ポイント)\n\n')
-    for i, word in enumerate(vocabulary_dict.keys(), start=1):
-        with open(EXAM_FILE_LOCATION, 'a', encoding='utf-8') as f:
-            f.write(f'{i}. {word}: \n')
+    generate_quiz(vocabulary_dict)
 
     # TODO: database for all past news and tests
 
