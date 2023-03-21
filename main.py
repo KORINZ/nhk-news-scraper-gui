@@ -101,7 +101,6 @@ if __name__ == '__main__':
     # Important vocabularies (語彙)
     vocabulary_list = soup.find_all('a', class_='dicWin')
     vocabulary_dict = {}
-    concatenated_vocabulary_list = []
     furigana = ''
 
     for vocabulary in vocabulary_list:
