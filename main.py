@@ -98,7 +98,7 @@ def generate_quiz(url: str, word_dict: Dict[str, str], questions=4) -> None:
             f.write(f'{i}. {word}: \n')
 
 
-def push_message() -> None:
+def push_quiz() -> None:
     """Send message via LINE API to students"""
     with open('sample_test.txt', 'r', encoding='utf-8') as f:
         content = f.read()
@@ -223,4 +223,4 @@ if __name__ == '__main__':
         os.system('cls')
 
     main()
-    push_message()
+    push_quiz()
