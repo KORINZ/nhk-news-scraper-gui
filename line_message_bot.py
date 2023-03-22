@@ -7,12 +7,11 @@ from config import CHANNEL_ACCESS_TOKEN, USER_ID
 # CHANNEL_ACCESS_TOKEN = ''
 # USER_ID = ''
 
-
-def send_message(text) -> None:
+def send_message(content: str) -> None:
+    """Login to LINE bot API and send text message"""
     line_bot_api = LineBotApi(CHANNEL_ACCESS_TOKEN)
-
     try:
-        line_bot_api.push_message(USER_ID, TextSendMessage(text=text))
+        line_bot_api.push_message(USER_ID, TextSendMessage(text=content))
     except LineBotApiError as e:
         print(e.message)
 
