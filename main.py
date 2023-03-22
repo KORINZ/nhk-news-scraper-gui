@@ -14,8 +14,6 @@ from typing import Dict, List
 '''
 NEWS WEB EASY
 平日のみ、4つのニュースを更新される
-更新時間は日本時間夜以降
-まとめて4つのニュース更新される
 出所の明示でニュースの内容を転載○ 語彙は○ 辞書△×？
 
 https://www.nhk.or.jp/nijiriyou/kyouiku.html
@@ -164,10 +162,15 @@ def main() -> None:
 
         if combine:
             kana = deque(value.split(' '))
-            for char in key:
-                if not is_hiragana_char(char):
-                    word += f'{char}({kana[0]})'
-                    kana.popleft()
+            for i, char in enumerate(key):
+                if not is_hiragana_char(char) and is_hiragana_char(key[i + 1]):
+                    try:
+                        word += f'{char}({kana[0]})'
+                        kana.popleft()
+                    except IndexError:
+                        word += char
+                    finally:
+                        word = word.replace(f'({value})', '')
                 else:
                     word += char
         if word:
