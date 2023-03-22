@@ -18,6 +18,7 @@ See the `.txt` file in the repository for an example output.
 - `BeautifulSoup4`
 - `Selenium`
 - `requests`
+- `line-bot-sdk`
 
 ## Installation
 
@@ -27,7 +28,7 @@ See the `.txt` file in the repository for an example output.
 git clone https://github.com/KORINZ/nhk_news_web_easy_scraper.git
 ```
 
-2. Install the required packages listed in the dependencies.
+1. Install the required packages listed in the dependencies.
 
 ## Usage
 
@@ -37,7 +38,7 @@ git clone https://github.com/KORINZ/nhk_news_web_easy_scraper.git
 python main.py
 ```
 
-2. The script will generate a text file news_article.txt containing the article's URL, date, title, content,
+1. The script will generate a text file news_article.txt containing the article's URL, date, title, content,
 and important vocabularies (with furigana) for a random news article.
 
 ## Future Work
