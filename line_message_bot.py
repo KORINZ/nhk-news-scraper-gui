@@ -4,6 +4,10 @@ from linebot.exceptions import LineBotApiError
 from config import CHANNEL_ACCESS_TOKEN, USER_ID
 
 
+# CHANNEL_ACCESS_TOKEN = ''
+# USER_ID = ''
+
+
 def send_message(text) -> None:
     line_bot_api = LineBotApi(CHANNEL_ACCESS_TOKEN)
 
@@ -14,7 +18,6 @@ def send_message(text) -> None:
 
 
 if __name__ == "__main__":
-
     with open('sample_test.txt', 'r', encoding='utf-8') as f:
         content = f.read()
 
