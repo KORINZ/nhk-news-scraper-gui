@@ -75,11 +75,17 @@ def get_day_of_week_jp(date) -> List:
     return week_list[date.weekday()]
 
 
-def generate_quiz(word_dict: Dict[str, str]) -> None:
+def generate_quiz(url: str, word_dict: Dict[str, str], questions=4) -> None:
     """Generate a test for students"""
     now = datetime.datetime.now()
     today = now.strftime('%Y年%m月%d日 %H時%M分')
+
+    # randomly remove questions until the number of questions reach a desired value
+    while len(word_dict) > questions:
+        word_dict.pop(random.choice(list(word_dict.keys())))
+
     with open(SAMPLE_TEST_LOCATION, 'w', encoding='utf-8') as f:
+        f.write(f'{url}\n')
         f.write(
             f'語彙力クイズ {today} {get_day_of_week_jp(now)}\n\n')
         f.write(f'今日読んだニュースを復習して、辞書を見せずにスマホで簡単な日本語で単語・漢字の読み方と意味を書いてください。\n' +
@@ -93,7 +99,7 @@ def generate_quiz(word_dict: Dict[str, str]) -> None:
 def main() -> None:
     """Establish request connection and scrap the Japanese news article's content and vocabularies"""
     # Get and encode a random news url; parsing the HTML content
-    url = get_news_url()
+    url = "https://www3.nhk.or.jp/news/easy/k10014012231000/k10014012231000.html"
     response = requests.get(url)
     response.encoding = response.apparent_encoding
 
@@ -169,7 +175,6 @@ def main() -> None:
                         kana.popleft()
                     except IndexError:
                         word += char
-                    finally:
                         word = word.replace(f'({value})', '')
                 else:
                     word += char
@@ -185,7 +190,7 @@ def main() -> None:
         with open(NEWS_ARTICLE_TXT_LOCATION, 'a', encoding='utf-8') as f:
             f.write(f'\n{word}')
 
-    generate_quiz(vocabulary_dict)
+    generate_quiz(url, vocabulary_dict, questions=4)
 
     # Printing news title, date, and url
     if title and date is not None:
