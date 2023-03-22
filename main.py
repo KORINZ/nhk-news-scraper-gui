@@ -7,6 +7,7 @@ import os
 
 from bs4 import BeautifulSoup
 from collections import deque
+from line_message_bot import send_message
 from selenium import webdriver
 from selenium.webdriver.common.by import By
 from typing import Dict, List
@@ -86,20 +87,33 @@ def generate_quiz(url: str, word_dict: Dict[str, str], questions=4) -> None:
 
     with open(SAMPLE_TEST_LOCATION, 'w', encoding='utf-8') as f:
         f.write(f'{url}\n')
-        f.write(
-            f'語彙力クイズ {today} {get_day_of_week_jp(now)}\n\n')
-        f.write(f'今日読んだニュースを復習して、辞書を見せずにスマホで簡単な日本語で単語・漢字の読み方と意味を書いてください。\n' +
-                f'カタカナは意味のみ書いてください。難しい場合は英語でもいいです。({len(word_dict)}ポイント)\n\n')
+        f.write(f'語彙力クイズ {today} {get_day_of_week_jp(now)}\n\n')
+        f.write(f'今日読んだニュースを復習して、辞書を見せずにスマホで単語・漢字の読み方を書いてください。\n' +
+                f'カタカナの場合は日本語もしくは英語で意味を書いてください。({len(word_dict)}ポイント)\n\n')
+        f.write('---\n\n')
         f.write('お名前: \n学生番号: \n\n')
+
     for i, word in enumerate(word_dict.keys(), start=1):
         with open(SAMPLE_TEST_LOCATION, 'a', encoding='utf-8') as f:
             f.write(f'{i}. {word}: \n')
 
 
+def push_message() -> None:
+    """Send message via LINE API to students"""
+    with open('sample_test.txt', 'r', encoding='utf-8') as f:
+        content = f.read()
+        parts = content.split('---')
+        instruction = parts[0].strip()
+        questions = parts[1].strip()
+
+        send_message(instruction)
+        send_message(questions)
+
+
 def main() -> None:
     """Establish request connection and scrap the Japanese news article's content and vocabularies"""
     # Get and encode a random news url; parsing the HTML content
-    url = "https://www3.nhk.or.jp/news/easy/k10014012231000/k10014012231000.html"
+    url = get_news_url()
     response = requests.get(url)
     response.encoding = response.apparent_encoding
 
@@ -190,7 +204,7 @@ def main() -> None:
         with open(NEWS_ARTICLE_TXT_LOCATION, 'a', encoding='utf-8') as f:
             f.write(f'\n{word}')
 
-    generate_quiz(url, vocabulary_dict, questions=4)
+    generate_quiz(url, vocabulary_dict, questions=5)
 
     # Printing news title, date, and url
     if title and date is not None:
@@ -207,4 +221,6 @@ if __name__ == '__main__':
     # Windows
     elif sys.platform.startswith('win32'):
         os.system('cls')
+
     main()
+    push_message()
