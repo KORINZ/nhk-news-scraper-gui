@@ -110,7 +110,7 @@ def push_quiz() -> None:
         send_message(questions)
 
 
-def main() -> None:
+def main(push=False, questions=5) -> None:
     """Establish request connection and scrap the Japanese news article's content and vocabularies"""
     # Get and encode a random news url; parsing the HTML content
     url = get_news_url()
@@ -204,7 +204,10 @@ def main() -> None:
         with open(NEWS_ARTICLE_TXT_LOCATION, 'a', encoding='utf-8') as f:
             f.write(f'\n{word}')
 
-    generate_quiz(url, vocabulary_dict, questions=5)
+    # Generate and push quiz to LINE
+    generate_quiz(url, vocabulary_dict, questions=questions)
+    if push:
+        push_quiz()
 
     # Printing news title, date, and url
     if title and date is not None:
@@ -222,5 +225,4 @@ if __name__ == '__main__':
     elif sys.platform.startswith('win32'):
         os.system('cls')
 
-    main()
-    push_quiz()
+    main(push=True, questions=4)
