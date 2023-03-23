@@ -32,7 +32,7 @@ def send_message(message_type: str, content: Optional[str] = None, package_id=No
         print(f"Connection timeout error: {ct}")
 
 
-def send_vocab() -> str:
+def get_vocab() -> str:
     """Send quiz answer via LINE API to students"""
     with open('news_article.txt', 'r', encoding='utf-8') as f:
         content = f.read()
@@ -43,7 +43,7 @@ def send_vocab() -> str:
 if __name__ == "__main__":
     # Message contents
     announcement = f'【重要】{today}\nお疲れ様です😀今日は試験の日です。\n頑張ってください！'
-    news_vocab = f'今日のニュースの単語です。\n\n{send_vocab()}'
+    news_vocab = f'今日のニュースの単語です。\n\n{get_vocab()}'
 
     # Sending messages
     send_message('text', announcement)
