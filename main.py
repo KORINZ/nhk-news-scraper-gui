@@ -103,14 +103,15 @@ def generate_quiz(url: str, word_dict: Dict[str, str], questions=4) -> None:
             f.write(f'{i}. {word}: \n')
 
 
-def save_quiz_vocab() -> None:
+def save_quiz_vocab(news_url: str) -> None:
+    """Save pushed quiz vocabularies and news url to a file"""
     now, today = today_date()
     with open('news_article.txt', 'r', encoding='utf-8') as f:
         content = f.read()
         parts = content.split('---')
         vocab = parts[1].strip()
     with open('past_vocab.txt', 'a+', encoding='utf-8') as f:
-        f.write(f'{today}\n{vocab}\n\n')
+        f.write(f'{today}\n{news_url}\n{vocab}\n\n')
 
 
 def push_quiz() -> None:
@@ -220,7 +221,7 @@ def main(push=False, questions=5) -> None:
     generate_quiz(url, vocabulary_dict, questions=questions)
     if push:
         push_quiz()
-        save_quiz_vocab()
+        save_quiz_vocab(url)
 
     # Printing news title, date, and url
     if title and date is not None:
