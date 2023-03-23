@@ -91,15 +91,15 @@ def generate_quiz(url: str, word_dict: Dict[str, str], questions=4) -> None:
         word_dict.pop(random.choice(list(word_dict.keys())))
 
     with open(SAMPLE_TEST_LOCATION, 'w', encoding='utf-8') as f:
-        f.write(f'{url}\n')
         f.write(f'【語彙力クイズ】{today}\n\n')
-        f.write(f'今日読んだニュースを復習して、辞書を見せずにスマホで単語・漢字の読み方を書いてください。\n' +
+        f.write(f'今日読んだニュース📰を復習して、辞書を見せずにスマホで単語・漢字の読み方を書いてください。\n' +
                 f'カタカナの場合は日本語もしくは英語で意味を書いてください。({len(word_dict)}ポイント)\n\n')
+        f.write(f'{url}\n\n')
         f.write('---\n\n')
-        f.write('お名前: \n学生番号: \n\n')
+        f.write('学生番号: \n\n')
 
-    for i, word in enumerate(word_dict.keys(), start=1):
-        with open(SAMPLE_TEST_LOCATION, 'a', encoding='utf-8') as f:
+    with open(SAMPLE_TEST_LOCATION, 'a', encoding='utf-8') as f:
+        for i, word in enumerate(word_dict.keys(), start=1):
             f.write(f'{i}. {word}: \n')
 
 
@@ -116,7 +116,7 @@ def push_quiz() -> None:
 
 
 def main(push=False, questions=5) -> None:
-    """Establish request connection and scrap the Japanese news article's content and vocabularies"""
+    """Establish request connection and randomly scrap a Japanese news article's content and vocabularies"""
     # Get and encode a random news url; parsing the HTML content
     url = get_news_url()
     response = requests.get(url)
@@ -171,10 +171,6 @@ def main(push=False, questions=5) -> None:
 
         vocabulary_dict[word] = furigana
 
-    with open(NEWS_ARTICLE_TXT_LOCATION, 'a', encoding='utf-8') as f:
-        for key, value in vocabulary_dict.items():
-            f.write(f'{key}: {value}\n')
-
     # Reformat word: 話し合う: はな あ -> 話(はな)し合(あ)う
     formatted_word_list = []
 
@@ -206,7 +202,7 @@ def main(push=False, questions=5) -> None:
             formatted_word_list.append(formatted_word)
 
     with open(NEWS_ARTICLE_TXT_LOCATION, 'a', encoding='utf-8') as f:
-        f.write('\n---\n')
+        f.write('---\n')
         for word in formatted_word_list:
             f.write(f'\n{word}')
 
