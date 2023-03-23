@@ -73,7 +73,7 @@ def is_hiragana_char(character: str) -> bool:
 def today_date() -> Tuple:
     """Return today's date in Japanese"""
     now = datetime.datetime.now()
-    return now, now.strftime('%Y年%m月%d日 %H時%M分')
+    return now, now.strftime(f'%Y年%m月%d日 {get_day_of_week_jp(now)} %H時%M分')
 
 
 def get_day_of_week_jp(date) -> List:
@@ -92,7 +92,7 @@ def generate_quiz(url: str, word_dict: Dict[str, str], questions=4) -> None:
 
     with open(SAMPLE_TEST_LOCATION, 'w', encoding='utf-8') as f:
         f.write(f'{url}\n')
-        f.write(f'語彙力クイズ 【{today} {get_day_of_week_jp(now)}】\n\n')
+        f.write(f'【語彙力クイズ】{today}\n\n')
         f.write(f'今日読んだニュースを復習して、辞書を見せずにスマホで単語・漢字の読み方を書いてください。\n' +
                 f'カタカナの場合は日本語もしくは英語で意味を書いてください。({len(word_dict)}ポイント)\n\n')
         f.write('---\n\n')
@@ -171,8 +171,8 @@ def main(push=False, questions=5) -> None:
 
         vocabulary_dict[word] = furigana
 
-    for key, value in vocabulary_dict.items():
-        with open(NEWS_ARTICLE_TXT_LOCATION, 'a', encoding='utf-8') as f:
+    with open(NEWS_ARTICLE_TXT_LOCATION, 'a', encoding='utf-8') as f:
+        for key, value in vocabulary_dict.items():
             f.write(f'{key}: {value}\n')
 
     # Reformat word: 話し合う: はな あ -> 話(はな)し合(あ)う
@@ -205,8 +205,9 @@ def main(push=False, questions=5) -> None:
                 formatted_word = formatted_word.replace('()', '')
             formatted_word_list.append(formatted_word)
 
-    for word in formatted_word_list:
-        with open(NEWS_ARTICLE_TXT_LOCATION, 'a', encoding='utf-8') as f:
+    with open(NEWS_ARTICLE_TXT_LOCATION, 'a', encoding='utf-8') as f:
+        f.write('\n---\n')
+        for word in formatted_word_list:
             f.write(f'\n{word}')
 
     # Generate and push quiz to LINE
