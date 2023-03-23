@@ -10,7 +10,7 @@ from collections import deque
 from line_message_bot import send_message
 from selenium import webdriver
 from selenium.webdriver.common.by import By
-from typing import Dict, List
+from typing import Dict, List, Tuple
 
 '''
 NEWS WEB EASY
@@ -70,6 +70,12 @@ def is_hiragana_char(character: str) -> bool:
     return u'\u3040' <= character <= u'\u309F'
 
 
+def today_date() -> Tuple:
+    """Return today's date in Japanese"""
+    now = datetime.datetime.now()
+    return now, now.strftime('%Y年%m月%d日 %H時%M分')
+
+
 def get_day_of_week_jp(date) -> List:
     """Return day of the week in Japanese"""
     week_list = ['月曜日', '火曜日', '水曜日', '木曜日', '金曜日', '土曜日', '日曜日']
@@ -78,8 +84,7 @@ def get_day_of_week_jp(date) -> List:
 
 def generate_quiz(url: str, word_dict: Dict[str, str], questions=4) -> None:
     """Generate a test for students"""
-    now = datetime.datetime.now()
-    today = now.strftime('%Y年%m月%d日 %H時%M分')
+    now, today = today_date()
 
     # randomly remove questions until the number of questions reach a desired value
     while len(word_dict) > questions:
@@ -87,7 +92,7 @@ def generate_quiz(url: str, word_dict: Dict[str, str], questions=4) -> None:
 
     with open(SAMPLE_TEST_LOCATION, 'w', encoding='utf-8') as f:
         f.write(f'{url}\n')
-        f.write(f'語彙力クイズ {today} {get_day_of_week_jp(now)}\n\n')
+        f.write(f'語彙力クイズ 【{today} {get_day_of_week_jp(now)}】\n\n')
         f.write(f'今日読んだニュースを復習して、辞書を見せずにスマホで単語・漢字の読み方を書いてください。\n' +
                 f'カタカナの場合は日本語もしくは英語で意味を書いてください。({len(word_dict)}ポイント)\n\n')
         f.write('---\n\n')
@@ -106,8 +111,8 @@ def push_quiz() -> None:
         instruction = parts[0].strip()
         questions = parts[1].strip()
 
-        send_message(instruction)
-        send_message(questions)
+        send_message('text', instruction)
+        send_message('text', questions)
 
 
 def main(push=False, questions=5) -> None:
