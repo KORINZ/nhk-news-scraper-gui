@@ -14,6 +14,8 @@ week_list = ['月曜日', '火曜日', '水曜日', '木曜日', '金曜日', '�
 day_of_week = week_list[now.weekday()]
 today = now.strftime(f'%Y年%m月%d日 {day_of_week} %H時%M分')
 
+'''See https://developers.line.biz/ja/docs/messaging-api/sticker-list/ for sticker IDs'''
+
 
 def send_message(message_type: str, content: Optional[str] = None, package_id=None, sticker_id=None) -> None:
     """Login to LINE bot API and send text message"""
@@ -39,11 +41,11 @@ def send_vocab() -> str:
 
 
 if __name__ == "__main__":
-    # Send a custom message
-    send_message('text', f'【重要】{today}\nお疲れ様です😀今日は試験の日です。\n頑張ってください！')
-    
-    # send_message('text', f'今日のニュースの単語です。\n{send_vocab()}')
-    
-    # https://developers.line.biz/ja/docs/messaging-api/sticker-list/
-    # お願いしますスタンプ
+    # Message contents
+    announcement = f'【重要】{today}\nお疲れ様です😀今日は試験の日です。\n頑張ってください！'
+    news_vocab = f'今日のニュースの単語です。\n\n{send_vocab()}'
+
+    # Sending messages
+    send_message('text', announcement)
     send_message('stamp', package_id='6359', sticker_id='11069859')
+    send_message('text', news_vocab)
