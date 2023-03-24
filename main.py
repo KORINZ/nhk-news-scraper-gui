@@ -11,6 +11,7 @@ from line_message_bot import send_message
 from selenium import webdriver
 from selenium.webdriver.common.by import By
 from typing import Dict, List, Tuple
+from get_definition import get_definition_list
 
 '''
 NEWS WEB EASY
@@ -36,7 +37,8 @@ locale.setlocale(locale.LC_CTYPE, "Japanese_Japan.932")
 PATH = 'https://www3.nhk.or.jp/news/easy/'
 NEWS_ARTICLE_URL_IDENTIFIER = 'k1001'
 NEWS_ARTICLE_TXT_LOCATION = r'./news_article.txt'
-SAMPLE_TEST_LOCATION = r'./sample_test.txt'
+SAMPLE_TEST_LOCATION_PRONOUN = r'./sample_test_pronunciation.txt'
+SAMPLE_TEST_LOCATION_DEF = r'./sample_test_definition.txt'
 
 
 def get_news_url() -> str:
@@ -82,15 +84,15 @@ def get_day_of_week_jp(date) -> List:
     return week_list[date.weekday()]
 
 
-def generate_quiz(url: str, word_dict: Dict[str, str], questions=4) -> None:
-    """Generate a test for students"""
+def generate_quiz_pronunciation(url: str, word_dict: Dict[str, str], questions=4) -> None:
+    """Generate a pronunciation test for students"""
     now, today = today_date()
 
     # randomly remove questions until the number of questions reach a desired value
     while len(word_dict) > questions:
         word_dict.pop(random.choice(list(word_dict.keys())))
 
-    with open(SAMPLE_TEST_LOCATION, 'w', encoding='utf-8') as f:
+    with open(SAMPLE_TEST_LOCATION_PRONOUN, 'w', encoding='utf-8') as f:
         f.write(f'【語彙力クイズ】{today}\n\n')
         f.write(f'今日読んだニュース📰を復習して、辞書を見せずにスマホで単語・漢字の読み方を書いてください。\n' +
                 f'カタカナの場合は日本語もしくは英語で意味を書いてください。({len(word_dict)}ポイント)\n\n')
@@ -98,9 +100,27 @@ def generate_quiz(url: str, word_dict: Dict[str, str], questions=4) -> None:
         f.write('---\n\n')
         f.write('学生番号: \n\n')
 
-    with open(SAMPLE_TEST_LOCATION, 'a', encoding='utf-8') as f:
+    with open(SAMPLE_TEST_LOCATION_PRONOUN, 'a', encoding='utf-8') as f:
         for i, word in enumerate(word_dict.keys(), start=1):
             f.write(f'{i}. {word}: \n')
+
+
+def generate_quiz_definition(url: str, word_list: List, questions=4) -> None:
+    """Generate a definition test for students"""
+    now, today = today_date()
+    while len(word_list) > questions:
+        word_list.remove(random.choice(word_list))
+
+    with open(SAMPLE_TEST_LOCATION_DEF, 'w', encoding='utf-8') as f:
+        f.write(f'【単語意味クイズ】{today}\n\n')
+        f.write(f'今日のニュース📰です。辞書の定義を通じて、単語を書いてください。({len(word_list)}ポイント)\n\n')
+        f.write(f'{url}\n\n')
+        f.write('---\n\n')
+        f.write('学生番号: \n\n')
+
+    with open(SAMPLE_TEST_LOCATION_DEF, 'a', encoding='utf-8') as f:
+        for i, word in enumerate(word_list, start=1):
+            f.write(f'{i}. {word.split("：")[1]}\n')
 
 
 def save_quiz_vocab(news_url: str) -> None:
@@ -218,17 +238,22 @@ def main(push=False, questions=5) -> None:
             f.write(f'\n{word}')
 
     # Generate and push quiz to LINE
-    generate_quiz(url, vocabulary_dict, questions=questions)
+    generate_quiz_pronunciation(url, vocabulary_dict, questions=questions)
     if push:
         push_quiz()
         save_quiz_vocab(url)
 
     # Printing news title, date, and url
     if title and date is not None:
-        print(f'{title.text.rstrip()} {date.text}')
+        print(f'{title.text.lstrip().rstrip()} {date.text}')
         print(f'{url}\n')
 
-    # TODO: database for all past news and tests
+    definition_list = get_definition_list(url, soup)
+    with open(NEWS_ARTICLE_TXT_LOCATION, 'a', encoding='utf-8') as f:
+        f.write('\n\n---\n\n')
+        for definition in definition_list:
+            f.write(f'{definition}\n')
+    generate_quiz_definition(url, definition_list, questions=questions)
 
 
 if __name__ == '__main__':
@@ -239,4 +264,4 @@ if __name__ == '__main__':
     elif sys.platform.startswith('win32'):
         os.system('cls')
 
-    main(push=True, questions=4)
+    main(push=False, questions=4)

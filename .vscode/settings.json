@@ -3,6 +3,7 @@
         "furigana",
         "linebot",
         "popleft",
+        "RSHOK",
         "setrecursionlimit"
     ]
 }

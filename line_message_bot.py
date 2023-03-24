@@ -46,8 +46,8 @@ if __name__ == "__main__":
     answers = f'お疲れ様です。昨日のニュース📰の単語です。\n\n{get_vocab()}'
 
     # Sending announcement and sticker
-    send_message('text', announcement)
-    send_message('stamp', package_id='6359', sticker_id='11069859')
+    # send_message('text', announcement)
+    # send_message('stamp', package_id='6359', sticker_id='11069859')
 
     # Sending quiz answers
-    # send_message('text', answers)
+    send_message('text', answers)
