@@ -45,6 +45,7 @@ def get_news_url() -> str:
     """Retrieve up-to-date news url links"""
     opt = webdriver.ChromeOptions()
     opt.add_argument('headless')
+    opt.add_experimental_option('excludeSwitches', ['enable-logging'])
     driver = webdriver.Chrome(options=opt)
     driver.get(PATH)
 
@@ -92,6 +93,7 @@ def generate_quiz_pronunciation(url: str, word_dict: Dict[str, str], questions=4
     while len(word_dict) > questions:
         word_dict.pop(random.choice(list(word_dict.keys())))
 
+    # write the test to a file
     with open(SAMPLE_TEST_LOCATION_PRONOUN, 'w', encoding='utf-8') as f:
         f.write(f'【語彙力クイズ】{today}\n\n')
         f.write(f'今日読んだニュース📰を復習して、辞書を見せずにスマホで単語・漢字の読み方を書いてください。\n' +
@@ -99,28 +101,32 @@ def generate_quiz_pronunciation(url: str, word_dict: Dict[str, str], questions=4
         f.write(f'{url}\n\n')
         f.write('---\n\n')
         f.write('学生番号: \n\n')
-
     with open(SAMPLE_TEST_LOCATION_PRONOUN, 'a', encoding='utf-8') as f:
         for i, word in enumerate(word_dict.keys(), start=1):
             f.write(f'{i}. {word}: \n')
 
 
-def generate_quiz_definition(url: str, word_list: List, questions=4) -> None:
+def generate_quiz_definition(url: str, word_dict: Dict[str, str], word_list: List, questions=4) -> None:
     """Generate a definition test for students"""
     now, today = today_date()
-    while len(word_list) > questions:
-        word_list.remove(random.choice(word_list))
+
+    # randomly remove questions until the number of questions reach a desired value
+    new_word_list = []
+    for key in word_dict:
+        for definition in word_list:
+            if key == definition.split('：')[0]:
+                new_word_list.append(definition.split('：')[1])
 
     with open(SAMPLE_TEST_LOCATION_DEF, 'w', encoding='utf-8') as f:
         f.write(f'【単語意味クイズ】{today}\n\n')
-        f.write(f'今日のニュース📰です。辞書の定義を通じて、単語を書いてください。({len(word_list)}ポイント)\n\n')
+        f.write(
+            f'今日のニュース📰です。辞書の定義を通じて、単語を書いてください。({len(new_word_list)}ポイント)\n\n')
         f.write(f'{url}\n\n')
         f.write('---\n\n')
         f.write('学生番号: \n\n')
-
     with open(SAMPLE_TEST_LOCATION_DEF, 'a', encoding='utf-8') as f:
-        for i, word in enumerate(word_list, start=1):
-            f.write(f'{i}. {word.split("：")[1]}\n')
+        for i, word in enumerate(new_word_list, start=1):
+            f.write(f'{i}. {word.split(" ")[1]}\n')
 
 
 def save_quiz_vocab(news_url: str) -> None:
@@ -134,9 +140,9 @@ def save_quiz_vocab(news_url: str) -> None:
         f.write(f'{today}\n{news_url}\n{vocab}\n\n')
 
 
-def push_quiz() -> None:
+def push_quiz(test_type: str) -> None:
     """Send message via LINE API to students"""
-    with open('sample_test.txt', 'r', encoding='utf-8') as f:
+    with open(test_type, 'r', encoding='utf-8') as f:
         content = f.read()
         parts = content.split('---')
         instruction = parts[0].strip()
@@ -146,7 +152,7 @@ def push_quiz() -> None:
         send_message('text', questions)
 
 
-def main(push=False, questions=5) -> None:
+def main(test_type: str, push=False, questions=5) -> None:
     """Establish request connection and randomly scrap a Japanese news article's content and vocabularies"""
     # Get and encode a random news url; parsing the HTML content
     url = get_news_url()
@@ -239,9 +245,6 @@ def main(push=False, questions=5) -> None:
 
     # Generate and push quiz to LINE
     generate_quiz_pronunciation(url, vocabulary_dict, questions=questions)
-    if push:
-        push_quiz()
-        save_quiz_vocab(url)
 
     # Printing news title, date, and url
     if title and date is not None:
@@ -253,7 +256,17 @@ def main(push=False, questions=5) -> None:
         f.write('\n\n---\n\n')
         for definition in definition_list:
             f.write(f'{definition}\n')
-    generate_quiz_definition(url, definition_list, questions=questions)
+
+    generate_quiz_definition(url, vocabulary_dict,
+                             definition_list, questions=questions)
+
+    if push:
+        if test_type == 'def':
+            push_quiz(SAMPLE_TEST_LOCATION_DEF)
+            save_quiz_vocab(url)
+        elif test_type == 'pronoun':
+            push_quiz(SAMPLE_TEST_LOCATION_PRONOUN)
+            save_quiz_vocab(url)
 
 
 if __name__ == '__main__':
@@ -264,4 +277,5 @@ if __name__ == '__main__':
     elif sys.platform.startswith('win32'):
         os.system('cls')
 
-    main(push=False, questions=4)
+    # test_type: 'def' -> 単語意味 or 'pronoun' -> 単語発音
+    main(test_type='def', push=False, questions=4)
