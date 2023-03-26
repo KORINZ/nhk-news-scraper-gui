@@ -97,7 +97,7 @@ def generate_pronunciation_quiz(url: str, word_dict: Dict[str, str], questions=4
     # write the test to a file
     with open(SAMPLE_TEST_LOCATION_PRONOUN, 'w', encoding='utf-8') as f:
         f.write(f'【語彙力クイズ】{today}\n\n')
-        f.write(f'今日読んだニュース📰を復習して、辞書を見せずにスマホで単語・漢字の読み方を書いてください。\n' +
+        f.write(f'今日読んだNHK EASYニュース📰を復習して、辞書を見せずにスマホで単語・漢字の読み方を書いてください。\n' +
                 f'カタカナの場合は日本語もしくは英語で意味を書いてください。({len(word_dict)}ポイント)\n\n')
         f.write(f'{url}\n\n')
         f.write('---\n\n')
@@ -127,7 +127,7 @@ def generate_definition_quiz(article, word_dict: Dict[str, str], word_list: List
     with open(SAMPLE_TEST_LOCATION_DEF, 'w', encoding='utf-8') as f:
         f.write(f'【単語意味クイズ】{today}\n\n')
         f.write(
-            f'今日のニュース📰です。(1)から正しい単語の意味を順番に並べてください。({len(new_word_list)}ポイント)\n\n')
+            f'今日のNHK EASYニュース📰です。(1)から正しい単語の意味を順番に並べてください。({len(new_word_list)}ポイント)\n\n')
 
     with open(SAMPLE_TEST_LOCATION_DEF, 'a', encoding='utf-8') as f:
         for paragraph in article:
