@@ -24,12 +24,17 @@ See the `.txt` file in the repository for an example output.
 ## Installation
 1. Sign up for a [LINE official account](https://www.linebiz.com/jp/signup/).
 2. Get your own `CHANNEL_ACCESS_TOKEN` and `USER_ID` from [LINE Developers](https://developers.line.biz/ja/) Messaging API Settings.
-3. Clone this repository:
+3. Install the required packages listed in the dependencies:
+
+```bash
+pip install -r requirements.txt
+```
+
+4. Clone this repository:
 
 ```bash
 git clone https://github.com/KORINZ/nhk_news_web_easy_scraper.git
 ```
-4. Install the required packages listed in the dependencies.
 
 ## Usage
 
