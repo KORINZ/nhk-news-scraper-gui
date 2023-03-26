@@ -106,7 +106,7 @@ def generate_quiz_pronunciation(url: str, word_dict: Dict[str, str], questions=4
             f.write(f'{i}. {word}: \n')
 
 
-def generate_quiz_definition(url: str, word_dict: Dict[str, str], word_list: List, questions=4) -> None:
+def generate_quiz_definition(url: str, word_dict: Dict[str, str], word_list: List) -> None:
     """Generate a definition test for students"""
     now, today = today_date()
 
@@ -115,7 +115,7 @@ def generate_quiz_definition(url: str, word_dict: Dict[str, str], word_list: Lis
     for key in word_dict:
         for definition in word_list:
             if key == definition.split('：')[0]:
-                new_word_list.append(definition.split('：')[1])
+                new_word_list.append(definition.split('：', 1)[1])
 
     with open(SAMPLE_TEST_LOCATION_DEF, 'w', encoding='utf-8') as f:
         f.write(f'【単語意味クイズ】{today}\n\n')
@@ -257,8 +257,7 @@ def main(test_type: str, push=False, questions=5) -> None:
         for definition in definition_list:
             f.write(f'{definition}\n')
 
-    generate_quiz_definition(url, vocabulary_dict,
-                             definition_list, questions=questions)
+    generate_quiz_definition(url, vocabulary_dict, definition_list)
 
     if push:
         if test_type == 'def':
