@@ -114,7 +114,7 @@ def generate_quiz_definition(url: str, word_dict: Dict[str, str], word_list: Lis
     new_word_list = []
     for key in word_dict:
         for definition in word_list:
-            if key == definition.split('：')[0]:
+            if key == definition.split('：', 1)[0]:
                 new_word_list.append(definition.split('：', 1)[1])
 
     with open(SAMPLE_TEST_LOCATION_DEF, 'w', encoding='utf-8') as f:
@@ -126,7 +126,7 @@ def generate_quiz_definition(url: str, word_dict: Dict[str, str], word_list: Lis
         f.write('学生番号: \n\n')
     with open(SAMPLE_TEST_LOCATION_DEF, 'a', encoding='utf-8') as f:
         for i, word in enumerate(new_word_list, start=1):
-            f.write(f'{i}. {word.split(" ")[1]}\n')
+            f.write(f'{i}. {word.split(" ")[1]}\n\n')
 
 
 def save_quiz_vocab(news_url: str) -> None:
