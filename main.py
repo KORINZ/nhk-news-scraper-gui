@@ -38,8 +38,9 @@ locale.setlocale(locale.LC_CTYPE, "Japanese_Japan.932")
 PATH = 'https://www3.nhk.or.jp/news/easy/'
 NEWS_ARTICLE_URL_IDENTIFIER = 'k1001'
 NEWS_ARTICLE_TXT_LOCATION = r'./news_article.txt'
-SAMPLE_TEST_LOCATION_PRONOUN = r'./sample_test_pronunciation.txt'
-SAMPLE_TEST_LOCATION_DEF = r'./sample_test_definition.txt'
+PRONOUN_QUIZ_LOCATION = r'./pronunciation_quiz.txt'
+DEF_QUIZ_LOCATION = r'./definition_quiz.txt'
+PAST_QUIZ_DATA_LOCATION = r'./past_quiz_data.txt'
 
 
 def get_news_url() -> str:
@@ -95,14 +96,14 @@ def generate_pronunciation_quiz(url: str, word_dict: Dict[str, str], questions=4
         word_dict.pop(random.choice(list(word_dict.keys())))
 
     # write the test to a file
-    with open(SAMPLE_TEST_LOCATION_PRONOUN, 'w', encoding='utf-8') as f:
+    with open(PRONOUN_QUIZ_LOCATION, 'w', encoding='utf-8') as f:
         f.write(f'【語彙力クイズ】{today}\n\n')
         f.write(f'今日読んだNHK EASYニュース📰を復習して、辞書を見せずにスマホで単語・漢字の読み方を書いてください。\n' +
                 f'カタカナの場合は日本語もしくは英語で意味を書いてください。({len(word_dict)}ポイント)\n\n')
         f.write(f'{url}\n\n')
         f.write('---\n\n')
         f.write('学生番号: \n\n')
-    with open(SAMPLE_TEST_LOCATION_PRONOUN, 'a', encoding='utf-8') as f:
+    with open(PRONOUN_QUIZ_LOCATION, 'a', encoding='utf-8') as f:
         for i, word in enumerate(word_dict.keys(), start=1):
             letter = string.ascii_uppercase[i-1]
             f.write(f'{letter}. {word}: \n')
@@ -130,12 +131,12 @@ def generate_definition_quiz(article, word_dict: Dict[str, str], word_list: List
         f"{item[:-1]} {string.ascii_uppercase[i]}" for i, item in enumerate(new_word_list)]
 
     # write the test to a file
-    with open(SAMPLE_TEST_LOCATION_DEF, 'w', encoding='utf-8') as f:
+    with open(DEF_QUIZ_LOCATION, 'w', encoding='utf-8') as f:
         f.write(f'【単語意味クイズ】{today}\n\n')
         f.write(
             f'今日のNHK EASYニュース📰です。(1)から正しい単語の意味を順番に並べてください。({len(new_word_list)}ポイント)\n\n')
 
-    with open(SAMPLE_TEST_LOCATION_DEF, 'a', encoding='utf-8') as f:
+    with open(DEF_QUIZ_LOCATION, 'a', encoding='utf-8') as f:
         for paragraph in article:
             f.write(paragraph.text.strip() + '\n\n')
 
@@ -163,7 +164,7 @@ def save_quiz_vocab(news_url: str) -> None:
         parts = content.split('---')
         vocab = parts[1].strip()
         vocab_def = parts[2].strip()
-    with open('past_vocab.txt', 'a+', encoding='utf-8') as f:
+    with open(PAST_QUIZ_DATA_LOCATION, 'a+', encoding='utf-8') as f:
         f.write(f'{today}\n{news_url}\n\n{vocab}\n\n{vocab_def}\n\n')
         f.write('---\n\n')
 
@@ -289,10 +290,10 @@ def main(test_type: str, push=False, questions=5) -> None:
 
     if push:
         if test_type == 'def':
-            push_quiz(SAMPLE_TEST_LOCATION_DEF)
+            push_quiz(DEF_QUIZ_LOCATION)
             save_quiz_vocab(url)
         elif test_type == 'pronoun':
-            push_quiz(SAMPLE_TEST_LOCATION_PRONOUN)
+            push_quiz(PRONOUN_QUIZ_LOCATION)
             save_quiz_vocab(url)
 
 
@@ -305,4 +306,4 @@ if __name__ == '__main__':
         os.system('cls')
 
     # test_type: 'def' -> 単語意味 or 'pronoun' -> 単語発音
-    main(test_type='def', push=True, questions=5)
+    main(test_type='def', push=False, questions=5)
