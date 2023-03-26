@@ -2,6 +2,7 @@ import datetime
 import locale
 import requests
 import random
+import string
 import sys
 import os
 
@@ -85,7 +86,7 @@ def get_day_of_week_jp(date) -> List:
     return week_list[date.weekday()]
 
 
-def generate_quiz_pronunciation(url: str, word_dict: Dict[str, str], questions=4) -> None:
+def generate_pronunciation_quiz(url: str, word_dict: Dict[str, str], questions=4) -> None:
     """Generate a pronunciation test for students"""
     now, today = today_date()
 
@@ -103,30 +104,49 @@ def generate_quiz_pronunciation(url: str, word_dict: Dict[str, str], questions=4
         f.write('学生番号: \n\n')
     with open(SAMPLE_TEST_LOCATION_PRONOUN, 'a', encoding='utf-8') as f:
         for i, word in enumerate(word_dict.keys(), start=1):
-            f.write(f'{i}. {word}: \n')
+            letter = string.ascii_uppercase[i-1]
+            f.write(f'{letter}. {word}: \n')
 
 
-def generate_quiz_definition(url: str, word_dict: Dict[str, str], word_list: List) -> None:
+def generate_definition_quiz(article, word_dict: Dict[str, str], word_list: List) -> None:
     """Generate a definition test for students"""
     now, today = today_date()
 
     # randomly remove questions until the number of questions reach a desired value
+    new_word_list_header = []
     new_word_list = []
-    for key in word_dict:
+    for key in word_dict.keys():
         for definition in word_list:
-            if key == definition.split('：', 1)[0]:
+            if key in definition.split('：', 1)[0]:
+                new_word_list_header.append(definition.split('：', 1)[0])
                 new_word_list.append(definition.split('：', 1)[1])
+
+    # Shuffle the word list
+    random.shuffle(new_word_list)
 
     with open(SAMPLE_TEST_LOCATION_DEF, 'w', encoding='utf-8') as f:
         f.write(f'【単語意味クイズ】{today}\n\n')
         f.write(
-            f'今日のニュース📰です。辞書の定義を通じて、単語を書いてください。({len(new_word_list)}ポイント)\n\n')
-        f.write(f'{url}\n\n')
-        f.write('---\n\n')
-        f.write('学生番号: \n\n')
+            f'今日のニュース📰です。(1)から正しい単語の意味を順番に並べてください。({len(new_word_list)}ポイント)\n\n')
+
     with open(SAMPLE_TEST_LOCATION_DEF, 'a', encoding='utf-8') as f:
+        for paragraph in article:
+            f.write(paragraph.text.strip() + '\n\n')
+
+        f.write('---\n\n')
+
+        for i, word in enumerate(new_word_list_header, start=1):
+            f.write(f'({i}) {word} ')
+
+        f.write('\n\n')
+
         for i, word in enumerate(new_word_list, start=1):
-            f.write(f'{i}. {word.split(" ")[1]}\n\n')
+            letter = string.ascii_uppercase[i-1]
+            f.write(f'{letter}. {word.split(" ")[1]}\n\n')
+
+        f.write('【返信フォーマット】(英語アルファベットと数字のみ):\n')
+        f.write('学生番号: A10001\n')
+        f.write('解答: ABCDE')
 
 
 def save_quiz_vocab(news_url: str) -> None:
@@ -244,7 +264,7 @@ def main(test_type: str, push=False, questions=5) -> None:
             f.write(f'\n{word}')
 
     # Generate and push quiz to LINE
-    generate_quiz_pronunciation(url, vocabulary_dict, questions=questions)
+    generate_pronunciation_quiz(url, vocabulary_dict, questions=questions)
 
     # Printing news title, date, and url
     if title and date is not None:
@@ -257,7 +277,7 @@ def main(test_type: str, push=False, questions=5) -> None:
         for definition in definition_list:
             f.write(f'{definition}\n')
 
-    generate_quiz_definition(url, vocabulary_dict, definition_list)
+    generate_definition_quiz(article, vocabulary_dict, definition_list)
 
     if push:
         if test_type == 'def':
