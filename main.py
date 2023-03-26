@@ -117,13 +117,19 @@ def generate_definition_quiz(article, word_dict: Dict[str, str], word_list: List
     new_word_list = []
     for key in word_dict.keys():
         for definition in word_list:
-            if key in definition.split('：', 1)[0]:
+            if key == definition.split('：', 1)[0]:
                 new_word_list_header.append(definition.split('：', 1)[0])
                 new_word_list.append(definition.split('：', 1)[1])
 
-    # Shuffle the word list
+    # Shuffle the order of the questions and print the answer key
+    new_word_list = [
+        f"{item}{string.ascii_uppercase[i]}" for i, item in enumerate(new_word_list)]
     random.shuffle(new_word_list)
+    print(f'\n単語意味クイズ解答：{"".join([item[-1] for item in new_word_list])}')
+    new_word_list = [
+        f"{item[:-1]} {string.ascii_uppercase[i]}" for i, item in enumerate(new_word_list)]
 
+    # write the test to a file
     with open(SAMPLE_TEST_LOCATION_DEF, 'w', encoding='utf-8') as f:
         f.write(f'【単語意味クイズ】{today}\n\n')
         f.write(
@@ -297,4 +303,4 @@ if __name__ == '__main__':
         os.system('cls')
 
     # test_type: 'def' -> 単語意味 or 'pronoun' -> 単語発音
-    main(test_type='def', push=False, questions=4)
+    main(test_type='def', push=False, questions=5)
