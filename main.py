@@ -165,6 +165,7 @@ def save_quiz_vocab(news_url: str) -> None:
         vocab_def = parts[2].strip()
     with open('past_vocab.txt', 'a+', encoding='utf-8') as f:
         f.write(f'{today}\n{news_url}\n\n{vocab}\n\n{vocab_def}\n\n')
+        f.write('---\n\n')
 
 
 def push_quiz(test_type: str) -> None:
@@ -304,4 +305,4 @@ if __name__ == '__main__':
         os.system('cls')
 
     # test_type: 'def' -> 単語意味 or 'pronoun' -> 単語発音
-    main(test_type='def', push=False, questions=5)
+    main(test_type='def', push=True, questions=5)
