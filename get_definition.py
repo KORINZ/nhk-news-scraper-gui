@@ -41,7 +41,7 @@ def get_definition_list(url: str, soup) -> List:
 
         text_content = dictionary_box.text
         text_content = ''.join(text_content.split())
-        text_content = text_content.replace('1', '： 1')
+        text_content = text_content.replace('1', '： 1', 1)
         print(text_content)
         definition_list.append(text_content)
 
