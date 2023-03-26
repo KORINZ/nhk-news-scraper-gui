@@ -162,8 +162,9 @@ def save_quiz_vocab(news_url: str) -> None:
         content = f.read()
         parts = content.split('---')
         vocab = parts[1].strip()
+        vocab_def = parts[2].strip()
     with open('past_vocab.txt', 'a+', encoding='utf-8') as f:
-        f.write(f'{today}\n{news_url}\n{vocab}\n\n')
+        f.write(f'{today}\n{news_url}\n\n{vocab}\n\n{vocab_def}\n\n')
 
 
 def push_quiz(test_type: str) -> None:
