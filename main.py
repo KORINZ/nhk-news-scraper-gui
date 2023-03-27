@@ -127,7 +127,7 @@ def generate_definition_quiz(article, word_dict: Dict[str, str], word_list: List
 
     # Shuffle the order of the questions and print the answer key
     new_word_list = [
-        f"{item}{string.ascii_uppercase[i]}" for i, item in enumerate(new_word_list)]
+        f'{item}{string.ascii_uppercase[i]}' for i, item in enumerate(new_word_list)]
     random.shuffle(new_word_list)
     answer = "".join([item[-1] for item in new_word_list])
     print(f'\n単語意味クイズ解答：{answer}')
@@ -245,7 +245,6 @@ def main(test_type: str, push=False, questions=5) -> None:
 
     # Reformat word: 話し合う: はな あ -> 話(はな)し合(あ)う
     formatted_word_list = []
-
     for key, value in vocabulary_dict.items():
         word = ''
         combine = False
@@ -253,6 +252,7 @@ def main(test_type: str, push=False, questions=5) -> None:
             if is_hiragana_char(char):
                 combine = True
 
+        # If the word is a combination of hiragana, combine the furigana
         if combine:
             kana = deque(value.split(' '))
             for i, char in enumerate(key):
@@ -278,23 +278,37 @@ def main(test_type: str, push=False, questions=5) -> None:
         for word in formatted_word_list:
             f.write(f'\n{word}')
 
-    # Generate and push quiz to LINE
-    generate_pronunciation_quiz(url, vocabulary_dict, questions=questions)
-
     # Printing news title, date, and url
     if title and date is not None:
         print(f'{title.text.lstrip().rstrip()} {date.text}')
         print(f'{url}\n')
 
+    # Modify the definition list to include the original word
     definition_list = get_definition_list(url)
+    definition_list_original_word = []
+    for key, meaning in zip(vocabulary_dict.keys(), definition_list):
+        try:
+            definition_list_original_word.append(
+                key + '：' + meaning.split('：', 1)[1])
+        except IndexError:
+            print(
+                f'\nWARNING: definition_list is missing {len(vocabulary_dict.keys()) - len(definition_list_original_word)} element(s). This is a rare case due to incomplete scrapping of selenium. Consider re-running the program.')
+            pass
+
+    # Save definitions to a news_article.txt file
     with open(NEWS_ARTICLE_TXT_LOCATION, 'a', encoding='utf-8') as f:
         f.write('\n\n---\n\n')
-        for definition in definition_list:
+        for definition in definition_list_original_word:
             f.write(f'{definition}\n')
 
-    def_answer = generate_definition_quiz(
-        article, vocabulary_dict, definition_list)
+    # Generate the pronunciation quiz
+    generate_pronunciation_quiz(url, vocabulary_dict, questions=questions)
 
+    # Get the answer to the definition quiz and generate the definition quiz
+    def_answer = generate_definition_quiz(
+        article, vocabulary_dict, definition_list_original_word)
+
+    # Push quiz to LINE if push is True
     if push:
         if test_type == 'def':
             push_quiz(DEF_QUIZ_LOCATION)
@@ -316,4 +330,4 @@ if __name__ == '__main__':
         'win32') else os.system('clear')
 
     # test_type: 'def' -> 単語意味 or 'pronoun' -> 単語発音
-    main(test_type='def', push=False, questions=5)
+    main(test_type='def', push=False, questions=4)

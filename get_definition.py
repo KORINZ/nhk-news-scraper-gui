@@ -7,7 +7,7 @@ from typing import List, Tuple
 import requests
 import re
 
-PATTERN = re.compile(r'^RSHOK-K-')
+PATTERN = re.compile(r'^RSHOK-[KH]-')
 
 
 def get_number_of_word(url: str) -> Tuple:
@@ -60,5 +60,5 @@ def get_definition_list(url: str) -> List:
 
 
 if __name__ == '__main__':
-    test_url = 'https://www3.nhk.or.jp/news/easy/k10014015941000/k10014015941000.html'
+    test_url = 'https://www3.nhk.or.jp/news/easy/k10014017571000/k10014017571000.html'
     definition_list = get_definition_list(test_url)
