@@ -1,7 +1,7 @@
 import gspread
 import pandas as pd
 
-from datetime import datetime
+from datetime import datetime, timedelta
 from pathlib import Path
 
 LINE_INCOMING_MESSAGE_FILENAME = 'LINE_Messages'
@@ -15,8 +15,13 @@ sa = gspread.service_account(
 # Get quiz start/sent time
 with open('log.txt', 'r') as f:
     quiz_start_time = f.readline().strip('\n').split('.')[0]
-    datetime.strptime(quiz_start_time, '%Y-%m-%d %H:%M:%S')
+    quiz_start_time = datetime.strptime(quiz_start_time, '%Y-%m-%d %H:%M:%S')
     print(quiz_start_time)
+
+quiz_end_time = quiz_start_time + timedelta(days=1)
+quiz_end_time = quiz_end_time.replace(
+    hour=21, minute=0, second=0, microsecond=0)
+print(quiz_end_time)
 
 line_message = sa.open(LINE_INCOMING_MESSAGE_FILENAME)
 message_sheet = line_message.worksheet('Messages')
@@ -29,5 +34,6 @@ grade_book = sa.open(GRADE_BOOK_FILENAME)
 grade_sheet = grade_book.worksheet('シート1')
 
 if __name__ == "__main__":
-    df_message.query('`Sent Time` < @quiz_start_time', inplace=True)
+    df_message = df_message.query(
+        '@quiz_start_time <= `Sent Time` <= @quiz_end_time')
     print(df_message['Sent Time'])
