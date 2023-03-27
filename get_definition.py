@@ -11,7 +11,7 @@ PATTERN = re.compile(r'^RSHOK-K-')
 
 
 def get_number_of_word(url: str) -> Tuple:
-    """ Get number of words and word ids which contain RSHOK-K- prefix"""
+    """Get number of words and word ids which contain RSHOK-K- prefix"""
     response = requests.get(url)
     response.encoding = response.apparent_encoding
     html_content = response.text
@@ -22,7 +22,7 @@ def get_number_of_word(url: str) -> Tuple:
 
 
 def get_definition_list(url: str) -> List:
-    """ Get definition list of words which contain RSHOK-K- prefix"""
+    """Get definition list of words which contain RSHOK-K- prefix"""
     # Get word ids which contain RSHOK-K- prefix
     matching_ids = get_number_of_word(url)[1]
 
@@ -60,7 +60,5 @@ def get_definition_list(url: str) -> List:
 
 
 if __name__ == '__main__':
-
-    url = 'https://www3.nhk.or.jp/news/easy/k10014015941000/k10014015941000.html'
-
-    definition_list = get_definition_list(url)
+    test_url = 'https://www3.nhk.or.jp/news/easy/k10014015941000/k10014015941000.html'
+    definition_list = get_definition_list(test_url)

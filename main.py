@@ -1,5 +1,4 @@
 import locale
-import re
 import requests
 import random
 import string
