@@ -30,7 +30,7 @@ https://sartras.or.jp/seido/
 
 # Initial settings and website and file paths
 sys.setrecursionlimit(50)
-locale.setlocale(locale.LC_TIME, 'ja_JP.UTF-8')
+
 PATH = 'https://www3.nhk.or.jp/news/easy/'
 NEWS_ARTICLE_URL_IDENTIFIER = 'k1001'
 NEWS_ARTICLE_TXT_LOCATION = r'./news_article.txt'
@@ -38,6 +38,11 @@ PRONOUN_QUIZ_LOCATION = r'./pronunciation_quiz.txt'
 DEF_QUIZ_LOCATION = r'./definition_quiz.txt'
 PAST_QUIZ_DATA_LOCATION = r'./past_quiz_data.txt'
 LOG_LOCATION = r'./log.txt'
+
+if sys.platform.startswith('win32'):
+    locale.setlocale(locale.LC_CTYPE, "Japanese_Japan.932")
+else:
+    locale.setlocale(locale.LC_TIME, 'ja_JP.UTF-8')
 
 
 def get_news_url() -> str:
