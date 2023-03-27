@@ -1,5 +1,5 @@
-import datetime
 import locale
+import re
 import requests
 import random
 import string
@@ -8,11 +8,12 @@ import os
 
 from bs4 import BeautifulSoup
 from collections import deque
+from datetime import datetime
 from line_message_bot import send_message
 from selenium import webdriver
 from selenium.webdriver.common.by import By
 from typing import Dict, List, Tuple
-from get_definition import get_definition_list
+from get_definition import get_definition_list, get_number_of_word
 
 '''
 NEWS WEB EASY
@@ -20,27 +21,24 @@ NEWS WEB EASY
 出所の明示でニュースの内容を転載○ 語彙は○ 辞書△×？
 
 https://www.nhk.or.jp/nijiriyou/kyouiku.html
-著作権法では、学校その他の教育機関で、授業の教材として複製を認める代わりに、「授業担当者または授業を受ける者が複製すること」や「出所の明示」など、
-いくつかの条件を守るよう求めています。
-また、著作権法が一部改正され、２０２０年４月２８日から、権利者の利益を不当に害しない範囲で、学校の先生や生徒がインターネットなどを通じて、
-ＮＨＫの番組を教材として利用することが可能になりました。
+著作権法では、学校その他の教育機関で、授業の教材として複製を認める代わりに、「授業担当者または授業を受ける者が複製すること」や「出所の明示」など、いくつかの条件を守るよう求めています。
+また、著作権法が一部改正され、２０２０年４月２８日から、権利者の利益を不当に害しない範囲で、学校の先生や生徒がインターネットなどを通じて、ＮＨＫの番組を教材として利用することが可能になりました。
 
 https://sartras.or.jp/seido/
 授業目的公衆送信補償金制度
-具体的には、学校等の教育機関の授業で、予習・復習用に教員が他人の著作物を用いて作成した教材を生徒の端末に送信したり、
-サーバにアップロードしたりすることなど、ICTの活用により授業の過程で利用するために必要な公衆送信について、
-個別に著作権者等の許諾を得ることなく行うことができるようになります。
+具体的には、学校等の教育機関の授業で、予習・復習用に教員が他人の著作物を用いて作成した教材を生徒の端末に送信したり、サーバにアップロードしたりすることなど、ICTの活用により授業の過程で利用するために必要な公衆送信について、個別に著作権者等の許諾を得ることなく行うことができるようになります。
 '''
 
 # Initial settings and website and file paths
 sys.setrecursionlimit(50)
-locale.setlocale(locale.LC_CTYPE, "Japanese_Japan.932")
+locale.setlocale(locale.LC_TIME, 'ja_JP.UTF-8')
 PATH = 'https://www3.nhk.or.jp/news/easy/'
 NEWS_ARTICLE_URL_IDENTIFIER = 'k1001'
 NEWS_ARTICLE_TXT_LOCATION = r'./news_article.txt'
 PRONOUN_QUIZ_LOCATION = r'./pronunciation_quiz.txt'
 DEF_QUIZ_LOCATION = r'./definition_quiz.txt'
 PAST_QUIZ_DATA_LOCATION = r'./past_quiz_data.txt'
+LOG_LOCATION = r'./log.txt'
 
 
 def get_news_url() -> str:
@@ -54,7 +52,13 @@ def get_news_url() -> str:
     links = driver.find_elements(By.XPATH, "//a[@href]")
     news_links = [link.get_attribute("href")
                   for link in links if NEWS_ARTICLE_URL_IDENTIFIER in link.get_attribute("href")]
+
     news_current = list(set(news_links[1:9]))
+
+    # Remove links with less than 3 words
+    for link in news_current:
+        if get_number_of_word(link)[0] < 3:
+            news_current.remove(link)
 
     try:
         new_url = random.choice(news_current)
@@ -77,7 +81,7 @@ def is_hiragana_char(character: str) -> bool:
 
 def today_date() -> Tuple:
     """Return today's date in Japanese"""
-    now = datetime.datetime.now()
+    now = datetime.now()
     return now, now.strftime(f'%Y年%m月%d日 {get_day_of_week_jp(now)} %H時%M分')
 
 
@@ -109,7 +113,7 @@ def generate_pronunciation_quiz(url: str, word_dict: Dict[str, str], questions=4
             f.write(f'{letter}. {word}: \n')
 
 
-def generate_definition_quiz(article, word_dict: Dict[str, str], word_list: List) -> None:
+def generate_definition_quiz(article, word_dict: Dict[str, str], word_list: List) -> str:
     """Generate a definition test for students"""
     now, today = today_date()
 
@@ -126,7 +130,8 @@ def generate_definition_quiz(article, word_dict: Dict[str, str], word_list: List
     new_word_list = [
         f"{item}{string.ascii_uppercase[i]}" for i, item in enumerate(new_word_list)]
     random.shuffle(new_word_list)
-    print(f'\n単語意味クイズ解答：{"".join([item[-1] for item in new_word_list])}')
+    answer = "".join([item[-1] for item in new_word_list])
+    print(f'\n単語意味クイズ解答：{answer}')
     new_word_list = [
         f"{item[:-1]} {string.ascii_uppercase[i]}" for i, item in enumerate(new_word_list)]
 
@@ -154,6 +159,8 @@ def generate_definition_quiz(article, word_dict: Dict[str, str], word_list: List
         f.write('【返信フォーマット】(英語アルファベットと数字のみ):\n')
         f.write('学生番号: A10001\n')
         f.write('解答: ABCDE')
+
+        return answer
 
 
 def save_quiz_vocab(news_url: str) -> None:
@@ -280,13 +287,14 @@ def main(test_type: str, push=False, questions=5) -> None:
         print(f'{title.text.lstrip().rstrip()} {date.text}')
         print(f'{url}\n')
 
-    definition_list = get_definition_list(url, soup)
+    definition_list = get_definition_list(url)
     with open(NEWS_ARTICLE_TXT_LOCATION, 'a', encoding='utf-8') as f:
         f.write('\n\n---\n\n')
         for definition in definition_list:
             f.write(f'{definition}\n')
 
-    generate_definition_quiz(article, vocabulary_dict, definition_list)
+    def_answer = generate_definition_quiz(
+        article, vocabulary_dict, definition_list)
 
     if push:
         if test_type == 'def':
@@ -296,14 +304,17 @@ def main(test_type: str, push=False, questions=5) -> None:
             push_quiz(PRONOUN_QUIZ_LOCATION)
             save_quiz_vocab(url)
 
+    # Save quiz sent time and news url to a log file
+    with open(LOG_LOCATION, 'w', encoding='utf-8') as f:
+        now = today_date()[0]
+        now.strftime(f'%Y/%m-%d %H:%M')
+        f.write(f'{now}\n{url}\n{def_answer}\n')
+
 
 if __name__ == '__main__':
-    # Linux
-    if sys.platform.startswith('linux'):
-        os.system('clear')
-    # Windows
-    elif sys.platform.startswith('win32'):
-        os.system('cls')
+    # Clearing the terminal
+    os.system('cls') if sys.platform.startswith(
+        'win32') else os.system('clear')
 
     # test_type: 'def' -> 単語意味 or 'pronoun' -> 単語発音
     main(test_type='def', push=False, questions=5)

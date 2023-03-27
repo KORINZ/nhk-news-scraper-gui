@@ -3,17 +3,28 @@ from selenium.webdriver.common.by import By
 from selenium.webdriver.common.action_chains import ActionChains
 
 from bs4 import BeautifulSoup
-from typing import List
+from typing import List, Tuple
 import requests
 import re
 
+PATTERN = re.compile(r'^RSHOK-K-')
 
-def get_definition_list(url: str, soup) -> List:
 
-    # Get word ids which contain RSHOK-K- prefix
-    pattern = re.compile(r'^RSHOK-K-')
+def get_number_of_word(url: str) -> Tuple:
+    """ Get number of words and word ids which contain RSHOK-K- prefix"""
+    response = requests.get(url)
+    response.encoding = response.apparent_encoding
+    html_content = response.text
+    soup = BeautifulSoup(html_content, 'html.parser')
     matching_ids = list(dict.fromkeys([element['id']
-                        for element in soup.find_all(id=pattern)]))
+                                       for element in soup.find_all(id=PATTERN)]))
+    return len(matching_ids), matching_ids, soup
+
+
+def get_definition_list(url: str) -> List:
+    """ Get definition list of words which contain RSHOK-K- prefix"""
+    # Get word ids which contain RSHOK-K- prefix
+    matching_ids = get_number_of_word(url)[1]
 
     # Selenium setup
     options = webdriver.ChromeOptions()
@@ -51,9 +62,5 @@ def get_definition_list(url: str, soup) -> List:
 if __name__ == '__main__':
 
     url = 'https://www3.nhk.or.jp/news/easy/k10014015941000/k10014015941000.html'
-    response = requests.get(url)
-    response.encoding = response.apparent_encoding
-    html_content = response.text
-    soup = BeautifulSoup(html_content, 'html.parser')
 
-    definition_list = get_definition_list(url, soup)
+    definition_list = get_definition_list(url)
