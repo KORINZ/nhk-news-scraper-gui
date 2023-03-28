@@ -89,11 +89,12 @@ def update_status_label_blink() -> None:
 
 root = tk.Tk()
 root.title(f'NHK NEWS EASY クイズ作成 GUI {VERSION}')
-root.geometry("500x600")
+root.geometry("700x700")
+root.option_add("*font", "Mincho, 11")
 root.iconbitmap(r'icon/nhk.ico')
 
 status_label = tk.Label(root, text="")
-status_label.grid(row=3, column=1, padx=(160, 0), sticky="w")
+status_label.grid(row=3, column=1, padx=(230, 0), sticky="w")
 
 test_type_var = tk.StringVar()
 line_push_var = tk.BooleanVar()
@@ -127,7 +128,7 @@ generate_button.grid(row=3, column=1, pady=(10, 20), sticky="w")
 
 send_button = tk.Button(
     root, text="LINEに発信", command=press_push_quiz_button, state="disabled")  # Disable the send button initially
-send_button.grid(row=3, column=1, padx=(80, 0), pady=(10, 20), sticky="w")
+send_button.grid(row=3, column=1, padx=(100, 0), pady=(10, 20), sticky="w")
 
 article_label = tk.Label(root, text="ファイル表示:")
 article_label.grid(row=4, column=0, sticky="w")
@@ -146,15 +147,15 @@ load_article_button.grid(row=4, column=1, sticky="w")
 
 load_def_quiz_button = tk.Button(
     root, text="単語意味クイズ", command=lambda: load_file("definition_quiz.txt"), state="disabled")
-load_def_quiz_button.grid(row=4, column=1, padx=(80, 0), sticky="w")
+load_def_quiz_button.grid(row=4, column=1, padx=(120, 0), sticky="w")
 
 load_pron_quiz_button = tk.Button(
     root, text="読み方クイズ", command=lambda: load_file("pronunciation_quiz.txt"), state="disabled")
-load_pron_quiz_button.grid(row=4, column=1, padx=(180, 0), sticky="w")
+load_pron_quiz_button.grid(row=4, column=1, padx=(255, 0), sticky="w")
 
 load_log_button = tk.Button(
     root, text="ログファイル", command=lambda: load_file("log.txt"), state="disabled")
-load_log_button.grid(row=4, column=1, padx=(265, 0), sticky="w")
+load_log_button.grid(row=4, column=1, padx=(375, 0), sticky="w")
 
 root.grid_columnconfigure(1, weight=1)
 root.grid_rowconfigure(5, weight=1)
