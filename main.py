@@ -317,10 +317,10 @@ def main(test_type: str, push=False, questions=5) -> None:
 
     # Push quiz to LINE if push is True
     if push:
-        if test_type == 'def':
+        if test_type == '単語意味クイズ':
             push_quiz(DEF_QUIZ_LOCATION)
             save_quiz_vocab(url)
-        elif test_type == 'pronoun':
+        elif test_type == '読み方クイズ':
             push_quiz(PRONOUN_QUIZ_LOCATION)
             save_quiz_vocab(url)
 
@@ -337,4 +337,4 @@ if __name__ == '__main__':
         'win32') else os.system('clear')
 
     # test_type: 'def' -> 単語意味 or 'pronoun' -> 単語発音
-    main(test_type='def', push=False, questions=4)
+    main(test_type='単語意味クイズ', push=False, questions=4)

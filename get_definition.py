@@ -7,7 +7,7 @@ from typing import List, Tuple
 import requests
 import re
 
-PATTERN = re.compile(r'^RSHOK-[KH]-')
+PATTERN = re.compile(r'^RSHOK-')
 
 
 def get_number_of_word(url: str) -> Tuple:

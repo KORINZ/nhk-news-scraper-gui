@@ -1,6 +1,11 @@
 import tkinter as tk
 from tkinter import messagebox
-from main import main
+from main import main, push_quiz
+import tkinter.ttk as ttk
+
+VERSION = "v1.0.0"
+PRONOUN_QUIZ_LOCATION = r'./pronunciation_quiz.txt'
+DEF_QUIZ_LOCATION = r'./definition_quiz.txt'
 
 
 def run_quiz_generation() -> None:
@@ -10,8 +15,20 @@ def run_quiz_generation() -> None:
         messagebox.showinfo("成功", "クイズ生成が完了しました！")
         # Automatically update the Text widget after quiz generation
         load_file('news_article.txt')
+        send_button.config(state="normal")  # Enable the send button
     except Exception:
         messagebox.showerror("エラー", "問題数を指定してください。")
+
+
+def press_push_quiz_button() -> None:
+    try:
+        if test_type_var.get() == "読み方クイズ":
+            push_quiz(PRONOUN_QUIZ_LOCATION)
+        else:
+            push_quiz(DEF_QUIZ_LOCATION)
+        messagebox.showinfo("成功", "クイズを発信しました！")
+    except Exception as e:
+        messagebox.showerror("エラー", f"クイズの発信に失敗しました: {e}")
 
 
 def load_file(file_name: str) -> None:
@@ -25,7 +42,7 @@ def load_file(file_name: str) -> None:
 
 
 root = tk.Tk()
-root.title("NHK NEWS EASY クイズ作成 GUI")
+root.title(f'NHK NEWS EASY クイズ作成 GUI {VERSION}')
 root.geometry("500x600")
 
 test_type_var = tk.StringVar()
@@ -37,11 +54,14 @@ test_type_var.set("単語意味クイズ")
 
 test_type_label = tk.Label(root, text="クイズタイプ:")
 test_type_label.grid(row=0, column=0, sticky="w")
-test_type_option = tk.OptionMenu(
-    root, test_type_var, "読み方クイズ", "単語意味クイズ")
-test_type_option.grid(row=0, column=1, sticky="w")
 
-line_push_label = tk.Label(root, text="LINEに発信:")
+# Create a ttk.Combobox to replace the OptionMenu
+test_type_combobox = ttk.Combobox(root, textvariable=test_type_var, values=[
+                                  "読み方クイズ", "単語意味クイズ"], state="readonly")
+test_type_combobox.grid(row=0, column=1, sticky="w")
+
+
+line_push_label = tk.Label(root, text="すぐLINEに発信:")
 line_push_label.grid(row=1, column=0, sticky="w")
 line_push_check = tk.Checkbutton(root, variable=line_push_var)
 line_push_check.grid(row=1, column=1, sticky="w")
@@ -54,6 +74,10 @@ questions_entry.grid(row=2, column=1, sticky="w")
 generate_button = tk.Button(
     root, text="クイズ作成", command=run_quiz_generation)
 generate_button.grid(row=3, column=1, pady=(10, 20), sticky="w")
+
+send_button = tk.Button(
+    root, text="LINEに発信", command=press_push_quiz_button, state="disabled")  # Disable the send button initially
+send_button.grid(row=3, column=1, padx=(80, 0), pady=(10, 20), sticky="w")
 
 article_label = tk.Label(root, text="ファイル表示:")
 article_label.grid(row=4, column=0, sticky="w")
