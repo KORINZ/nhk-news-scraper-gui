@@ -60,5 +60,5 @@ def get_definition_list(url: str) -> List:
 
 
 if __name__ == '__main__':
-    test_url = 'https://www3.nhk.or.jp/news/easy/k10014017571000/k10014017571000.html'
+    test_url = 'https://www3.nhk.or.jp/news/easy/k10014019531000/k10014019531000.html'
     definition_list = get_definition_list(test_url)
