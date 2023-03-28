@@ -32,6 +32,7 @@ def send_message(message_type: str, content: Optional[str] = None, package_id=No
                 USER_ID, StickerSendMessage(package_id=package_id, sticker_id=sticker_id))
     except LineBotApiError as e:
         print(e.message)
+        raise PermissionError('認証に失敗しました。認可ヘッダのアクセストークンが有効であることを確認してください。')
     except requests.exceptions.ConnectTimeout as ct:
         print(f"Connection timeout error: {ct}")
 
