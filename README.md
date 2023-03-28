@@ -16,12 +16,14 @@ See the `.txt` file in the repository for an example output.
 ## Dependencies
 
 - `Python 3`
+- `chardet`
 - `BeautifulSoup4`
 - `Selenium`
 - `requests`
 - `line-bot-sdk`
 
 ## Installation
+
 1. Sign up for a [LINE official account](https://www.linebiz.com/jp/signup/).
 2. Get your own `CHANNEL_ACCESS_TOKEN` and `USER_ID` from [LINE Developers](https://developers.line.biz/ja/) Messaging API Settings.
 3. Install the required packages listed in the dependencies:
@@ -43,6 +45,7 @@ git clone https://github.com/KORINZ/nhk_news_web_easy_scraper.git
 ```bash
 python main.py
 ```
+
 2. The script will generate a text file news_article.txt containing the article's URL, date, title, content,
 and important vocabularies (with furigana) for a random news article.
 
