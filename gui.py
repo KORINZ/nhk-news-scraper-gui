@@ -44,6 +44,7 @@ def load_file(file_name: str) -> None:
 root = tk.Tk()
 root.title(f'NHK NEWS EASY クイズ作成 GUI {VERSION}')
 root.geometry("500x600")
+root.iconbitmap(r'icon/nhk.ico')
 
 test_type_var = tk.StringVar()
 line_push_var = tk.BooleanVar()
