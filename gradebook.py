@@ -1,7 +1,7 @@
 import sys
 import pandas as pd
 import gspread
-from datetime import datetime, timedelta, date
+from datetime import datetime, timedelta
 from pathlib import Path
 
 LINE_INCOMING_MESSAGE_FILENAME = 'LINE_Messages'
@@ -17,16 +17,21 @@ def get_quiz_answer() -> str:
 
 
 def calculate_point(correct: str, given: str) -> int:
-    return sum(c == g for c, g in zip(correct, given))
+    if len(correct) != len(given):
+        return 0
+    return sum(c == g for c, g in zip(correct, given.upper()))
 
 
-def process_data(raw_data, correct_answer):
-    student_id, given_answer = raw_data.split('\n')
+def process_data(raw_data: str, correct_answer: str) -> pd.Series:
+    try:
+        student_id, given_answer = raw_data.split('\n')
+    except ValueError:
+        return pd.Series(['0', '0', '0'], index=['student_id', 'given_answer', 'points'])
     points = calculate_point(correct_answer, given_answer)
     return pd.Series([student_id, given_answer, points], index=['student_id', 'given_answer', 'points'])
 
 
-def get_quiz_start_end_time(days: int, hour: int, minute: int) -> tuple[datetime, datetime]:
+def get_quiz_start_end_time(days: int, hour: int, minute: int) -> tuple[datetime, datetime, datetime]:
     with open('log.txt', 'r') as f:
         quiz_start_time = f.readline().strip('\n').split('.')[0]
         quiz_start_time = datetime.strptime(
@@ -40,15 +45,18 @@ def get_quiz_start_end_time(days: int, hour: int, minute: int) -> tuple[datetime
     days, hours, minutes = time_diff.days, time_diff.seconds // 3600, (
         time_diff.seconds % 3600) // 60
 
-    print(f'開始時間：{quiz_start_time}\n終了時間：{quiz_end_time}')
+    now = datetime.now()
+    print(f'開始時間：{quiz_start_time}')
+    print(f'現在時間：{now.strftime("%Y-%m-%d %H:%M:%S")}')
+    print(f'終了時間：{quiz_end_time}')
     print(f'クイズ時間：{days}日{hours}時間{minutes}分')
 
-    return quiz_start_time, quiz_end_time
+    return now, quiz_start_time, quiz_end_time
 
 
-def main():
-    quiz_start_time, quiz_end_time = get_quiz_start_end_time(
-        days=1, hour=21, minute=0)
+def main() -> None:
+    now, quiz_start_time, quiz_end_time = get_quiz_start_end_time(
+        days=0, hour=17, minute=1)
 
     line_message = SERVICE_ACCOUNT.open(LINE_INCOMING_MESSAGE_FILENAME)
     message_sheet = line_message.worksheet('Messages')
@@ -62,11 +70,13 @@ def main():
     correct_answer = get_quiz_answer()
     df_message = df_message.query(
         '@quiz_start_time <= `Sent Time` <= @quiz_end_time')
-    df_message = df_message['Message'].apply(
+    df_processed = df_message['Message'].apply(
         lambda x: process_data(x, correct_answer))
-    print(df_message)
 
-    now = datetime.now()
+    df_result = pd.concat([df_message['Sent Time'], df_processed], axis=1)
+    df_result = df_result.query(
+        'student_id != "0" or given_answer != "0" or points != "0"')
+    print(df_result)
 
     if quiz_end_time > now:
         print("Error: quiz_end_time has not been reached.")
@@ -83,7 +93,8 @@ def main():
     # Find the index of the date column
     date_col_idx = header_row.index(quiz_end_time_str) + 1
 
-    for _, row in df_message.iterrows():
+    for _, row in df_result.iterrows():
+        sent_time = row['Sent Time']
         student_id = row['student_id']
         points = row['points']
 
