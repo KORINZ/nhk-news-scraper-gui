@@ -1,3 +1,4 @@
+chardet
 beautifulsoup4
 selenium
 requests
