@@ -1,3 +1,4 @@
+import chardet
 import locale
 import requests
 import random
@@ -197,7 +198,8 @@ def main(test_type: str, push=False, questions=5) -> None:
     # Get and encode a random news url; parsing the HTML content
     url = get_news_url()
     response = requests.get(url)
-    response.encoding = response.apparent_encoding
+    encoding = chardet.detect(response.content)['encoding']
+    response.encoding = encoding
 
     if response.status_code == 200:
         # HTTP status OK
@@ -322,11 +324,11 @@ def main(test_type: str, push=False, questions=5) -> None:
             push_quiz(PRONOUN_QUIZ_LOCATION)
             save_quiz_vocab(url)
 
-    # Save quiz sent time and news url to a log file
-    with open(LOG_LOCATION, 'w', encoding='utf-8') as f:
-        now = today_date()[0]
-        now.strftime(f'%Y/%m-%d %H:%M')
-        f.write(f'{now}\n{url}\n{def_answer}\n')
+        # Save quiz sent time and news url to a log file
+        with open(LOG_LOCATION, 'w', encoding='utf-8') as f:
+            now = today_date()[0]
+            now.strftime(f'%Y/%m-%d %H:%M')
+            f.write(f'{now}\n{url}\n{def_answer}\n')
 
 
 if __name__ == '__main__':
