@@ -324,11 +324,11 @@ def main(test_type: str, push=False, questions=5) -> None:
             push_quiz(PRONOUN_QUIZ_LOCATION)
             save_quiz_vocab(url)
 
-        # Save quiz sent time and news url to a log file
-        with open(LOG_LOCATION, 'w', encoding='utf-8') as f:
-            now = today_date()[0]
-            now.strftime(f'%Y/%m-%d %H:%M')
-            f.write(f'{now}\n{url}\n{def_answer}\n')
+    # Save quiz sent time and news url to a log file
+    with open(LOG_LOCATION, 'w', encoding='utf-8') as f:
+        now = today_date()[0]
+        now.strftime(f'%Y/%m-%d %H:%M')
+        f.write(f'{now}\n{url}\n{def_answer}\n')
 
 
 if __name__ == '__main__':

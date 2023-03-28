@@ -13,7 +13,7 @@ is_blinking = False
 def start_quiz_generation_thread() -> None:
     global is_blinking
     is_blinking = True
-    status_label.config(text="クイズ作成中")
+    status_label.config(text="何も押さないでください。クイズ作成中")
     update_status_label_blink()
     quiz_generation_thread = threading.Thread(target=run_quiz_generation)
     quiz_generation_thread.start()
@@ -68,29 +68,23 @@ def update_status_label_blink() -> None:
         return
 
     current_text = status_label.cget("text")
-    if current_text == "クイズ作成中 - 何も押さないでください":
-        new_text = "クイズ作成中. - 何も押さないでください"
-    elif current_text == "クイズ作成中. - 何も押さないでください":
-        new_text = "クイズ作成中.. - 何も押さないでください"
-    elif current_text == "クイズ作成中.. - 何も押さないでください":
-        new_text = "クイズ作成中... - 何も押さないでください"
-    elif current_text == "クイズ作成中... - 何も押さないでください":
-        new_text = "クイズ作成中.... - 何も押さないでください"
-    elif current_text == "クイズ作成中.... - 何も押さないでください":
-        new_text = "クイズ作成中..... - 何も押さないでください"
-    elif current_text == "クイズ作成中..... - 何も押さないでください":
-        new_text = "クイズ作成中...... - 何も押さないでください"
+    if current_text == "何も押さないでください。クイズ作成中":
+        new_text = "何も押さないでください。クイズ作成中・"
+    elif current_text == "何も押さないでください。クイズ作成中・":
+        new_text = "何も押さないでください。クイズ作成中・・"
+    elif current_text == "何も押さないでください。クイズ作成中・・":
+        new_text = "何も押さないでください。クイズ作成中・・・"
     else:
-        new_text = "クイズ作成中 - 何も押さないでください"
+        new_text = "何も押さないでください。クイズ作成中"
 
     status_label.config(text=new_text)
-    root.after(500, update_status_label_blink)  # Schedule the next update
+    root.after(750, update_status_label_blink)  # Schedule the next update
 
 
 root = tk.Tk()
 root.title(f'NHK NEWS EASY クイズ作成 GUI {VERSION}')
-root.geometry("700x700")
-root.option_add("*font", "Mincho, 11")
+root.geometry("970x600")
+root.option_add("*font", "Mincho, 12")
 root.iconbitmap(r'icon/nhk.ico')
 
 status_label = tk.Label(root, text="")
@@ -119,7 +113,7 @@ line_push_check.grid(row=1, column=1, sticky="w")
 
 questions_label = tk.Label(root, text="最大問題数:")
 questions_label.grid(row=2, column=0, sticky="w")
-questions_entry = tk.Entry(root, textvariable=questions_var, width=5)
+questions_entry = tk.Entry(root, textvariable=questions_var, width=4)
 questions_entry.grid(row=2, column=1, sticky="w")
 
 generate_button = tk.Button(
@@ -128,7 +122,7 @@ generate_button.grid(row=3, column=1, pady=(10, 20), sticky="w")
 
 send_button = tk.Button(
     root, text="LINEに発信", command=press_push_quiz_button, state="disabled")  # Disable the send button initially
-send_button.grid(row=3, column=1, padx=(100, 0), pady=(10, 20), sticky="w")
+send_button.grid(row=3, column=1, padx=(110, 0), pady=(10, 20), sticky="w")
 
 article_label = tk.Label(root, text="ファイル表示:")
 article_label.grid(row=4, column=0, sticky="w")
@@ -147,15 +141,15 @@ load_article_button.grid(row=4, column=1, sticky="w")
 
 load_def_quiz_button = tk.Button(
     root, text="単語意味クイズ", command=lambda: load_file("definition_quiz.txt"), state="disabled")
-load_def_quiz_button.grid(row=4, column=1, padx=(120, 0), sticky="w")
+load_def_quiz_button.grid(row=4, column=1, padx=(125, 0), sticky="w")
 
 load_pron_quiz_button = tk.Button(
     root, text="読み方クイズ", command=lambda: load_file("pronunciation_quiz.txt"), state="disabled")
-load_pron_quiz_button.grid(row=4, column=1, padx=(255, 0), sticky="w")
+load_pron_quiz_button.grid(row=4, column=1, padx=(265, 0), sticky="w")
 
 load_log_button = tk.Button(
     root, text="ログファイル", command=lambda: load_file("log.txt"), state="disabled")
-load_log_button.grid(row=4, column=1, padx=(375, 0), sticky="w")
+load_log_button.grid(row=4, column=1, padx=(390, 0), sticky="w")
 
 root.grid_columnconfigure(1, weight=1)
 root.grid_rowconfigure(5, weight=1)
