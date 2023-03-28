@@ -114,6 +114,7 @@ line_push_check.grid(row=1, column=1, sticky="w")
 questions_label = tk.Label(root, text="最大問題数:")
 questions_label.grid(row=2, column=0, sticky="w")
 questions_entry = tk.Entry(root, textvariable=questions_var, width=4)
+questions_entry.insert(0, "5")
 questions_entry.grid(row=2, column=1, sticky="w")
 
 generate_button = tk.Button(
