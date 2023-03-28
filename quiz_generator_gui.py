@@ -62,7 +62,7 @@ def load_file(file_name: str) -> None:
         messagebox.showerror("Error", f"File '{file_name}' not found.")
 
 
-def update_status_label_blink():
+def update_status_label_blink() -> None:
     global is_blinking
     if not is_blinking:
         return
