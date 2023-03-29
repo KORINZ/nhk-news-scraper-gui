@@ -159,3 +159,7 @@ if __name__ == '__main__':
 
     # Quiz duration in the format 'Xday, Xhr, Xmin'
     main(quiz_duration='1day, 1hr, 0min')
+
+    # TODO: Set quiz end time instead of quiz duration
+    # TODO: Set up a cron job to run this script every day at 12:00 AM
+    # TODO: Add a function to send a message to the students who have not submitted their answers
