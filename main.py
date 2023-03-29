@@ -289,7 +289,7 @@ def main(test_type: str, push=False, questions=5) -> None:
 
     # Printing news title, date, and url
     if title and date is not None:
-        print(f'{title.text.lstrip().rstrip()} {date.text}')
+        print(f'{title.text.strip()} {date.text}')
         print(f'{url}\n')
 
     # Modify the definition list to include the original word
@@ -329,7 +329,7 @@ def main(test_type: str, push=False, questions=5) -> None:
     # Save quiz sent time and news url to a log file
     with open(LOG_LOCATION, 'w', encoding='utf-8') as f:
         now = today_date()[0]
-        now = now.strftime(f'%Y/%m-%d %H:%M:%S')
+        now = now.strftime(f'%Y-%m-%d %H:%M:%S')
         f.write(f'{now}\n{url}\n{def_answer}\n')
 
 
@@ -339,4 +339,4 @@ if __name__ == '__main__':
         'win32') else os.system('clear')
 
     # test_type: 'def' -> 単語意味 or 'pronoun' -> 単語発音
-    main(test_type='単語意味クイズ', push=False, questions=4)
+    main(test_type='単語意味クイズ', push=False, questions=5)
