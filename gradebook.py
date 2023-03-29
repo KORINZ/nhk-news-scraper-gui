@@ -45,6 +45,10 @@ def get_quiz_start_end_time(days: int, hour: int, minute: int) -> tuple[datetime
     days, hours, minutes = time_diff.days, time_diff.seconds // 3600, (
         time_diff.seconds % 3600) // 60
 
+    if days < 0 or hours < 0 or minutes < 0:
+        print("Error: quiz_end_time is earlier than quiz_start_time.")
+        sys.exit()
+
     now = datetime.now()
     print(f'開始時間：{quiz_start_time}')
     print(f'現在時間：{now.strftime("%Y-%m-%d %H:%M:%S")}')
