@@ -1,5 +1,9 @@
 # NHK News Web Easy Scraper
 
+<p align="center">
+  <img width="600" alt="1" src="https://user-images.githubusercontent.com/111611023/228608713-99dcb154-2abb-4f53-93bf-d437506e0d60.gif">
+</p>
+
 This project is a Python script for scraping news articles from [NHK News Web Easy](https://www3.nhk.or.jp/news/easy/),
 a website that provides news articles written in simpler Japanese, suitable for language learners.
 The script extracts the article's URL, title, content, and important vocabularies along with their furigana (hiragana reading) and generate a quiz for students based on the scraped article.
