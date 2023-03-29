@@ -251,7 +251,7 @@ increment_button = tk.Button(root, text="▲", command=increment_questions)
 increment_button.grid(row=2, column=1, padx=(35, 0), pady=(0, 0), sticky="w")
 
 decrement_button = tk.Button(root, text="▼", command=decrement_questions)
-decrement_button.grid(row=2, column=1, padx=(70, 0), pady=(0, 0), sticky="w")
+decrement_button.grid(row=2, column=1, padx=(80, 0), pady=(0, 0), sticky="w")
 
 generate_button = tk.Button(
     root, text="クイズ作成", command=start_quiz_generation_thread)
