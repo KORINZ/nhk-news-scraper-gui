@@ -1,4 +1,5 @@
 import sys
+import os
 import pandas as pd
 import gspread
 from datetime import datetime, timedelta
@@ -53,7 +54,7 @@ def get_quiz_start_end_time(days: int, hour: int, minute: int) -> tuple[datetime
     print(f'開始時間：{quiz_start_time}')
     print(f'現在時間：{now.strftime("%Y-%m-%d %H:%M:%S")}')
     print(f'終了時間：{quiz_end_time}')
-    print(f'クイズ時間：{days}日{hours}時間{minutes}分')
+    print(f'クイズ時間：{days}日{hours}時間{minutes}分\n')
 
     return now, quiz_start_time, quiz_end_time
 
@@ -123,4 +124,7 @@ def main() -> None:
 
 
 if __name__ == '__main__':
+    # Clearing the terminal
+    os.system('cls') if sys.platform.startswith(
+        'win32') else os.system('clear')
     main()
