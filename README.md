@@ -12,6 +12,7 @@ See the `.txt` file in the repository for an example output.
 - Save article details (URL, date, title, content) and featured vocabularies (with furigana) in a text file
 - Generate a daily quiz for students based on the scraped article
 - Send customized text or sticker messages from a terminal interface
+- Generate quizzes and send them via LINE with GUI
 
 ## Dependencies
 
