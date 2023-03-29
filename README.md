@@ -13,6 +13,7 @@ See the `.txt` file in the repository for an example output.
 - Generate a daily quiz for students based on the scraped article
 - Send customized text or sticker messages from a terminal interface
 - Generate quizzes and send them via LINE with GUI
+- Automatically receive (via Google Apps Script) and evaluate answers and upload them to Google Sheets
 
 ## Dependencies
 
@@ -22,6 +23,8 @@ See the `.txt` file in the repository for an example output.
 - `Selenium`
 - `requests`
 - `line-bot-sdk`
+- `pandas`
+- `gspread`
 
 ## Installation
 
