@@ -200,7 +200,7 @@ def update_status_label_blink() -> None:
 
 root = tk.Tk()
 root.title(f'NHK NEWS EASY クイズ作成 GUI {VERSION}')
-root.geometry("970x600")
+root.geometry("900x556")
 root.option_add("*font", "Mincho, 12")
 root.iconbitmap(r'icon/nhk.ico')
 
@@ -295,7 +295,7 @@ send_button.grid(row=3, column=1, padx=(
 article_label = tk.Label(root, text="ファイル表示:")
 article_label.grid(row=4, column=0, sticky="w")
 
-article_text = tk.Text(root, wrap=tk.WORD)
+article_text = tk.Text(root, wrap=tk.WORD, width=45, height=28)
 article_text.grid(row=5, column=0, columnspan=2,
                   padx=10, pady=10, sticky="nsew")
 
