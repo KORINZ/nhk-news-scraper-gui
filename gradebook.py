@@ -2,6 +2,7 @@ import sys
 import os
 import pandas as pd
 import gspread
+import re
 from datetime import datetime, timedelta
 from pathlib import Path
 
@@ -32,15 +33,20 @@ def process_data(raw_data: str, correct_answer: str) -> pd.Series:
     return pd.Series([student_id, given_answer, points], index=['student_id', 'given_answer', 'points'])
 
 
-def get_quiz_start_end_time(duration: str) -> tuple[datetime, datetime, datetime]:
-    # Extract the days, hours, and minutes from the input string
-    import re
+def parse_duration(duration: str) -> tuple[int, int, int]:
+    """Extract days, hours, and minutes from the input string."""
     days_match = re.search(r'(\d+)day', duration)
     days = int(days_match.group(1)) if days_match else 0
     hours_match = re.search(r'(\d+)hr', duration)
     hours = int(hours_match.group(1)) if hours_match else 0
     minutes_match = re.search(r'(\d+)min', duration)
     minutes = int(minutes_match.group(1)) if minutes_match else 0
+
+    return days, hours, minutes
+
+
+def get_quiz_start_end_time(duration: str) -> tuple[datetime, datetime, datetime]:
+    days, hours, minutes = parse_duration(duration)
 
     with open('log.txt', 'r') as f:
         quiz_start_time = f.readline().strip('\n').split('.')[0]
@@ -59,42 +65,10 @@ def get_quiz_start_end_time(duration: str) -> tuple[datetime, datetime, datetime
     return now, quiz_start_time, quiz_end_time
 
 
-def main(quiz_duration: str) -> None:
-    """Main function to process the data and update the grade book"""
-
-    # The input format for duration is: 'Xday, Xhr, Xmin' where X is an integer
-    now, quiz_start_time, quiz_end_time = get_quiz_start_end_time(
-        quiz_duration)
-
-    line_message = SERVICE_ACCOUNT.open(LINE_INCOMING_MESSAGE_FILENAME)
-    message_sheet = line_message.worksheet('Messages')
-    message_records = message_sheet.get_all_records()
-    df_message = pd.DataFrame(message_records)
-    df_message['Sent Time'] = pd.to_datetime(df_message['Sent Time'])
-
+def update_grade_book(df_result: pd.DataFrame, quiz_end_time: datetime) -> None:
     grade_book = SERVICE_ACCOUNT.open(GRADE_BOOK_FILENAME)
     grade_sheet = grade_book.worksheet('シート1')
-
-    correct_answer = get_quiz_answer()
-    df_message = df_message.query(
-        '@quiz_start_time <= `Sent Time` <= @quiz_end_time')
-    df_processed = df_message['Message'].apply(
-        lambda x: process_data(x, correct_answer))
-
-    df_result = pd.concat([df_message['Sent Time'], df_processed], axis=1)
-    try:
-        df_result = df_result.query(
-            'student_id != "0" or given_answer != "0" or points != "0"')
-        print(df_result)
-    except pd.errors.UndefinedVariableError:
-        print("Error: No data found.")
-        sys.exit()
-
-    if quiz_end_time > now:
-        print("Warning: quiz_end_time has not been reached. Data will not be updated.")
-        sys.exit()
-    else:
-        quiz_end_time_str = quiz_end_time.date().strftime('%Y/%m/%d')
+    quiz_end_time_str = quiz_end_time.date().strftime('%Y/%m/%d')
 
     header_row = grade_sheet.row_values(1)
     if quiz_end_time_str not in header_row:
@@ -124,6 +98,41 @@ def main(quiz_duration: str) -> None:
             # If the student ID doesn't exist, append a new row with the student ID and points
             new_row = [student_id] + [''] * (date_col_idx - 2) + [points]
             grade_sheet.append_row(new_row)
+
+
+def main(quiz_duration: str) -> None:
+    """Main function to process the data and update the grade book"""
+
+    # The input format for duration is: 'Xday, Xhr, Xmin' where X is an integer
+    now, quiz_start_time, quiz_end_time = get_quiz_start_end_time(
+        quiz_duration)
+
+    line_message = SERVICE_ACCOUNT.open(LINE_INCOMING_MESSAGE_FILENAME)
+    message_sheet = line_message.worksheet('Messages')
+    message_records = message_sheet.get_all_records()
+    df_message = pd.DataFrame(message_records)
+    df_message['Sent Time'] = pd.to_datetime(df_message['Sent Time'])
+
+    correct_answer = get_quiz_answer()
+    df_message = df_message.query(
+        '@quiz_start_time <= `Sent Time` <= @quiz_end_time')
+    df_processed = df_message['Message'].apply(
+        lambda x: process_data(x, correct_answer))
+
+    df_result = pd.concat([df_message['Sent Time'], df_processed], axis=1)
+    try:
+        df_result = df_result.query(
+            'student_id != "0" or given_answer != "0" or points != "0"')
+        print(df_result)
+    except pd.errors.UndefinedVariableError:
+        print("Error: No data found.")
+        sys.exit()
+
+    if quiz_end_time > now:
+        print("Warning: quiz_end_time has not been reached. Data will not be updated.")
+        sys.exit()
+    else:
+        update_grade_book(df_result, quiz_end_time)
 
 
 if __name__ == '__main__':
