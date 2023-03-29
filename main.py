@@ -261,9 +261,10 @@ def main(test_type: str, push=False, questions=5) -> None:
 
         # If the word is a combination of hiragana, combine the furigana
         if combine:
+            key += ' '
             kana = deque(value.split(' '))
             for i, char in enumerate(key):
-                if not is_hiragana_char(char) and is_hiragana_char(key[i + 1]):
+                if not is_hiragana_char(char) and (i + 1 < len(key)) and (is_hiragana_char(key[i + 1]) or ' '):
                     try:
                         word += f'{char}({kana[0]})'
                         kana.popleft()
@@ -273,6 +274,7 @@ def main(test_type: str, push=False, questions=5) -> None:
                 else:
                     word += char
         if word:
+            word = word.replace(" ", "")
             formatted_word_list.append(word)
         else:
             formatted_word = f'{key}({value})'
