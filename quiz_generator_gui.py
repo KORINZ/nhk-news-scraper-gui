@@ -44,6 +44,21 @@ def enter_line_confidential() -> None:
     line_confidential_popup.title("LINE機密情報入力")
     line_confidential_popup.iconbitmap(r'icon/LINE.ico')
 
+    # Calculate the position for the center of the main window
+    main_window_width = root.winfo_width()
+    main_window_height = root.winfo_height()
+    main_window_x = root.winfo_x()
+    main_window_y = root.winfo_y()
+    popup_width = 420
+    popup_height = 105
+    x_position = main_window_x + (main_window_width // 2) - (popup_width // 2)
+    y_position = main_window_y + \
+        (main_window_height // 2) - (popup_height // 2)
+
+    # Set the position and dimensions of the popup
+    line_confidential_popup.geometry(
+        f"{popup_width}x{popup_height}+{x_position}+{y_position}")
+
     tk.Label(line_confidential_popup, text="CHANNEL_ACCESS_TOKEN:").grid(
         row=0, column=0, sticky="w")
     channel_access_token_entry = tk.Entry(line_confidential_popup)
@@ -84,7 +99,7 @@ def start_quiz_generation_thread() -> None:
     """Start a thread to run the quiz generation function in the background."""
     global is_blinking
     is_blinking = True
-    status_label.config(text="何も押さないでください。クイズ作成中")
+    status_label.config(text="")
     update_status_label_blink()
     quiz_generation_thread = threading.Thread(target=run_quiz_generation)
     quiz_generation_thread.start()
@@ -111,6 +126,10 @@ def run_quiz_generation() -> None:
         is_blinking = False
     except ValueError:
         messagebox.showerror("エラー", "問題数を指定してください。")
+        is_blinking = False
+        status_label.config(text="")
+    except PermissionError as e:
+        messagebox.showerror("エラー", f"クイズの発信に失敗しました: {e}")
         is_blinking = False
         status_label.config(text="")
 
@@ -144,7 +163,7 @@ def press_push_quiz_button() -> None:
         else:
             push_quiz(DEF_QUIZ_LOCATION)
         messagebox.showinfo("成功", "クイズを発信しました！")
-    except Exception as e:
+    except PermissionError as e:
         messagebox.showerror("エラー", f"クイズの発信に失敗しました: {e}")
 
 
@@ -185,6 +204,11 @@ root.geometry("970x600")
 root.option_add("*font", "Mincho, 12")
 root.iconbitmap(r'icon/nhk.ico')
 
+# Padding for the labels and the entry widgets
+entry_padding = 5
+
+# Padding for the buttons
+button_padding = 8
 
 status_label = tk.Label(root, text="")
 status_label.grid(row=3, column=1, padx=(230, 0), sticky="w")
@@ -192,7 +216,6 @@ status_label.grid(row=3, column=1, padx=(230, 0), sticky="w")
 test_type_var = tk.StringVar()
 line_push_var = tk.BooleanVar()
 questions_var = tk.StringVar()
-
 
 # Create a menu bar
 menu_bar = tk.Menu(root)
@@ -223,29 +246,35 @@ menu_bar.add_cascade(label="情報", menu=about_menu)
 about_menu.add_command(
     label=f"NHK NEWS EASY クイズ作成 GUI {VERSION}について", command=show_credit_popup)
 
-
 # Set the default value for test_type_var
 test_type_var.set("単語意味クイズ")
 
 test_type_label = tk.Label(root, text="クイズタイプ:")
 test_type_label.grid(row=0, column=0, sticky="w")
 
-# Create a ttk.Combobox to replace the OptionMenu
-test_type_combobox = ttk.Combobox(root, textvariable=test_type_var, values=[
-                                  "読み方クイズ", "単語意味クイズ"], state="readonly")
-test_type_combobox.grid(row=0, column=1, sticky="w")
+test_type_label = tk.Label(root, text="クイズタイプ:")
+test_type_label.grid(row=0, column=0, padx=entry_padding,
+                     pady=entry_padding, sticky="w")
 
+test_type_combobox = ttk.Combobox(root, textvariable=test_type_var, values=[
+    "読み方クイズ", "単語意味クイズ"], state="readonly")
+test_type_combobox.grid(row=0, column=1, padx=entry_padding,
+                        pady=entry_padding, sticky="w")
 
 line_push_label = tk.Label(root, text="すぐLINEに発信:")
-line_push_label.grid(row=1, column=0, sticky="w")
+line_push_label.grid(row=1, column=0, padx=entry_padding,
+                     pady=entry_padding, sticky="w")
 line_push_check = tk.Checkbutton(root, variable=line_push_var)
-line_push_check.grid(row=1, column=1, sticky="w")
+line_push_check.grid(row=1, column=1, padx=entry_padding,
+                     pady=entry_padding, sticky="w")
 
 questions_label = tk.Label(root, text="最大問題数:")
-questions_label.grid(row=2, column=0, sticky="w")
+questions_label.grid(row=2, column=0, padx=entry_padding,
+                     pady=entry_padding, sticky="w")
 questions_entry = tk.Entry(root, textvariable=questions_var, width=2)
 questions_entry.insert(0, "5")
-questions_entry.grid(row=2, column=1, sticky="w")
+questions_entry.grid(row=2, column=1, padx=entry_padding,
+                     pady=entry_padding, sticky="w")
 
 increment_button = tk.Button(root, text="▲", command=increment_questions)
 increment_button.grid(row=2, column=1, padx=(35, 0), pady=(0, 0), sticky="w")
@@ -255,11 +284,13 @@ decrement_button.grid(row=2, column=1, padx=(80, 0), pady=(0, 0), sticky="w")
 
 generate_button = tk.Button(
     root, text="クイズ作成", command=start_quiz_generation_thread)
-generate_button.grid(row=3, column=1, pady=(10, 20), sticky="w")
+generate_button.grid(row=3, column=1, padx=button_padding,
+                     pady=button_padding, sticky="w")
 
 send_button = tk.Button(
-    root, text="LINEに発信", command=press_push_quiz_button, state="disabled")  # Disable the send button initially
-send_button.grid(row=3, column=1, padx=(110, 0), pady=(10, 20), sticky="w")
+    root, text="LINEに発信", command=press_push_quiz_button, state="disabled")
+send_button.grid(row=3, column=1, padx=(
+    110 + button_padding, 0), pady=button_padding, sticky="w")
 
 article_label = tk.Label(root, text="ファイル表示:")
 article_label.grid(row=4, column=0, sticky="w")

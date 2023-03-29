@@ -329,7 +329,7 @@ def main(test_type: str, push=False, questions=5) -> None:
     # Save quiz sent time and news url to a log file
     with open(LOG_LOCATION, 'w', encoding='utf-8') as f:
         now = today_date()[0]
-        now.strftime(f'%Y/%m-%d %H:%M')
+        now = now.strftime(f'%Y/%m-%d %H:%M:%S')
         f.write(f'{now}\n{url}\n{def_answer}\n')
 
 
