@@ -27,6 +27,7 @@ def send_message(message_type: str, content: Optional[str] = None, package_id=No
     try:
         if message_type == 'text':
             line_bot_api.push_message(USER_ID, TextSendMessage(text=content))
+            # line_bot_api.broadcast(TextSendMessage(text=content))
         elif message_type == 'stamp':
             line_bot_api.push_message(
                 USER_ID, StickerSendMessage(package_id=package_id, sticker_id=sticker_id))
