@@ -4,7 +4,6 @@ from main import main, push_quiz
 import tkinter.ttk as ttk
 import threading
 
-import os
 from tkinter import filedialog
 
 VERSION = "v1.0.0"
@@ -57,7 +56,7 @@ def enter_line_confidential() -> None:
     user_id_entry.grid(row=1, column=1, padx=5, pady=5, sticky="w")
 
     save_button = tk.Button(line_confidential_popup, text="保存", command=lambda: save_line_confidential(
-        channel_access_token_entry.get(), user_id_entry.get()))
+        channel_access_token_entry.get(), user_id_entry.get(), line_confidential_popup))
     save_button.grid(row=2, column=1, padx=5, pady=5, sticky="e")
 
     # Add a "Cancel" button
@@ -66,12 +65,13 @@ def enter_line_confidential() -> None:
     cancel_button.grid(row=2, column=0, padx=5, pady=5, sticky="w")
 
 
-def save_line_confidential(channel_access_token: str, user_id: str) -> None:
+def save_line_confidential(channel_access_token: str, user_id: str, line_confidential_popup: tk.Toplevel) -> None:
     """Save the LINE confidential information to a config.py file."""
     with open("config.py", "w", encoding="utf-8") as config_file:
         config_file.write(f"CHANNEL_ACCESS_TOKEN = '{channel_access_token}'\n")
         config_file.write(f"USER_ID = '{user_id}'\n")
     messagebox.showinfo("成功", "LINE機密情報が保存されました！")
+    line_confidential_popup.destroy()
 
 
 def show_credit_popup() -> None:
@@ -111,6 +111,19 @@ def run_quiz_generation() -> None:
         messagebox.showerror("エラー", "問題数を指定してください。")
         is_blinking = False
         status_label.config(text="")
+
+
+def increment_questions() -> None:
+    """Increase the value of the questions Entry."""
+    current_value = int(questions_var.get())
+    questions_var.set(str(current_value + 1))
+
+
+def decrement_questions() -> None:
+    """Decrease the value of the questions Entry."""
+    current_value = int(questions_var.get())
+    if current_value > 1:
+        questions_var.set(str(current_value - 1))
 
 
 def press_push_quiz_button() -> None:
@@ -219,9 +232,15 @@ line_push_check.grid(row=1, column=1, sticky="w")
 
 questions_label = tk.Label(root, text="最大問題数:")
 questions_label.grid(row=2, column=0, sticky="w")
-questions_entry = tk.Entry(root, textvariable=questions_var, width=4)
+questions_entry = tk.Entry(root, textvariable=questions_var, width=2)
 questions_entry.insert(0, "5")
 questions_entry.grid(row=2, column=1, sticky="w")
+
+increment_button = tk.Button(root, text="▲", command=increment_questions)
+increment_button.grid(row=2, column=1, padx=(35, 0), pady=(0, 0), sticky="w")
+
+decrement_button = tk.Button(root, text="▼", command=decrement_questions)
+decrement_button.grid(row=2, column=1, padx=(70, 0), pady=(0, 0), sticky="w")
 
 generate_button = tk.Button(
     root, text="クイズ作成", command=start_quiz_generation_thread)

@@ -144,7 +144,7 @@ def generate_definition_quiz(article, word_dict: Dict[str, str], word_list: List
     with open(DEF_QUIZ_LOCATION, 'w', encoding='utf-8') as f:
         f.write(f'【単語意味クイズ】{today}\n\n')
         f.write(
-            f'今日のNHK EASYニュース📰です。(1)から正しい単語の意味を順番に並べてください。({len(new_word_list)}ポイント)\n\n')
+            f'今日のNHK EASYニュース📰です。(1) から正しい単語の意味を順番に並べてください。({len(new_word_list)}ポイント)\n\n')
 
     with open(DEF_QUIZ_LOCATION, 'a', encoding='utf-8') as f:
         for paragraph in article:

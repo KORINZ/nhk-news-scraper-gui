@@ -1,11 +1,19 @@
 {
     "cSpell.words": [
         "chardet",
+        "columnspan",
         "furigana",
         "gspread",
+        "KORIN",
         "linebot",
+        "Mincho",
+        "padx",
+        "pady",
         "popleft",
         "RSHOK",
-        "setrecursionlimit"
+        "setrecursionlimit",
+        "tearoff",
+        "textvariable",
+        "yscrollcommand"
     ]
 }
