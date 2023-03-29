@@ -78,12 +78,16 @@ def main() -> None:
         lambda x: process_data(x, correct_answer))
 
     df_result = pd.concat([df_message['Sent Time'], df_processed], axis=1)
-    df_result = df_result.query(
-        'student_id != "0" or given_answer != "0" or points != "0"')
-    print(df_result)
+    try:
+        df_result = df_result.query(
+            'student_id != "0" or given_answer != "0" or points != "0"')
+        print(df_result)
+    except pd.errors.UndefinedVariableError:
+        print("Error: No data found.")
+        sys.exit()
 
     if quiz_end_time > now:
-        print("Error: quiz_end_time has not been reached.")
+        print("Warning: quiz_end_time has not been reached. Data will not be updated.")
         sys.exit()
     else:
         quiz_end_time_str = quiz_end_time.date().strftime('%Y/%m/%d')
