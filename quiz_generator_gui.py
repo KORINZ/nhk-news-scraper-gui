@@ -11,6 +11,7 @@ is_blinking = False
 
 
 def start_quiz_generation_thread() -> None:
+    """Start a thread to run the quiz generation function in the background."""
     global is_blinking
     is_blinking = True
     status_label.config(text="何も押さないでください。クイズ作成中")
@@ -20,6 +21,7 @@ def start_quiz_generation_thread() -> None:
 
 
 def run_quiz_generation() -> None:
+    """Run the quiz generation function in the background."""
     global is_blinking
     try:
         main(test_type_var.get(), push=line_push_var.get(),
@@ -42,6 +44,7 @@ def run_quiz_generation() -> None:
 
 
 def press_push_quiz_button() -> None:
+    """Send the quiz to LINE."""
     try:
         if test_type_var.get() == "読み方クイズ":
             push_quiz(PRONOUN_QUIZ_LOCATION)
@@ -53,6 +56,7 @@ def press_push_quiz_button() -> None:
 
 
 def load_file(file_name: str) -> None:
+    """Load a file into the Text widget."""
     try:
         with open(file_name, "r", encoding="utf-8") as file:
             content = file.read()
@@ -63,6 +67,7 @@ def load_file(file_name: str) -> None:
 
 
 def update_status_label_blink() -> None:
+    """Update the status label to blink."""
     global is_blinking
     if not is_blinking:
         return
