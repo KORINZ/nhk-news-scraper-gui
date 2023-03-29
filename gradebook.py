@@ -110,6 +110,8 @@ def update_grade_book(df_result: pd.DataFrame, quiz_end_time: datetime) -> None:
 
 def pretty_print_dataframe(df: pd.DataFrame) -> None:
     data = df.reset_index().values.tolist()
+    for row in data:
+        row[0] += 2  # Add 2 to the 'Index' column
     header = ['Index'] + df.columns.tolist()
     print(tabulate(data, headers=header, tablefmt='grid'))
 
