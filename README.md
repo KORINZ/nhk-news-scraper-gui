@@ -44,13 +44,19 @@ git clone https://github.com/KORINZ/nhk_news_web_easy_scraper.git
 
 ## Usage
 
-1. Run the script:
+1. To use GUI:
+
+```bash
+python quiz_generator_gui.py
+```
+
+2. To use on terminal:
 
 ```bash
 python main.py
 ```
 
-2. The script will generate a text file news_article.txt containing the article's URL, date, title, content,
+3. The script will generate a text file news_article.txt containing the article's URL, date, title, content,
 and important vocabularies (with furigana) for a random news article.
 
 ## Future Work
