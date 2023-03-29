@@ -124,6 +124,8 @@ def run_quiz_generation() -> None:
         # Reset the status_label's text to an empty string after 5 seconds
         root.after(5000, lambda: status_label.config(text=""))
         is_blinking = False
+        if line_push_var.get():
+            messagebox.showinfo("成功", "クイズがLINEに送信されました！")
     except ValueError:
         messagebox.showerror("エラー", "問題数を指定してください。")
         is_blinking = False
