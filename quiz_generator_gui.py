@@ -70,7 +70,7 @@ def save_line_confidential(channel_access_token: str, user_id: str, line_confide
     with open("config.py", "w", encoding="utf-8") as config_file:
         config_file.write(f"CHANNEL_ACCESS_TOKEN = '{channel_access_token}'\n")
         config_file.write(f"USER_ID = '{user_id}'\n")
-    messagebox.showinfo("成功", "LINE機密情報が保存されました！")
+    messagebox.showinfo("成功", "LINE機密情報が保存されました！\nGUIを再起動してください。")
     line_confidential_popup.destroy()
 
 
@@ -96,7 +96,8 @@ def run_quiz_generation() -> None:
     try:
         main(test_type_var.get(), push=line_push_var.get(),
              questions=int(questions_var.get()))
-        messagebox.showinfo("成功", "クイズ生成が完了しました！")
+        # Update the status_label's text to show success
+        status_label.config(text="クイズの作成が完了しました！")
         # Automatically update the Text widget after quiz generation
         load_file('news_article.txt')
         send_button.config(state="normal")  # Enable the send button
@@ -105,8 +106,9 @@ def run_quiz_generation() -> None:
         load_def_quiz_button.config(state="normal")
         load_pron_quiz_button.config(state="normal")
         load_log_button.config(state="normal")
+        # Reset the status_label's text to an empty string after 5 seconds
+        root.after(5000, lambda: status_label.config(text=""))
         is_blinking = False
-        status_label.config(text="")
     except ValueError:
         messagebox.showerror("エラー", "問題数を指定してください。")
         is_blinking = False
@@ -115,15 +117,23 @@ def run_quiz_generation() -> None:
 
 def increment_questions() -> None:
     """Increase the value of the questions Entry."""
-    current_value = int(questions_var.get())
-    questions_var.set(str(current_value + 1))
+    current_value_str = questions_var.get().strip()
+    if not current_value_str.isdigit():
+        questions_var.set("1")
+    else:
+        current_value = int(current_value_str)
+        questions_var.set(str(current_value + 1))
 
 
 def decrement_questions() -> None:
     """Decrease the value of the questions Entry."""
-    current_value = int(questions_var.get())
-    if current_value > 1:
-        questions_var.set(str(current_value - 1))
+    current_value_str = questions_var.get().strip()
+    if not current_value_str.isdigit():
+        questions_var.set("1")
+    else:
+        current_value = int(current_value_str)
+        if current_value > 1:
+            questions_var.set(str(current_value - 1))
 
 
 def press_push_quiz_button() -> None:
@@ -174,6 +184,7 @@ root.title(f'NHK NEWS EASY クイズ作成 GUI {VERSION}')
 root.geometry("970x600")
 root.option_add("*font", "Mincho, 12")
 root.iconbitmap(r'icon/nhk.ico')
+
 
 status_label = tk.Label(root, text="")
 status_label.grid(row=3, column=1, padx=(230, 0), sticky="w")
