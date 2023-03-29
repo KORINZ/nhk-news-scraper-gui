@@ -32,23 +32,23 @@ def process_data(raw_data: str, correct_answer: str) -> pd.Series:
     return pd.Series([student_id, given_answer, points], index=['student_id', 'given_answer', 'points'])
 
 
-def get_quiz_start_end_time(days: int, hour: int, minute: int) -> tuple[datetime, datetime, datetime]:
+def get_quiz_start_end_time(duration: str) -> tuple[datetime, datetime, datetime]:
+    # Extract the days, hours, and minutes from the input string
+    import re
+    days_match = re.search(r'(\d+)day', duration)
+    days = int(days_match.group(1)) if days_match else 0
+    hours_match = re.search(r'(\d+)hr', duration)
+    hours = int(hours_match.group(1)) if hours_match else 0
+    minutes_match = re.search(r'(\d+)min', duration)
+    minutes = int(minutes_match.group(1)) if minutes_match else 0
+
     with open('log.txt', 'r') as f:
         quiz_start_time = f.readline().strip('\n').split('.')[0]
         quiz_start_time = datetime.strptime(
             quiz_start_time, '%Y-%m-%d %H:%M:%S')
 
-    quiz_end_time = quiz_start_time + timedelta(days=days)
-    quiz_end_time = quiz_end_time.replace(
-        hour=hour, minute=minute, second=0, microsecond=0)
-
-    time_diff = quiz_end_time - quiz_start_time
-    days, hours, minutes = time_diff.days, time_diff.seconds // 3600, (
-        time_diff.seconds % 3600) // 60
-
-    if days < 0 or hours < 0 or minutes < 0:
-        print("Error: quiz_end_time is earlier than quiz_start_time.")
-        sys.exit()
+    quiz_end_time = quiz_start_time + \
+        timedelta(days=days, hours=hours, minutes=minutes)
 
     now = datetime.now()
     print(f'開始時間：{quiz_start_time}')
@@ -59,9 +59,12 @@ def get_quiz_start_end_time(days: int, hour: int, minute: int) -> tuple[datetime
     return now, quiz_start_time, quiz_end_time
 
 
-def main() -> None:
+def main(quiz_duration: str) -> None:
+    """Main function to process the data and update the grade book"""
+
+    # The input format for duration is: 'Xday, Xhr, Xmin' where X is an integer
     now, quiz_start_time, quiz_end_time = get_quiz_start_end_time(
-        days=0, hour=17, minute=1)
+        quiz_duration)
 
     line_message = SERVICE_ACCOUNT.open(LINE_INCOMING_MESSAGE_FILENAME)
     message_sheet = line_message.worksheet('Messages')
@@ -127,4 +130,6 @@ if __name__ == '__main__':
     # Clearing the terminal
     os.system('cls') if sys.platform.startswith(
         'win32') else os.system('clear')
-    main()
+
+    # Quiz duration in the format 'Xday, Xhr, Xmin'
+    main(quiz_duration='1day, 1hr, 0min')
