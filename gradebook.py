@@ -3,8 +3,10 @@ import os
 import pandas as pd
 import gspread
 import re
+
 from datetime import datetime, timedelta
 from pathlib import Path
+from tabulate import tabulate
 
 LINE_INCOMING_MESSAGE_FILENAME = 'LINE_Messages'
 GRADE_BOOK_FILENAME = '日本語ニュース成績表'
@@ -15,13 +17,17 @@ SERVICE_ACCOUNT = gspread.service_account(
 def get_quiz_answer() -> str:
     with open('log.txt', 'r') as f:
         lines = f.readlines()
-        return lines[2]
+        answer = lines[2]
+        print(f'単語意味クイズ正解：{answer}')
+        return answer
 
 
 def calculate_point(correct: str, given: str) -> int:
+    correct = correct.strip().upper()
+    given = given.strip().upper()
     if len(correct) != len(given):
         return 0
-    return sum(c == g for c, g in zip(correct, given.upper()))
+    return sum(c == g for c, g in zip(correct, given))
 
 
 def process_data(raw_data: str, correct_answer: str) -> pd.Series:
@@ -85,19 +91,27 @@ def update_grade_book(df_result: pd.DataFrame, quiz_end_time: datetime) -> None:
         points = row['points']
 
         # Try to find the student ID in the sheet
-        student_id_cell = grade_sheet.find(student_id)
+        try:
+            student_id_cell = grade_sheet.find(student_id)
+            if student_id_cell:
+                # If the student ID exists, update the points in the date column only if the cell is empty
+                existing_points = grade_sheet.cell(
+                    student_id_cell.row, date_col_idx).value
+                if not existing_points:  # If the cell is empty
+                    grade_sheet.update_cell(
+                        student_id_cell.row, date_col_idx, points)
+            else:
+                # If the student ID doesn't exist, append a new row with the student ID and points
+                new_row = [student_id] + [''] * (date_col_idx - 2) + [points]
+                grade_sheet.append_row(new_row)
+        except gspread.exceptions.APIError as e:
+            print(f'Error: {e}')
 
-        if student_id_cell:
-            # If the student ID exists, update the points in the date column only if the cell is empty
-            existing_points = grade_sheet.cell(
-                student_id_cell.row, date_col_idx).value
-            if not existing_points:  # If the cell is empty
-                grade_sheet.update_cell(
-                    student_id_cell.row, date_col_idx, points)
-        else:
-            # If the student ID doesn't exist, append a new row with the student ID and points
-            new_row = [student_id] + [''] * (date_col_idx - 2) + [points]
-            grade_sheet.append_row(new_row)
+
+def pretty_print_dataframe(df: pd.DataFrame) -> None:
+    data = df.reset_index().values.tolist()
+    header = ['Index'] + df.columns.tolist()
+    print(tabulate(data, headers=header, tablefmt='grid'))
 
 
 def main(quiz_duration: str) -> None:
@@ -123,7 +137,7 @@ def main(quiz_duration: str) -> None:
     try:
         df_result = df_result.query(
             'student_id != "0" or given_answer != "0" or points != "0"')
-        print(df_result)
+        pretty_print_dataframe(df_result)
     except pd.errors.UndefinedVariableError:
         print("Error: No data found.")
         sys.exit()

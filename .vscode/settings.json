@@ -2,8 +2,10 @@
     "cSpell.words": [
         "chardet",
         "columnspan",
+        "dataframe",
         "furigana",
         "gspread",
+        "iterrows",
         "KORIN",
         "linebot",
         "Mincho",
@@ -12,6 +14,7 @@
         "popleft",
         "RSHOK",
         "setrecursionlimit",
+        "tablefmt",
         "tearoff",
         "textvariable",
         "Xday",
