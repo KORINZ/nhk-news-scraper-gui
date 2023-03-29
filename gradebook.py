@@ -9,13 +9,14 @@ from pathlib import Path
 from tabulate import tabulate
 
 LINE_INCOMING_MESSAGE_FILENAME = 'LINE_Messages'
+LOG_LOCATION = 'push_log.txt'
 GRADE_BOOK_FILENAME = '日本語ニュース成績表'
 SERVICE_ACCOUNT = gspread.service_account(
     filename=Path() / "savvy-temple-381905-6e78e62d4ee5.json")
 
 
 def get_quiz_answer() -> str:
-    with open('log.txt', 'r') as f:
+    with open(LOG_LOCATION, 'r') as f:
         lines = f.readlines()
         answer = lines[2]
         print(f'単語意味クイズ正解：{answer}')
@@ -54,7 +55,7 @@ def parse_duration(duration: str) -> tuple[int, int, int]:
 def get_quiz_start_end_time(duration: str) -> tuple[datetime, datetime, datetime]:
     days, hours, minutes = parse_duration(duration)
 
-    with open('log.txt', 'r') as f:
+    with open(LOG_LOCATION, 'r') as f:
         quiz_start_time = f.readline().strip('\n').split('.')[0]
         quiz_start_time = datetime.strptime(
             quiz_start_time, '%Y-%m-%d %H:%M:%S')

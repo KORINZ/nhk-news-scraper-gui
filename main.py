@@ -38,7 +38,7 @@ NEWS_ARTICLE_TXT_LOCATION = r'./news_article.txt'
 PRONOUN_QUIZ_LOCATION = r'./pronunciation_quiz.txt'
 DEF_QUIZ_LOCATION = r'./definition_quiz.txt'
 PAST_QUIZ_DATA_LOCATION = r'./past_quiz_data.txt'
-LOG_LOCATION = r'./log.txt'
+LOG_LOCATION = r'./push_log.txt'
 
 if sys.platform.startswith('win32'):
     locale.setlocale(locale.LC_CTYPE, "Japanese_Japan.932")
@@ -317,6 +317,12 @@ def main(test_type: str, push=False, questions=5) -> None:
     def_answer = generate_definition_quiz(
         article, vocabulary_dict, definition_list_original_word)
 
+    # Save quiz sent time and news url to a log file
+    with open(LOG_LOCATION, 'w', encoding='utf-8') as f:
+        now = today_date()[0]
+        now = now.strftime(f'%Y-%m-%d %H:%M:%S')
+        f.write(f'{now}\n{url}\n{def_answer}\n')
+
     # Push quiz to LINE if push is True
     if push:
         if test_type == '単語意味クイズ':
@@ -325,12 +331,8 @@ def main(test_type: str, push=False, questions=5) -> None:
         elif test_type == '読み方クイズ':
             push_quiz(PRONOUN_QUIZ_LOCATION)
             save_quiz_vocab(url)
-
-    # Save quiz sent time and news url to a log file
-    with open(LOG_LOCATION, 'w', encoding='utf-8') as f:
-        now = today_date()[0]
-        now = now.strftime(f'%Y-%m-%d %H:%M:%S')
-        f.write(f'{now}\n{url}\n{def_answer}\n')
+        with open(LOG_LOCATION, 'a', encoding='utf-8') as f:
+            f.write('PUSHED\n')
 
 
 if __name__ == '__main__':

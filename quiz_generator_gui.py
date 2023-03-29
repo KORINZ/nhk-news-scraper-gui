@@ -9,6 +9,7 @@ from tkinter import filedialog
 VERSION = "v1.0.0"
 PRONOUN_QUIZ_LOCATION = r'./pronunciation_quiz.txt'
 DEF_QUIZ_LOCATION = r'./definition_quiz.txt'
+LOG_LOCATION = r'./push_log.txt'
 is_blinking = False
 
 
@@ -34,7 +35,6 @@ def start_over() -> None:
     load_article_button.config(state="disabled")
     load_def_quiz_button.config(state="disabled")
     load_pron_quiz_button.config(state="disabled")
-    load_log_button.config(state="disabled")
     send_button.config(state="disabled")
 
 
@@ -165,6 +165,8 @@ def press_push_quiz_button() -> None:
         else:
             push_quiz(DEF_QUIZ_LOCATION)
         messagebox.showinfo("成功", "クイズを発信しました！")
+        with open(LOG_LOCATION, 'a', encoding='utf-8') as f:
+            f.write('PUSHED\n')
     except PermissionError as e:
         messagebox.showerror("エラー", f"クイズの発信に失敗しました: {e}")
 
@@ -318,7 +320,7 @@ load_pron_quiz_button = tk.Button(
 load_pron_quiz_button.grid(row=4, column=1, padx=(265, 0), sticky="w")
 
 load_log_button = tk.Button(
-    root, text="ログファイル", command=lambda: load_file("log.txt"), state="disabled")
+    root, text="ログファイル", command=lambda: load_file("push_log.txt"))
 load_log_button.grid(row=4, column=1, padx=(390, 0), sticky="w")
 
 root.grid_columnconfigure(1, weight=1)
