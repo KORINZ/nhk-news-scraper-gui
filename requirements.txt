@@ -3,3 +3,5 @@ beautifulsoup4
 selenium
 requests
 line-bot-sdk
+pandas
+gspread
