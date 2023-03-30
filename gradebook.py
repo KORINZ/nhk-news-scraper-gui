@@ -92,7 +92,6 @@ def update_grade_book(df_result: pd.DataFrame, quiz_end_time: datetime) -> None:
     date_col_idx = header_row.index(quiz_end_time_str) + 1
 
     for _, row in df_result.iterrows():
-        sent_time = row['Sent Time']
         student_id = row['student_id']
         points = row['points']
 
@@ -124,7 +123,9 @@ def pretty_print_dataframe(df: pd.DataFrame) -> None:
 
 
 def display_table_in_popup(df, quiz_info) -> None:
+    """Display the quiz results in a popup window"""
     def tabulate_dataframe(df) -> str:
+        """Format a dataframe as a table"""
         header = ['Index'] + df.columns.tolist()
         data = df.reset_index().values.tolist()
         for row in data:
@@ -210,7 +211,7 @@ if __name__ == '__main__':
         'win32') else os.system('clear')
 
     # Quiz end time in the format 'YYYY-MM-DD HH:mm'
-    main(end_time='2023-03-28 12:00')
+    main(end_time='2023-03-30 22:00')
 
     # TODO: Set up a cron job to run this script every day at 12:00 AM
     # TODO: Add a function to send a message to the students who have not submitted their answers

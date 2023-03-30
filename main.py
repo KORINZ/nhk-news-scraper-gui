@@ -120,8 +120,8 @@ def generate_pronunciation_quiz(url: str, word_dict: Dict[str, str], questions=4
 
 
 def generate_definition_quiz(article, word_dict: Dict[str, str], word_list: List) -> str:
-    """Generate a definition test for students"""
-    now, today = today_date()
+    """Generate a definition test for students and return the answer key"""
+    today = today_date()[1]
 
     # randomly remove questions until the number of questions reach a desired value
     new_word_list_header = []
