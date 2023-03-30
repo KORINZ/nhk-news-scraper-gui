@@ -8,9 +8,10 @@ from tkinter import filedialog
 
 # Global variables
 VERSION = "v1.0.1"
-PRONOUN_QUIZ_LOCATION = r'./pronunciation_quiz.txt'
-DEF_QUIZ_LOCATION = r'./definition_quiz.txt'
-LOG_LOCATION = r'./push_log.txt'
+PRONOUN_QUIZ_LOCATION = r'txt_files/pronunciation_quiz.txt'
+DEF_QUIZ_LOCATION = r'txt_files/definition_quiz.txt'
+LOG_LOCATION = r'txt_files/push_log.txt'
+NEWS_ARTICLE_LOCATION = r'txt_files/news_article.txt'
 LINE_ICON_LOCATION = r'./icon/LINE.ico'
 NHK_ICON_LOCATION = r'./icon/nhk.ico'
 is_blinking = False
@@ -121,7 +122,7 @@ def run_quiz_generation() -> None:
         # Update the status_label's text to show success
         status_label.config(text="クイズの作成が完了しました！")
         # Automatically update the Text widget after quiz generation
-        load_file('news_article.txt')
+        load_file(NEWS_ARTICLE_LOCATION)
         send_button.config(state="normal")  # Enable the send button
         # Enable the file load buttons
         load_article_button.config(state="normal")
@@ -322,19 +323,19 @@ article_text.config(yscrollcommand=scrollbar.set)
 
 # Create the load file buttons
 load_article_button = tk.Button(
-    root, text="ニュース文章", command=lambda: load_file("news_article.txt"), state="disabled")
+    root, text="ニュース文章", command=lambda: load_file(NEWS_ARTICLE_LOCATION), state="disabled")
 load_article_button.grid(row=4, column=1, sticky="w")
 
 load_def_quiz_button = tk.Button(
-    root, text="単語意味クイズ", command=lambda: load_file("definition_quiz.txt"), state="disabled")
+    root, text="単語意味クイズ", command=lambda: load_file(DEF_QUIZ_LOCATION), state="disabled")
 load_def_quiz_button.grid(row=4, column=1, padx=(125, 0), sticky="w")
 
 load_pron_quiz_button = tk.Button(
-    root, text="読み方クイズ", command=lambda: load_file("pronunciation_quiz.txt"), state="disabled")
+    root, text="読み方クイズ", command=lambda: load_file(PRONOUN_QUIZ_LOCATION), state="disabled")
 load_pron_quiz_button.grid(row=4, column=1, padx=(265, 0), sticky="w")
 
 load_log_button = tk.Button(
-    root, text="ログファイル", command=lambda: load_file("push_log.txt"))
+    root, text="ログファイル", command=lambda: load_file(LOG_LOCATION))
 load_log_button.grid(row=4, column=1, padx=(390, 0), sticky="w")
 
 root.grid_columnconfigure(1, weight=1)

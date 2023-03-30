@@ -33,11 +33,11 @@ https://sartras.or.jp/seido/
 sys.setrecursionlimit(50)
 PATH = 'https://www3.nhk.or.jp/news/easy/'
 NEWS_ARTICLE_URL_IDENTIFIER = 'k1001'
-NEWS_ARTICLE_TXT_LOCATION = r'./news_article.txt'
-PRONOUN_QUIZ_LOCATION = r'./pronunciation_quiz.txt'
-DEF_QUIZ_LOCATION = r'./definition_quiz.txt'
-PAST_QUIZ_DATA_LOCATION = r'./past_quiz_data.txt'
-LOG_LOCATION = r'./push_log.txt'
+NEWS_ARTICLE_TXT_LOCATION = r'txt_files/news_article.txt'
+PRONOUN_QUIZ_LOCATION = r'txt_files/pronunciation_quiz.txt'
+DEF_QUIZ_LOCATION = r'txt_files/definition_quiz.txt'
+PAST_QUIZ_DATA_LOCATION = r'txt_files/past_quiz_data.txt'
+LOG_LOCATION = r'txt_files/push_log.txt'
 
 # Set locale to Japanese
 if sys.platform.startswith('win32'):
