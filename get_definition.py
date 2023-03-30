@@ -7,6 +7,7 @@ from typing import List, Tuple
 import requests
 import re
 
+# Regular expression to match word ids which contain RSHOK-K- prefix
 PATTERN = re.compile(r'^RSHOK-')
 
 
@@ -47,9 +48,11 @@ def get_definition_list(url: str) -> List:
         hover = ActionChains(driver).move_to_element(element_to_hover_over)
         hover.perform()
 
+        # Get definition
         dictionary_box = driver.find_element(
             By.CSS_SELECTOR, ".dictionary-box")
 
+        # Remove unnecessary characters
         text_content = dictionary_box.text
         text_content = ''.join(text_content.split())
         text_content = text_content.replace('1', '： 1', 1)
