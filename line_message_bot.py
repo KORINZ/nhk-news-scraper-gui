@@ -7,7 +7,14 @@ from linebot import LineBotApi
 from linebot.models import TextSendMessage, StickerSendMessage
 from linebot.exceptions import LineBotApiError
 from typing import Optional
-from config import CHANNEL_ACCESS_TOKEN, USER_ID
+
+# Import config.py if it exists, otherwise create it
+try:
+    from config import CHANNEL_ACCESS_TOKEN, USER_ID
+except ImportError:
+    with open('config.py', 'w') as f:
+        f.write("CHANNEL_ACCESS_TOKEN = ''\n")
+        f.write("USER_ID = ''\n")
 
 # Set locale to Japanese
 if sys.platform.startswith('win32'):
