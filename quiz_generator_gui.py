@@ -7,12 +7,12 @@ import threading
 from tkinter import filedialog
 
 # Global variables
-VERSION = "v1.0.0"
+VERSION = "v1.0.1"
 PRONOUN_QUIZ_LOCATION = r'./pronunciation_quiz.txt'
 DEF_QUIZ_LOCATION = r'./definition_quiz.txt'
 LOG_LOCATION = r'./push_log.txt'
 LINE_ICON_LOCATION = r'./icon/LINE.ico'
-NHK_ICON_LOCATION = r'./icon/NHK.ico'
+NHK_ICON_LOCATION = r'./icon/nhk.ico'
 is_blinking = False
 
 
@@ -53,7 +53,7 @@ def enter_line_confidential() -> None:
     main_window_height = root.winfo_height()
     main_window_x = root.winfo_x()
     main_window_y = root.winfo_y()
-    popup_width = 420
+    popup_width = 375
     popup_height = 105
     x_position = main_window_x + (main_window_width // 2) - (popup_width // 2)
     y_position = main_window_y + \
@@ -134,7 +134,7 @@ def run_quiz_generation() -> None:
         if line_push_var.get():
             messagebox.showinfo("成功", "クイズがLINEに送信されました！")
     except ValueError:
-        messagebox.showerror("エラー", "問題数を指定してください。")
+        messagebox.showerror("エラー", "最大問題数を指定してください。")
         is_blinking = False
         status_label.config(text="")
     except PermissionError as e:
@@ -193,9 +193,10 @@ def update_status_label_blink() -> None:
     """Update the status label to blink."""
     global is_blinking
     if not is_blinking:
-        return
-
+        return None
     current_text = status_label.cget("text")
+    if current_text == "クイズの作成が完了しました！":
+        return None
     if current_text == "何も押さないでください。クイズ作成中":
         new_text = "何も押さないでください。クイズ作成中・"
     elif current_text == "何も押さないでください。クイズ作成中・":
