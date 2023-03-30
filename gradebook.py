@@ -2,6 +2,8 @@ import sys
 import os
 import pandas as pd
 import gspread
+import tkinter as tk
+from tkinter import scrolledtext
 
 from datetime import datetime
 from pathlib import Path
@@ -15,17 +17,21 @@ SERVICE_ACCOUNT = gspread.service_account(
     filename=Path() / "savvy-temple-381905-6e78e62d4ee5.json")
 
 
-def print_quiz_times(quiz_start_time: datetime, now: datetime, quiz_end_time: datetime) -> None:
-    """Print the quiz start time, current time, quiz end time, and quiz duration"""
+def format_quiz_times(quiz_start_time: datetime, now: datetime, quiz_end_time: datetime) -> str:
+    """Format the quiz start time, current time, quiz end time, and quiz duration"""
     duration = quiz_end_time - quiz_start_time
     days = duration.days
     hours, remainder = divmod(duration.seconds, 3600)
     minutes, _ = divmod(remainder, 60)
 
-    print(f'開始時間：{quiz_start_time}')
-    print(f'現在時間：{now.strftime("%Y-%m-%d %H:%M:%S")}')
-    print(f'終了時間：{quiz_end_time}')
-    print(f'クイズ時間：{days}日{hours}時間{minutes}分\n')
+    quiz_times_str = (
+        f'開始時間：{quiz_start_time}\n'
+        f'現在時間：{now.strftime("%Y-%m-%d %H:%M:%S")}\n'
+        f'終了時間：{quiz_end_time}\n'
+        f'クイズ時間：{days}日{hours}時間{minutes}分\n'
+    )
+
+    return quiz_times_str
 
 
 def get_quiz_answer() -> str:
@@ -33,8 +39,7 @@ def get_quiz_answer() -> str:
     with open(LOG_LOCATION, 'r') as f:
         lines = f.readlines()
         answer = lines[2]
-        print(f'単語意味クイズ正解：{answer}')
-        return answer
+        return answer.strip()
 
 
 def calculate_point(correct: str, given: str) -> int:
@@ -118,13 +123,49 @@ def pretty_print_dataframe(df: pd.DataFrame) -> None:
     print(tabulate(data, headers=header, tablefmt='grid'))
 
 
+def display_table_in_popup(df, quiz_info) -> None:
+    def tabulate_dataframe(df) -> str:
+        header = ['Index'] + df.columns.tolist()
+        data = df.reset_index().values.tolist()
+        for row in data:
+            row[0] += 2
+        formatted_table = tabulate(data, headers=header, tablefmt='grid')
+        return formatted_table
+
+    table_str = quiz_info + '\n' + tabulate_dataframe(df)
+    root = tk.Tk()
+    root.title("Quiz Results")
+    root.geometry("800x494")  # Set the size of the root window
+
+    frame = tk.Frame(root)
+    frame.grid(row=0, column=0, sticky="nsew")  # Place the frame using grid
+
+    root.grid_rowconfigure(0, weight=1)
+    root.grid_columnconfigure(0, weight=1)
+
+    text_area = scrolledtext.ScrolledText(frame, wrap=tk.WORD)
+    # Place the text area using grid
+    text_area.grid(row=0, column=0, sticky="nsew")
+
+    frame.grid_rowconfigure(0, weight=1)
+    frame.grid_columnconfigure(0, weight=1)
+
+    text_area.insert(tk.INSERT, table_str)
+
+    root.mainloop()
+
+
 def main(end_time: str) -> None:
     """Main function to process the data and update the grade book"""
 
     # Parse the quiz end time
     quiz_end_time = parse_quiz_end_time(end_time)
     now, quiz_start_time = get_quiz_start_time()
-    print_quiz_times(quiz_start_time, now, quiz_end_time)
+    quiz_times_str = format_quiz_times(quiz_start_time, now, quiz_end_time)
+    print(quiz_times_str)
+
+    correct_answer = get_quiz_answer()
+    print(f'単語意味クイズ正解：{correct_answer}\n')
 
     # Get the quiz answers from student messages
     line_message = SERVICE_ACCOUNT.open(LINE_INCOMING_MESSAGE_FILENAME)
@@ -146,6 +187,12 @@ def main(end_time: str) -> None:
         df_result = df_result.query(
             'student_id != "0" or given_answer != "0" or points != "0"')
         pretty_print_dataframe(df_result)
+
+        quiz_info = format_quiz_times(quiz_start_time, now, quiz_end_time)
+        correct_answer = get_quiz_answer()
+        quiz_info += f'単語意味クイズ正解：{correct_answer}\n'
+        display_table_in_popup(df_result, quiz_info)
+
     except pd.errors.UndefinedVariableError:
         print("Error: No data found.")
         sys.exit()
