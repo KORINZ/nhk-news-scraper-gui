@@ -7,12 +7,26 @@ import re
 from datetime import datetime, timedelta
 from pathlib import Path
 from tabulate import tabulate
+from typing import Union
 
 LINE_INCOMING_MESSAGE_FILENAME = 'LINE_Messages'
 LOG_LOCATION = 'push_log.txt'
 GRADE_BOOK_FILENAME = '日本語ニュース成績表'
 SERVICE_ACCOUNT = gspread.service_account(
     filename=Path() / "savvy-temple-381905-6e78e62d4ee5.json")
+
+
+def print_quiz_times(quiz_start_time: datetime, now: datetime, quiz_end_time: datetime) -> None:
+    """Print the quiz start time, current time, quiz end time, and quiz duration"""
+    duration = quiz_end_time - quiz_start_time
+    days = duration.days
+    hours, remainder = divmod(duration.seconds, 3600)
+    minutes, _ = divmod(remainder, 60)
+
+    print(f'開始時間：{quiz_start_time}')
+    print(f'現在時間：{now.strftime("%Y-%m-%d %H:%M:%S")}')
+    print(f'終了時間：{quiz_end_time}')
+    print(f'クイズ時間：{days}日{hours}時間{minutes}分\n')
 
 
 def get_quiz_answer() -> str:
@@ -40,36 +54,20 @@ def process_data(raw_data: str, correct_answer: str) -> pd.Series:
     return pd.Series([student_id, given_answer, points], index=['student_id', 'given_answer', 'points'])
 
 
-def parse_duration(duration: str) -> tuple[int, int, int]:
-    """Extract days, hours, and minutes from the input string."""
-    days_match = re.search(r'(\d+)day', duration)
-    days = int(days_match.group(1)) if days_match else 0
-    hours_match = re.search(r'(\d+)hr', duration)
-    hours = int(hours_match.group(1)) if hours_match else 0
-    minutes_match = re.search(r'(\d+)min', duration)
-    minutes = int(minutes_match.group(1)) if minutes_match else 0
-
-    return days, hours, minutes
+def parse_quiz_end_time(end_time: str) -> datetime:
+    """Parse a quiz end time string to a datetime object."""
+    return datetime.strptime(end_time, '%Y-%m-%d %H:%M')
 
 
-def get_quiz_start_end_time(duration: str) -> tuple[datetime, datetime, datetime]:
-    days, hours, minutes = parse_duration(duration)
-
+def get_quiz_start_time(quiz_end_time: datetime) -> tuple[datetime, datetime]:
     with open(LOG_LOCATION, 'r') as f:
         quiz_start_time = f.readline().strip('\n').split('.')[0]
         quiz_start_time = datetime.strptime(
             quiz_start_time, '%Y-%m-%d %H:%M:%S')
 
-    quiz_end_time = quiz_start_time + \
-        timedelta(days=days, hours=hours, minutes=minutes)
-
     now = datetime.now()
-    print(f'開始時間：{quiz_start_time}')
-    print(f'現在時間：{now.strftime("%Y-%m-%d %H:%M:%S")}')
-    print(f'終了時間：{quiz_end_time}')
-    print(f'クイズ時間：{days}日{hours}時間{minutes}分\n')
 
-    return now, quiz_start_time, quiz_end_time
+    return now, quiz_start_time
 
 
 def update_grade_book(df_result: pd.DataFrame, quiz_end_time: datetime) -> None:
@@ -117,12 +115,12 @@ def pretty_print_dataframe(df: pd.DataFrame) -> None:
     print(tabulate(data, headers=header, tablefmt='grid'))
 
 
-def main(quiz_duration: str) -> None:
+def main(end_time: str) -> None:
     """Main function to process the data and update the grade book"""
 
-    # The input format for duration is: 'Xday, Xhr, Xmin' where X is an integer
-    now, quiz_start_time, quiz_end_time = get_quiz_start_end_time(
-        quiz_duration)
+    quiz_end_time = parse_quiz_end_time(end_time)
+    now, quiz_start_time = get_quiz_start_time(quiz_end_time)
+    print_quiz_times(quiz_start_time, now, quiz_end_time)
 
     line_message = SERVICE_ACCOUNT.open(LINE_INCOMING_MESSAGE_FILENAME)
     message_sheet = line_message.worksheet('Messages')
@@ -157,10 +155,9 @@ if __name__ == '__main__':
     os.system('cls') if sys.platform.startswith(
         'win32') else os.system('clear')
 
-    # Quiz duration in the format 'Xday, Xhr, Xmin'
-    main(quiz_duration='1day, 1hr, 0min')
+    # Quiz end time in the format 'YYYY-MM-DD HH:mm'
+    main(end_time='2023-03-28 12:00')
 
-    # TODO: Set quiz end time instead of quiz duration
     # TODO: Set up a cron job to run this script every day at 12:00 AM
     # TODO: Add a function to send a message to the students who have not submitted their answers
     # TODO: Verify the USER ID as well
