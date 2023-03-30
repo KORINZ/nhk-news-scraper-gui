@@ -13,8 +13,13 @@ from tabulate import tabulate
 LINE_INCOMING_MESSAGE_FILENAME = 'LINE_Messages'
 LOG_LOCATION = 'push_log.txt'
 GRADE_BOOK_FILENAME = '日本語ニュース成績表'
-SERVICE_ACCOUNT = gspread.service_account(
-    filename=Path() / "savvy-temple-381905-6e78e62d4ee5.json")
+
+try:
+    SERVICE_ACCOUNT = gspread.service_account(
+        filename=Path() / "savvy-temple-381905-6e78e62d4ee5.json")
+except FileNotFoundError:
+    sys.exit(
+        'Service account file not found. Please download the file from Google Cloud Platform.')
 
 
 def format_quiz_times(quiz_start_time: datetime, now: datetime, quiz_end_time: datetime) -> str:
@@ -195,12 +200,11 @@ def main(end_time: str) -> None:
         display_table_in_popup(df_result, quiz_info)
 
     except pd.errors.UndefinedVariableError:
-        print("Error: No data found.")
-        sys.exit()
+        sys.exit("Error: No data found. Check the quiz start and end times.")
 
     if quiz_end_time > now:
-        print("Warning: quiz_end_time has not been reached. Data will not be updated.")
-        sys.exit()
+        sys.exit(
+            "Warning: quiz_end_time has not been reached. Data will not be updated.")
     else:
         update_grade_book(df_result, quiz_end_time)
 

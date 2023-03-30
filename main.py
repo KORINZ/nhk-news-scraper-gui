@@ -207,8 +207,7 @@ def main(test_type: str, push=False, questions=5) -> None:
         # HTTP status OK
         html_content = response.text
     else:
-        print('Request failed. Check your Internet connection.')
-        sys.exit()
+        sys.exit('Request failed. Check your Internet connection.')
 
     soup = BeautifulSoup(html_content, 'html.parser')
 
