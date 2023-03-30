@@ -15,6 +15,7 @@ except ImportError:
     with open('config.py', 'w') as f:
         f.write("CHANNEL_ACCESS_TOKEN = ''\n")
         f.write("USER_ID = ''\n")
+        print('config.py created. Please fill in the values and run the script again.')
 
 # Set locale to Japanese
 if sys.platform.startswith('win32'):
