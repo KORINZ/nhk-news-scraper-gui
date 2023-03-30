@@ -2,13 +2,12 @@ import sys
 import os
 import pandas as pd
 import gspread
-import re
 
-from datetime import datetime, timedelta
+from datetime import datetime
 from pathlib import Path
 from tabulate import tabulate
-from typing import Union
 
+# Constants
 LINE_INCOMING_MESSAGE_FILENAME = 'LINE_Messages'
 LOG_LOCATION = 'push_log.txt'
 GRADE_BOOK_FILENAME = '日本語ニュース成績表'
@@ -30,6 +29,7 @@ def print_quiz_times(quiz_start_time: datetime, now: datetime, quiz_end_time: da
 
 
 def get_quiz_answer() -> str:
+    """Get the quiz answer from the log file"""
     with open(LOG_LOCATION, 'r') as f:
         lines = f.readlines()
         answer = lines[2]
@@ -38,6 +38,7 @@ def get_quiz_answer() -> str:
 
 
 def calculate_point(correct: str, given: str) -> int:
+    """Calculate the number of correct answers"""
     correct = correct.strip().upper()
     given = given.strip().upper()
     if len(correct) != len(given):
@@ -46,6 +47,7 @@ def calculate_point(correct: str, given: str) -> int:
 
 
 def process_data(raw_data: str, correct_answer: str) -> pd.Series:
+    """Process the raw data from the LINE message file"""
     try:
         student_id, given_answer = raw_data.split('\n')
     except ValueError:
@@ -59,18 +61,18 @@ def parse_quiz_end_time(end_time: str) -> datetime:
     return datetime.strptime(end_time, '%Y-%m-%d %H:%M')
 
 
-def get_quiz_start_time(quiz_end_time: datetime) -> tuple[datetime, datetime]:
+def get_quiz_start_time() -> tuple[datetime, datetime]:
+    """Get the quiz start time from the log file"""
     with open(LOG_LOCATION, 'r') as f:
         quiz_start_time = f.readline().strip('\n').split('.')[0]
         quiz_start_time = datetime.strptime(
             quiz_start_time, '%Y-%m-%d %H:%M:%S')
-
     now = datetime.now()
-
     return now, quiz_start_time
 
 
 def update_grade_book(df_result: pd.DataFrame, quiz_end_time: datetime) -> None:
+    """Update the grade book with the quiz results"""
     grade_book = SERVICE_ACCOUNT.open(GRADE_BOOK_FILENAME)
     grade_sheet = grade_book.worksheet('シート1')
     quiz_end_time_str = quiz_end_time.date().strftime('%Y/%m/%d')
@@ -108,6 +110,7 @@ def update_grade_book(df_result: pd.DataFrame, quiz_end_time: datetime) -> None:
 
 
 def pretty_print_dataframe(df: pd.DataFrame) -> None:
+    """Print a dataframe in a pretty format"""
     data = df.reset_index().values.tolist()
     for row in data:
         row[0] += 2  # Add 2 to the 'Index' column
@@ -118,22 +121,26 @@ def pretty_print_dataframe(df: pd.DataFrame) -> None:
 def main(end_time: str) -> None:
     """Main function to process the data and update the grade book"""
 
+    # Parse the quiz end time
     quiz_end_time = parse_quiz_end_time(end_time)
-    now, quiz_start_time = get_quiz_start_time(quiz_end_time)
+    now, quiz_start_time = get_quiz_start_time()
     print_quiz_times(quiz_start_time, now, quiz_end_time)
 
+    # Get the quiz answers from student messages
     line_message = SERVICE_ACCOUNT.open(LINE_INCOMING_MESSAGE_FILENAME)
     message_sheet = line_message.worksheet('Messages')
     message_records = message_sheet.get_all_records()
     df_message = pd.DataFrame(message_records)
     df_message['Sent Time'] = pd.to_datetime(df_message['Sent Time'])
 
+    # Process the data
     correct_answer = get_quiz_answer()
     df_message = df_message.query(
         '@quiz_start_time <= `Sent Time` <= @quiz_end_time')
     df_processed = df_message['Message'].apply(
         lambda x: process_data(x, correct_answer))
 
+    # Concatenate the processed data with the original data
     df_result = pd.concat([df_message['Sent Time'], df_processed], axis=1)
     try:
         df_result = df_result.query(
