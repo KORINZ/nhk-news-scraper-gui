@@ -31,7 +31,6 @@ https://sartras.or.jp/seido/
 
 # Initial settings and website and file paths
 sys.setrecursionlimit(50)
-
 PATH = 'https://www3.nhk.or.jp/news/easy/'
 NEWS_ARTICLE_URL_IDENTIFIER = 'k1001'
 NEWS_ARTICLE_TXT_LOCATION = r'./news_article.txt'
@@ -40,6 +39,7 @@ DEF_QUIZ_LOCATION = r'./definition_quiz.txt'
 PAST_QUIZ_DATA_LOCATION = r'./past_quiz_data.txt'
 LOG_LOCATION = r'./push_log.txt'
 
+# Set locale to Japanese
 if sys.platform.startswith('win32'):
     locale.setlocale(locale.LC_CTYPE, "Japanese_Japan.932")
 else:
@@ -112,6 +112,7 @@ def generate_pronunciation_quiz(url: str, word_dict: Dict[str, str], questions=4
         f.write(f'{url}\n\n')
         f.write('---\n\n')
         f.write('学生番号: \n\n')
+
     with open(PRONOUN_QUIZ_LOCATION, 'a', encoding='utf-8') as f:
         for i, word in enumerate(word_dict.keys(), start=1):
             letter = string.ascii_uppercase[i-1]
@@ -146,6 +147,7 @@ def generate_definition_quiz(article, word_dict: Dict[str, str], word_list: List
         f.write(
             f'今日のNHK EASYニュース📰です。(1) から正しい単語の意味を順番に並べてください。({len(new_word_list)}ポイント)\n\n')
 
+    # write the article to a file
     with open(DEF_QUIZ_LOCATION, 'a', encoding='utf-8') as f:
         for paragraph in article:
             f.write(paragraph.text.strip() + '\n\n')
@@ -232,6 +234,7 @@ def main(test_type: str, push=False, questions=5) -> None:
     vocabulary_dict = {}
     furigana = ''
 
+    # Create a dictionary of vocabulary: furigana
     for vocabulary in vocabulary_list:
         word = vocabulary.text
         rt = vocabulary.find_all('rt')
@@ -282,6 +285,7 @@ def main(test_type: str, push=False, questions=5) -> None:
                 formatted_word = formatted_word.replace('()', '')
             formatted_word_list.append(formatted_word)
 
+    # Write formatted vocabularies to a file
     with open(NEWS_ARTICLE_TXT_LOCATION, 'a', encoding='utf-8') as f:
         f.write('---\n')
         for word in formatted_word_list:
@@ -331,6 +335,8 @@ def main(test_type: str, push=False, questions=5) -> None:
         elif test_type == '読み方クイズ':
             push_quiz(PRONOUN_QUIZ_LOCATION)
             save_quiz_vocab(url)
+
+        # Save quiz sent time and news url to a log file
         with open(LOG_LOCATION, 'a', encoding='utf-8') as f:
             f.write('PUSHED\n')
 
@@ -340,5 +346,5 @@ if __name__ == '__main__':
     os.system('cls') if sys.platform.startswith(
         'win32') else os.system('clear')
 
-    # test_type: 'def' -> 単語意味 or 'pronoun' -> 単語発音
+    # test_type: '単語意味クイズ' or '読み方クイズ'
     main(test_type='単語意味クイズ', push=False, questions=5)
