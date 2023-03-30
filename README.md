@@ -29,6 +29,7 @@ See the `.txt` file in the repository for an example output.
 - `line-bot-sdk`
 - `pandas`
 - `gspread`
+- `tabulate`
 
 ## Installation
 
