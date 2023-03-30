@@ -9,10 +9,13 @@ from linebot.exceptions import LineBotApiError
 from typing import Optional
 from config import CHANNEL_ACCESS_TOKEN, USER_ID
 
+# Set locale to Japanese
 if sys.platform.startswith('win32'):
     locale.setlocale(locale.LC_CTYPE, "Japanese_Japan.932")
 else:
     locale.setlocale(locale.LC_TIME, 'ja_JP.UTF-8')
+
+# Get today's date and day of the week
 now = datetime.datetime.now()
 week_list = ['月曜日', '火曜日', '水曜日', '木曜日', '金曜日', '土曜日', '日曜日']
 day_of_week = week_list[now.weekday()][0]
