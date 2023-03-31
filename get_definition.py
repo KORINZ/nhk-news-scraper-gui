@@ -1,11 +1,13 @@
 from selenium import webdriver
 from selenium.webdriver.common.by import By
 from selenium.webdriver.common.action_chains import ActionChains
-
+from selenium.common.exceptions import WebDriverException
 from bs4 import BeautifulSoup
 from typing import List, Tuple
+
 import requests
 import re
+import sys
 
 # Regular expression to match word ids which contain RSHOK-K- prefix
 PATTERN = re.compile(r'^RSHOK-')
@@ -13,7 +15,10 @@ PATTERN = re.compile(r'^RSHOK-')
 
 def get_number_of_word(url: str) -> Tuple:
     """Get number of words and word ids which contain RSHOK-K- prefix"""
-    response = requests.get(url)
+    try:
+        response = requests.get(url)
+    except requests.exceptions.ConnectionError:
+        sys.exit('Connection error. Please check your internet connection.')
     response.encoding = response.apparent_encoding
     html_content = response.text
     soup = BeautifulSoup(html_content, 'html.parser')

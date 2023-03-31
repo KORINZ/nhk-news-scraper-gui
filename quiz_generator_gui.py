@@ -142,6 +142,10 @@ def run_quiz_generation() -> None:
         messagebox.showerror("エラー", f"クイズの発信に失敗しました: {e}")
         is_blinking = False
         status_label.config(text="")
+    except ConnectionError as e:
+        messagebox.showerror("エラー", f"クイズの発信に失敗しました: {e}")
+        is_blinking = False
+        status_label.config(text="")
 
 
 def increment_questions() -> None:

@@ -11,6 +11,7 @@ from collections import deque
 from datetime import datetime
 from line_message_bot import send_message
 from selenium import webdriver
+from selenium.common.exceptions import WebDriverException
 from selenium.webdriver.common.by import By
 from typing import Dict, List, Tuple
 from get_definition import get_definition_list, get_number_of_word
@@ -51,8 +52,12 @@ def get_news_url() -> str:
     opt = webdriver.ChromeOptions()
     opt.add_argument('headless')
     opt.add_experimental_option('excludeSwitches', ['enable-logging'])
-    driver = webdriver.Chrome(options=opt)
-    driver.get(PATH)
+    try:
+        driver = webdriver.Chrome(options=opt)
+        driver.get(PATH)
+    except WebDriverException:
+        raise ConnectionError(
+            'インターネットの接続を確認してください。')
 
     links = driver.find_elements(By.XPATH, "//a[@href]")
     news_links = [link.get_attribute("href")
