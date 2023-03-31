@@ -22,7 +22,6 @@ def save_text_to_file() -> None:
     file_path = filedialog.asksaveasfilename(defaultextension=".txt",
                                              filetypes=[("Text Files", "*.txt"), ("All Files", "*.*")])
     if not file_path:
-        print("No file path specified.")
         return None
 
     content = article_text.get("1.0", tk.END)
@@ -54,7 +53,7 @@ def enter_line_confidential() -> None:
     main_window_height = root.winfo_height()
     main_window_x = root.winfo_x()
     main_window_y = root.winfo_y()
-    popup_width = 375
+    popup_width = 420
     popup_height = 105
     x_position = main_window_x + (main_window_width // 2) - (popup_width // 2)
     y_position = main_window_y + \
