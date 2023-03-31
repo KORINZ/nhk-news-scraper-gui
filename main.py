@@ -309,7 +309,7 @@ def main(test_type: str, push=False, questions=5) -> None:
                 key + '：' + meaning.split('：', 1)[1])
         except IndexError:
             print(
-                f'\nWARNING: definition_list is missing {len(vocabulary_dict.keys()) - len(definition_list_original_word)} element(s). This is a rare case due to incomplete scrapping of selenium. Consider re-running the program.')
+                f'\nWARNING: definition_list is missing {len(vocabulary_dict.keys()) - len(definition_list_original_word)} element(s). This is a rare case due to incomplete scrapping of selenium. Consider re-running the program or change the scale for document.body.style.transform in get_definition.py.')
             pass
 
     # Save definitions to a news_article.txt file
