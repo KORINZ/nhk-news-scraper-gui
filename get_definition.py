@@ -29,7 +29,7 @@ def get_number_of_word(url: str) -> Tuple:
 
 def get_definition_list(url: str) -> List:
     """Get definition list of words which contain RSHOK-K- prefix"""
-    # Get word ids which contain RSHOK-K- prefix
+    # Get word ids which contain RSHOK- prefix
     matching_ids = get_number_of_word(url)[1]
 
     # Selenium setup
@@ -44,7 +44,7 @@ def get_definition_list(url: str) -> List:
     button = driver.find_element(By.CLASS_NAME, "easy-wrapper")
     driver.execute_script(
         "arguments[0].setAttribute('class', 'easy-wrapper is-no-ruby')", button)
-    driver.execute_script("document.body.style.transform='scale(1)';")
+    driver.execute_script("document.body.style.transform='scale(0.99)';")
 
     definition_list = []
     # Hover over each word and print definition
@@ -68,5 +68,5 @@ def get_definition_list(url: str) -> List:
 
 
 if __name__ == '__main__':
-    test_url = 'https://www3.nhk.or.jp/news/easy/k10014019531000/k10014019531000.html'
+    test_url = 'https://www3.nhk.or.jp/news/easy/k10014023731000/k10014023731000.html'
     definition_list = get_definition_list(test_url)
