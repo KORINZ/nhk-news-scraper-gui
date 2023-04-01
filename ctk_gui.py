@@ -6,6 +6,7 @@ PRONOUN_QUIZ_LOCATION = r'txt_files/pronunciation_quiz.txt'
 DEF_QUIZ_LOCATION = r'txt_files/definition_quiz.txt'
 LOG_LOCATION = r'txt_files/push_log.txt'
 NEWS_ARTICLE_LOCATION = r'txt_files/news_article.txt'
+NHK_ICON_LOCATION = r'./icon/nhk.ico'
 
 
 class MyTabView(customtkinter.CTkTabview):
@@ -37,6 +38,7 @@ class App(customtkinter.CTk):
         super().__init__()
         self.geometry("900x556")
         # self.resizable(False, False)
+        self.iconbitmap(NHK_ICON_LOCATION)
         self.title("GUI demo")
         self.grid_rowconfigure(4, weight=1)  # configure grid system
         self.grid_columnconfigure(1, weight=1)
