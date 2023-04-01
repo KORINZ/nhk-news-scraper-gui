@@ -31,7 +31,7 @@ https://sartras.or.jp/seido/
 '''
 
 # Initial settings and website and file paths
-sys.setrecursionlimit(50)
+sys.setrecursionlimit(200)
 PATH = 'https://www3.nhk.or.jp/news/easy/'
 NEWS_ARTICLE_URL_IDENTIFIER = 'k1001'
 NEWS_ARTICLE_TXT_LOCATION = r'txt_files/news_article.txt'
