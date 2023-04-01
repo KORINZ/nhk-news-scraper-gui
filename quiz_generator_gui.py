@@ -220,7 +220,7 @@ def update_status_label_blink() -> None:
 root = tk.Tk()
 root.title(f'NHK NEWS EASY クイズ作成 GUI {VERSION}')
 root.geometry("900x556")
-root.option_add("*font", "Mincho, 12")
+root.option_add("*font", "Gothic, 12")
 root.iconbitmap(NHK_ICON_LOCATION)
 
 # Padding for the labels and the entry widgets
@@ -271,8 +271,6 @@ about_menu.add_command(
 test_type_var.set("単語意味クイズ")
 
 # Create the test type label and combobox
-test_type_label = tk.Label(root, text="クイズタイプ:")
-test_type_label.grid(row=0, column=0, sticky="w")
 test_type_label = tk.Label(root, text="クイズタイプ:")
 test_type_label.grid(row=0, column=0, padx=entry_padding,
                      pady=entry_padding, sticky="w")
