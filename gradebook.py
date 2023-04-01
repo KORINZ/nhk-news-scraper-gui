@@ -215,7 +215,7 @@ if __name__ == '__main__':
         'win32') else os.system('clear')
 
     # Quiz end time in the format 'YYYY-MM-DD HH:mm'
-    main(end_time='2023-03-30 22:00')
+    main(end_time='2023-04-22 22:00')
 
     # TODO: Set up a cron job to run this script every day at 12:00 AM
     # TODO: Add a function to send a message to the students who have not submitted their answers

@@ -7,7 +7,7 @@ import threading
 from tkinter import filedialog
 
 # Global variables
-VERSION = "v1.0.1"
+VERSION = "v1.1.0"
 PRONOUN_QUIZ_LOCATION = r'txt_files/pronunciation_quiz.txt'
 DEF_QUIZ_LOCATION = r'txt_files/definition_quiz.txt'
 LOG_LOCATION = r'txt_files/push_log.txt'
@@ -116,6 +116,7 @@ def run_quiz_generation() -> None:
     """Run the quiz generation function in the background."""
     global is_blinking
     try:
+        start_over()
         main(test_type_var.get(), push=line_push_var.get(),
              questions=int(questions_var.get()))
         # Update the status_label's text to show success
