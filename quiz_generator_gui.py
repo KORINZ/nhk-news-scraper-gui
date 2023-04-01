@@ -8,6 +8,7 @@ from tkinter import filedialog
 
 # Global variables
 VERSION = "v1.1.0"
+DEFAULT_NUMBER_OF_QUESTIONS = "4"
 PRONOUN_QUIZ_LOCATION = r'txt_files/pronunciation_quiz.txt'
 DEF_QUIZ_LOCATION = r'txt_files/definition_quiz.txt'
 LOG_LOCATION = r'txt_files/push_log.txt'
@@ -33,7 +34,7 @@ def start_over() -> None:
     """Reset the app to its initial state."""
     article_text.delete("1.0", tk.END)
     questions_entry.delete(0, tk.END)
-    questions_entry.insert(0, "5")
+    questions_entry.insert(0, DEFAULT_NUMBER_OF_QUESTIONS)
     test_type_combobox.current(1)
     line_push_var.set(False)
     load_article_button.config(state="disabled")
@@ -293,7 +294,7 @@ questions_label = tk.Label(root, text="最大問題数:")
 questions_label.grid(row=2, column=0, padx=entry_padding,
                      pady=entry_padding, sticky="w")
 questions_entry = tk.Entry(root, textvariable=questions_var, width=2)
-questions_entry.insert(0, "5")
+questions_entry.insert(0, DEFAULT_NUMBER_OF_QUESTIONS)
 questions_entry.grid(row=2, column=1, padx=entry_padding,
                      pady=entry_padding, sticky="w")
 
