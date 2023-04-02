@@ -8,12 +8,12 @@ import requests
 import re
 import sys
 
-# Regular expression to match word ids which contain RSHOK-K- prefix
+# Regular expression to match word ids which contain RSHOK- prefix
 PATTERN = re.compile(r'^RSHOK-')
 
 
-def get_number_of_word(url: str) -> Tuple:
-    """Get number of words and word ids which contain RSHOK-K- prefix"""
+def get_number_of_word(url: str) -> Tuple[int, List, BeautifulSoup]:
+    """Get number of words and word ids which contain RSHOK- prefix"""
     try:
         response = requests.get(url)
     except requests.exceptions.ConnectionError:
@@ -26,7 +26,7 @@ def get_number_of_word(url: str) -> Tuple:
     return len(matching_ids), matching_ids, soup
 
 
-def get_definition_list(url: str, progress_callback: Optional[Callable] = None) -> List:
+def get_definition_list(url: str, progress_callback: Optional[Callable] = None) -> List[str]:
     """Get definition list of words which contain RSHOK-K- prefix"""
     # Get word ids which contain RSHOK- prefix
     matching_ids = get_number_of_word(url)[1]
