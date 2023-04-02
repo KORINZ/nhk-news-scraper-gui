@@ -74,12 +74,16 @@ class MyTabView(ctk.CTkTabview):
             20, 0), pady=20, sticky="nw")
 
         self.optionmenu_var = ctk.StringVar(value=master.theme)
-
+        self.optionmenu_mapping = {
+            "Light": "ライト",
+            "Dark": "ダーク",
+            "System": "システム"
+        }
         self.appearance_mode_optionemenu = ctk.CTkOptionMenu(self.settings,
-                                                             values=[
-                                                                 "Light", "Dark", "System"],
+                                                             values=list(
+                                                                 self.optionmenu_mapping.values()),
                                                              command=self.change_appearance_mode_event,
-                                                             variable=self.optionmenu_var)
+                                                             variable=self.optionmenu_var, font=self.font)
         self.appearance_mode_optionemenu.grid(
             row=0, column=0, padx=(100, 0), pady=20, sticky="nw")
 
@@ -92,13 +96,24 @@ class MyTabView(ctk.CTkTabview):
         self.settings.grid_columnconfigure(0, weight=1)
 
     def change_appearance_mode_event(self, new_appearance_mode: str) -> None:
-        ctk.set_appearance_mode(new_appearance_mode)
+        english_value = {v: k for k, v in self.optionmenu_mapping.items()}[
+            new_appearance_mode]
+        ctk.set_appearance_mode(english_value)
+
+    def update_optionmenu_var(self, english_value: str) -> None:
+        japanese_value = self.optionmenu_mapping.get(english_value)
+        if japanese_value:
+            self.optionmenu_var.set(japanese_value)
 
     def save_settings(self) -> None:
         """Save the current settings to a file."""
+        japanese_value = self.optionmenu_var.get()
+        english_value = {v: k for k, v in self.optionmenu_mapping.items()}.get(
+            japanese_value)
+
         settings = {
-            "theme": self.optionmenu_var.get(),
-            # Add other settings here
+            "theme": english_value,
+            # Add other settings (pending)
         }
 
         try:
@@ -111,7 +126,7 @@ class MyTabView(ctk.CTkTabview):
         """Update the UI according to the provided settings."""
         theme = settings.get("theme")
         if theme:
-            self.optionmenu_var.set(theme)
+            self.update_optionmenu_var(theme)
 
 
 class App(ctk.CTk):
