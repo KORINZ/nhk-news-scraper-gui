@@ -7,7 +7,7 @@
 
 ### CustomTkinter Version GUI
 <p align="center">
-  <img width="600" alt="1" src="https://user-images.githubusercontent.com/111611023/229370646-65bd21be-a7ac-4281-8f68-3c9bb26a29fb.png">
+  <img width="600" alt="1" src="https://user-images.githubusercontent.com/111611023/229370851-fa2d5dcb-a135-49ae-88c9-7709a678537a.gif">
 </p>
 
 This project is a Python script for scraping news articles from [NHK News Web Easy](https://www3.nhk.or.jp/news/easy/),
