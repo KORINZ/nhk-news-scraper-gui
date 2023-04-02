@@ -2,6 +2,7 @@ import customtkinter
 import threading
 from main import main, push_quiz
 from tkinter import messagebox
+import sys
 
 VERSION = "v0.0.2b"
 customtkinter.set_default_color_theme("dark-blue")
@@ -94,12 +95,19 @@ class App(customtkinter.CTk):
         self.label_progress = customtkinter.CTkLabel(
             master=self, text="プログレス:", font=self.font)
         self.label_progress.grid(
-            row=0, column=0, padx=(500, 10), pady=10, sticky="nw")
+            row=0, column=0, padx=(0, 450), pady=10, sticky="ne")
+
         self.progressbar = customtkinter.CTkProgressBar(
-            master=self, width=200, height=20)
+            master=self, width=250, height=20)
         self.progressbar.grid(row=0, column=0, padx=(
-            575, 10), pady=15, sticky="nw")
+            0, 180), pady=15, sticky="ne")
         self.progressbar.set(0)
+
+        self.reset_button = customtkinter.CTkButton(
+            master=self, text="やり直す", font=self.font, command=self.start_over)
+        self.reset_button.grid(
+            row=0, column=0, padx=(0, 20), pady=10, sticky="ne")
+        self.reset_button.configure(state="disabled")
 
         self.label_type = customtkinter.CTkLabel(
             master=self, text="クイズタイプ:", font=self.font)
@@ -171,6 +179,10 @@ class App(customtkinter.CTk):
         try:
             self.progressbar.set(0)
             self.button_send.configure(state="disabled")
+            self.reset_button.configure(state="disabled")
+            if self.number_entry.get() == "0":
+                messagebox.showerror("エラー", "最大問題数を指定してください。")
+                sys.exit(1)
             main(self.combobox.get(), push=bool(self.check_box.get()),
                  questions=int(self.number_entry.get()), progress_callback=self.update_progressbar)
 
@@ -178,6 +190,7 @@ class App(customtkinter.CTk):
             self.update_textboxes()
             # Enable the send button
             self.button_send.configure(state="normal")
+            self.reset_button.configure(state="normal")
 
             if self.check_box.get():
                 messagebox.showinfo("成功", "クイズがLINEに送信されました！")
@@ -214,6 +227,7 @@ class App(customtkinter.CTk):
                 self.number_entry.insert(0, str(current_value - 1))
 
     def update_progressbar(self, progress: float) -> None:
+        """Update the progressbar in the main window."""
         app.progressbar.set(progress)
 
     def press_push_quiz_button(self) -> None:
@@ -252,12 +266,17 @@ class App(customtkinter.CTk):
 
     def start_over(self) -> None:
         """Reset the app to its initial state."""
-        # article_text.delete("1.0", customtkinter.END)
         self.number_entry.delete(0, customtkinter.END)
         self.number_entry.insert(0, DEFAULT_NUMBER_OF_QUESTIONS)
-        self.combobox.set("読み方クイズ")
+        self.combobox.set("単語意味クイズ")
         self.check_box.configure(state="normal")
         self.button_send.configure(state="disabled")
+        self.progressbar.set(0)
+
+        # Clear the textboxes (except the log file)
+        for tab_name, textbox in self.tab_view.textboxes.items():
+            if tab_name != "ログファイル":
+                textbox.delete("1.0", customtkinter.END)
 
 
 app = App()
