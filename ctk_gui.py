@@ -4,6 +4,7 @@ from main import main, push_quiz
 from tkinter import messagebox
 
 VERSION = "v0.0.2b"
+customtkinter.set_default_color_theme("dark-blue")
 customtkinter.set_appearance_mode("dark")
 
 DEFAULT_NUMBER_OF_QUESTIONS = "4"
