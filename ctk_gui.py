@@ -5,10 +5,11 @@ from tkinter import messagebox
 import sys
 import os
 import json
+import webbrowser
 
 VERSION = "v0.0.2b"
-customtkinter.set_default_color_theme("dark-blue")
-# customtkinter.set_appearance_mode("dark")
+button_colors = ['blue', 'green', 'dark-blue']
+customtkinter.set_default_color_theme(button_colors[2])
 
 DEFAULT_NUMBER_OF_QUESTIONS = "4"
 
@@ -18,6 +19,7 @@ LOG_LOCATION = r'txt_files/push_log.txt'
 NEWS_ARTICLE_LOCATION = r'txt_files/news_article.txt'
 NHK_ICON_LOCATION = r'./icon/nhk.ico'
 SETTINGS_FILE = "settings.json"
+GRADE_BOOK_URL = "www.google.com"
 
 
 class MyTabView(customtkinter.CTkTabview):
@@ -197,11 +199,15 @@ class App(customtkinter.CTk):
         self.button_send.configure(state="disabled")
 
         self.button_grade = customtkinter.CTkButton(
-            master=self, text="成績チェック", font=self.font)
+            master=self, text="成績チェック", command=self.open_grade_book, font=self.font)
         self.button_grade.grid(row=3, column=0, padx=340, pady=10, sticky="nw")
 
         self.grid_rowconfigure(4, weight=1)  # configure grid system
         self.grid_columnconfigure(0, weight=1)
+
+    def open_grade_book(self) -> None:
+        """Open the grade book."""
+        webbrowser.open_new(GRADE_BOOK_URL)
 
     def start_quiz_generation_thread(self) -> None:
         """Start a thread to run the quiz generation function in the background."""
