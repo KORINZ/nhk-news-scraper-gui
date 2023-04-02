@@ -13,7 +13,7 @@ from line_message_bot import send_message
 from selenium import webdriver
 from selenium.common.exceptions import WebDriverException
 from selenium.webdriver.common.by import By
-from typing import Dict, List, Tuple
+from typing import Dict, List, Tuple, Optional, Callable
 from get_definition import get_definition_list, get_number_of_word
 
 '''
@@ -178,7 +178,7 @@ def generate_definition_quiz(article, word_dict: Dict[str, str], word_list: List
 def save_quiz_vocab(news_url: str) -> None:
     """Save pushed quiz vocabularies and news url to a file"""
     now, today = today_date()
-    with open('news_article.txt', 'r', encoding='utf-8') as f:
+    with open(NEWS_ARTICLE_TXT_LOCATION, 'r', encoding='utf-8') as f:
         content = f.read()
         parts = content.split('---')
         vocab = parts[1].strip()
@@ -200,7 +200,7 @@ def push_quiz(test_type: str) -> None:
         send_message('text', questions)
 
 
-def main(test_type: str, push=False, questions=5) -> None:
+def main(quiz_type: str, push: bool = False, questions: int = 5, progress_callback: Optional[Callable] = None) -> None:
     """Establish request connection and randomly scrap a Japanese news article's content and vocabularies"""
     # Get and encode a random news url; parsing the HTML content
     url = get_news_url()
@@ -300,8 +300,8 @@ def main(test_type: str, push=False, questions=5) -> None:
         print(f'{title.text.strip()} {date.text}')
         print(f'{url}\n')
 
-    # Modify the definition list to include the original word
-    definition_list = get_definition_list(url)
+    # Modify the definition list to include the original word; get current progress
+    definition_list = get_definition_list(url, progress_callback)
     definition_list_original_word = []
     for key, meaning in zip(vocabulary_dict.keys(), definition_list):
         try:
@@ -309,7 +309,7 @@ def main(test_type: str, push=False, questions=5) -> None:
                 key + '：' + meaning.split('：', 1)[1])
         except IndexError:
             print(
-                f'\nWARNING: definition_list is missing {len(vocabulary_dict.keys()) - len(definition_list_original_word)} element(s). This is a rare case due to incomplete scrapping of selenium. Consider re-running the program or change the scale for document.body.style.transform in get_definition.py.')
+                f'\nWARNING: definition_list is missing a or some element(s). This is a rare case due to incomplete scrapping of selenium. Consider re-running the program or change the scale for document.body.style.transform in get_definition.py.')
             pass
 
     # Save definitions to a news_article.txt file
@@ -333,10 +333,10 @@ def main(test_type: str, push=False, questions=5) -> None:
 
     # Push quiz to LINE if push is True
     if push:
-        if test_type == '単語意味クイズ':
+        if quiz_type == '単語意味クイズ':
             push_quiz(DEF_QUIZ_LOCATION)
             save_quiz_vocab(url)
-        elif test_type == '読み方クイズ':
+        elif quiz_type == '読み方クイズ':
             push_quiz(PRONOUN_QUIZ_LOCATION)
             save_quiz_vocab(url)
 
@@ -350,5 +350,5 @@ if __name__ == '__main__':
     os.system('cls') if sys.platform.startswith(
         'win32') else os.system('clear')
 
-    # test_type: '単語意味クイズ' or '読み方クイズ'
-    main(test_type='単語意味クイズ', push=False, questions=5)
+    # quiz_type: '単語意味クイズ' or '読み方クイズ'
+    main(quiz_type='単語意味クイズ', push=False, questions=5)

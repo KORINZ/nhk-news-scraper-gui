@@ -1,4 +1,8 @@
 import customtkinter
+import threading
+from main import main
+from tkinter import messagebox
+import tkinter as tk
 
 VERSION = "v0.0.1a"
 customtkinter.set_appearance_mode("dark")
@@ -18,24 +22,20 @@ class MyTabView(customtkinter.CTkTabview):
         self.font = customtkinter.CTkFont(family="Yu Gothic UI", size=16)
         self._segmented_button.configure(font=self.font)
 
-        # Create Tab 1 and nested Tabview
-        self.add("ファイル")
-        self.nested_tab_view = customtkinter.CTkTabview(
-            master=self.tab("ファイル"))
-        self.nested_tab_view.pack(fill="both", expand=True)
-        self.nested_tab_view._segmented_button.configure(
-            font=self.font)  # Add this line
+        # *ファイル Tab
+        self.add("ファイル表示")
+        self.sub_txt_tabs = customtkinter.CTkTabview(
+            master=self.tab("ファイル表示"))
+        self.sub_txt_tabs.pack(fill="both", expand=True)
+        self.sub_txt_tabs._segmented_button.configure(
+            font=self.font)
+        self.textboxes = {}
 
-        # Create Tab 2
-        self.add("設定")
-        self.blank_frame = customtkinter.CTkFrame(master=self.tab("設定"))
-        self.blank_frame.pack(fill="both", expand=True)
-
-        # create tabs in nested Tabview
         def create_txt_tab(self, tab_name, txt_file) -> None:
-            self.nested_tab_view.add(tab_name)
+            """Create sub-tabs with textboxes that display the contents of txt files"""
+            self.sub_txt_tabs.add(tab_name)
             self.frame = customtkinter.CTkFrame(
-                master=self.nested_tab_view.tab(tab_name))
+                master=self.sub_txt_tabs.tab(tab_name))
 
             self.frame.pack(fill="both", expand=True)
 
@@ -43,14 +43,35 @@ class MyTabView(customtkinter.CTkTabview):
                 master=self.frame, wrap=customtkinter.WORD, font=self.font)
             self.textbox.pack(fill="both", expand=True)
 
-            with open(txt_file, 'r', encoding='utf-8') as f:
-                self.textbox.insert('insert', f.read())
+            if tab_name == "ログファイル":
+                with open(txt_file, 'r', encoding='utf-8') as f:
+                    self.textbox.insert('insert', f.read())
+            # Store the textbox in the dictionary
+            self.textboxes[tab_name] = self.textbox
 
         # add widgets on tabs in nested Tabview
         create_txt_tab(self, "ニュース文章", NEWS_ARTICLE_LOCATION)
         create_txt_tab(self, "単語意味クイズ", DEF_QUIZ_LOCATION)
         create_txt_tab(self, "読み方クイズ", PRONOUN_QUIZ_LOCATION)
         create_txt_tab(self, "ログファイル", LOG_LOCATION)
+
+        # *設定 Tab
+        self.add("設定")
+        self.settings = customtkinter.CTkFrame(master=self.tab("設定"))
+        self.settings.pack(fill="both", expand=True)
+        # Settings tab
+        self.label_theme = customtkinter.CTkLabel(
+            master=self.settings, text="テーマ:", font=self.font)
+        self.label_theme.grid(row=0, column=0, padx=(
+            20, 0), pady=20, sticky="nw")
+        self.optionmenu_var = customtkinter.StringVar(value="Dark")
+        self.appearance_mode_optionemenu = customtkinter.CTkOptionMenu(self.settings, values=["Light", "Dark", "System"],
+                                                                       command=self.change_appearance_mode_event, variable=self.optionmenu_var)
+        self.appearance_mode_optionemenu.grid(
+            row=0, column=0, padx=(100, 0), pady=20, sticky="nw")
+
+    def change_appearance_mode_event(self, new_appearance_mode: str) -> None:
+        customtkinter.set_appearance_mode(new_appearance_mode)
 
 
 class App(customtkinter.CTk):
@@ -62,6 +83,15 @@ class App(customtkinter.CTk):
         self.title(f'NHK NEWS EASY クイズ作成 CTk GUI {VERSION}')
 
         self.font = customtkinter.CTkFont(family="Yu Gothic UI", size=16)
+
+        # Create the test type radio buttons
+        # ? self.line_push_var = tk.BooleanVar()
+
+        # Create the progress bar
+        self.progressbar = customtkinter.CTkProgressBar(
+            master=self, width=200, height=20)
+        self.progressbar.grid(row=0, column=0, padx=300, pady=10, sticky="ne")
+        self.progressbar.set(0)
 
         self.label_type = customtkinter.CTkLabel(
             master=self, text="クイズタイプ:", font=self.font)
@@ -77,10 +107,10 @@ class App(customtkinter.CTk):
             master=self, text="最大問題数:", font=self.font)
         self.label_number.grid(
             row=1, column=0, padx=(20, 120), sticky="w")
-        self.entry = customtkinter.CTkEntry(
+        self.number_entry = customtkinter.CTkEntry(
             master=self, width=35, font=self.font)
-        self.entry.grid(row=1, column=0, padx=(120, 0), sticky="nw")
-        self.entry.insert(0, DEFAULT_NUMBER_OF_QUESTIONS)
+        self.number_entry.grid(row=1, column=0, padx=(120, 0), sticky="nw")
+        self.number_entry.insert(0, DEFAULT_NUMBER_OF_QUESTIONS)
 
         # Create the increment and decrement buttons
         self.increment_button = customtkinter.CTkButton(
@@ -91,7 +121,6 @@ class App(customtkinter.CTk):
             master=self, text="▼", width=30)
         self.decrement_button.grid(
             row=1, column=0, padx=(200, 0), pady=(0, 0), sticky="w")
-
         self.increment_button.configure(command=self.increment_questions)
         self.decrement_button.configure(command=self.decrement_questions)
 
@@ -99,42 +128,105 @@ class App(customtkinter.CTk):
             master=self, text="すぐLINEに発信", font=self.font)
         self.check_box.grid(row=2, column=0, padx=20, pady=10, sticky="w")
 
+        # Create the make and send buttons
         self.button_make = customtkinter.CTkButton(
             master=self, text="クイズ作成", font=self.font)
         self.button_make.grid(row=3, column=0, padx=20, pady=10, sticky="w")
+        self.button_make.configure(command=self.start_quiz_generation_thread)
 
         self.button_send = customtkinter.CTkButton(
             master=self, text="LINEに発信", font=self.font)
         self.button_send.grid(row=3, column=0, padx=180, pady=10, sticky="nw")
+        # self.button_make.configure(command=self.run_quiz_generation)
 
+        self.button_grade = customtkinter.CTkButton(
+            master=self, text="成績チェック", font=self.font)
+        self.button_grade.grid(row=3, column=0, padx=340, pady=10, sticky="nw")
+
+        # Create the tab view
         self.tab_view = MyTabView(master=self, width=860, height=300)
         self.tab_view.grid(row=4, column=0, padx=20, pady=20, sticky="nsew")
 
         self.grid_rowconfigure(4, weight=1)  # configure grid system
         self.grid_columnconfigure(0, weight=1)
 
+    def start_quiz_generation_thread(self) -> None:
+        """Start a thread to run the quiz generation function in the background."""
+        quiz_generation_thread = threading.Thread(
+            target=self.run_quiz_generation)
+        quiz_generation_thread.start()
+
+    def run_quiz_generation(self) -> None:
+        """Run the quiz generation function in the background."""
+        try:
+            # start_over()
+            self.progressbar.set(0)
+            main(self.combobox.get(), push=bool(self.check_box.get()),
+                 questions=int(self.number_entry.get()), progress_callback=self.update_progressbar)
+
+            # Automatically update the Text widget after quiz generation
+            self.update_textboxes()
+            # Enable the send button
+            self.button_send.configure(state="normal")
+            # Reset the status_label's text to an empty string after 5 seconds
+
+            # if self.line_push_var.get():
+            #     messagebox.showinfo("成功", "クイズがLINEに送信されました！")
+        except ValueError:
+            messagebox.showerror("エラー", "最大問題数を指定してください。")
+        except PermissionError as e:
+            messagebox.showerror("エラー", f"クイズの発信に失敗しました: {e}")
+        except ConnectionError as e:
+            messagebox.showerror("エラー", f"クイズの発信に失敗しました: {e}")
+        finally:
+            self.progressbar.stop()
+            # self.progressbar.set(0)
+
     def increment_questions(self) -> None:
         """Increase the value of the questions Entry."""
-        current_value_str = self.entry.get().strip()
+        current_value_str = self.number_entry.get().strip()
         if not current_value_str.isdigit():
-            self.entry.delete(0, customtkinter.END)
-            self.entry.insert(0, "1")
+            self.number_entry.delete(0, customtkinter.END)
+            self.number_entry.insert(0, "1")
         else:
             current_value = int(current_value_str)
-            self.entry.delete(0, customtkinter.END)
-            self.entry.insert(0, str(current_value + 1))
+            self.number_entry.delete(0, customtkinter.END)
+            self.number_entry.insert(0, str(current_value + 1))
 
     def decrement_questions(self) -> None:
         """Decrease the value of the questions Entry."""
-        current_value_str = self.entry.get().strip()
+        current_value_str = self.number_entry.get().strip()
         if not current_value_str.isdigit():
-            self.entry.delete(0, customtkinter.END)
-            self.entry.insert(0, "1")
+            self.number_entry.delete(0, customtkinter.END)
+            self.number_entry.insert(0, "1")
         else:
             current_value = int(current_value_str)
             if current_value > 1:
-                self.entry.delete(0, customtkinter.END)
-                self.entry.insert(0, str(current_value - 1))
+                self.number_entry.delete(0, customtkinter.END)
+                self.number_entry.insert(0, str(current_value - 1))
+
+    def update_progressbar(self, progress: float) -> None:
+        app.progressbar.set(progress)
+
+    def update_textboxes(self, initial_load: bool = False) -> None:
+        """Clear and update the textboxes after quiz generation."""
+        file_tab_mapping = {
+            "ニュース文章": NEWS_ARTICLE_LOCATION,
+            "単語意味クイズ": DEF_QUIZ_LOCATION,
+            "読み方クイズ": PRONOUN_QUIZ_LOCATION,
+            "ログファイル": LOG_LOCATION,
+        }
+
+        for tab_name, file_location in file_tab_mapping.items():
+            textbox = self.tab_view.textboxes[tab_name]
+
+            # Clear the textbox content only if it's not the initial load and the tab is not "ログファイル"
+            if not initial_load or tab_name != "ログファイル":
+                textbox.delete("1.0", customtkinter.END)
+
+            with open(file_location, "r", encoding="utf-8") as file:
+                content = file.read()
+                textbox.insert(customtkinter.END, content)
 
 
 app = App()

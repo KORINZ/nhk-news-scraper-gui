@@ -3,7 +3,7 @@ from selenium.webdriver.common.by import By
 from selenium.webdriver.common.action_chains import ActionChains
 from selenium.common.exceptions import WebDriverException
 from bs4 import BeautifulSoup
-from typing import List, Tuple
+from typing import List, Tuple, Optional, Callable
 
 import requests
 import re
@@ -27,7 +27,7 @@ def get_number_of_word(url: str) -> Tuple:
     return len(matching_ids), matching_ids, soup
 
 
-def get_definition_list(url: str) -> List:
+def get_definition_list(url: str, progress_callback: Optional[Callable] = None) -> List:
     """Get definition list of words which contain RSHOK-K- prefix"""
     # Get word ids which contain RSHOK- prefix
     matching_ids = get_number_of_word(url)[1]
@@ -48,7 +48,8 @@ def get_definition_list(url: str) -> List:
 
     definition_list = []
     # Hover over each word and print definition
-    for matching_id in matching_ids:
+    total_ids = len(matching_ids)
+    for index, matching_id in enumerate(matching_ids, start=1):
         element_to_hover_over = driver.find_element(By.ID, matching_id)
         hover = ActionChains(driver).move_to_element(element_to_hover_over)
         hover.perform()
@@ -63,6 +64,11 @@ def get_definition_list(url: str) -> List:
         text_content = text_content.replace('1', '： 1', 1)
         print(text_content)
         definition_list.append(text_content)
+
+        # Update the progress bar
+        if progress_callback:
+            progress = index / total_ids
+            progress_callback(progress)
 
     return definition_list
 
