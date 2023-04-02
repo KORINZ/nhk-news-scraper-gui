@@ -120,7 +120,7 @@ def generate_pronunciation_quiz(url: str, word_dict: Dict[str, str], questions=4
 
     with open(PRONOUN_QUIZ_LOCATION, 'a', encoding='utf-8') as f:
         for i, word in enumerate(word_dict.keys(), start=1):
-            letter = string.ascii_uppercase[i-1]
+            letter = string.ascii_uppercase[i - 1]
             f.write(f'{letter}. {word}: \n')
 
 
@@ -165,7 +165,7 @@ def generate_definition_quiz(article, word_dict: Dict[str, str], word_list: List
         f.write('\n\n')
 
         for i, word in enumerate(new_word_list, start=1):
-            letter = string.ascii_uppercase[i-1]
+            letter = string.ascii_uppercase[i - 1]
             f.write(f'{letter}. {word.split(" ")[1]}\n\n')
 
         f.write('【返信フォーマット】(英語アルファベットと数字のみ):\n')

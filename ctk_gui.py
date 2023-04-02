@@ -2,7 +2,6 @@ import customtkinter
 import threading
 from main import main
 from tkinter import messagebox
-import tkinter as tk
 
 VERSION = "v0.0.1a"
 customtkinter.set_appearance_mode("dark")
@@ -65,8 +64,10 @@ class MyTabView(customtkinter.CTkTabview):
         self.label_theme.grid(row=0, column=0, padx=(
             20, 0), pady=20, sticky="nw")
         self.optionmenu_var = customtkinter.StringVar(value="Dark")
-        self.appearance_mode_optionemenu = customtkinter.CTkOptionMenu(self.settings, values=["Light", "Dark", "System"],
-                                                                       command=self.change_appearance_mode_event, variable=self.optionmenu_var)
+        self.appearance_mode_optionemenu = customtkinter.CTkOptionMenu(self.settings,
+                                                                       values=["Light", "Dark", "System"],
+                                                                       command=self.change_appearance_mode_event,
+                                                                       variable=self.optionmenu_var)
         self.appearance_mode_optionemenu.grid(
             row=0, column=0, padx=(100, 0), pady=20, sticky="nw")
 

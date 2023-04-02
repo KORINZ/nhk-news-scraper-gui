@@ -129,6 +129,7 @@ def pretty_print_dataframe(df: pd.DataFrame) -> None:
 
 def display_table_in_popup(df, quiz_info) -> None:
     """Display the quiz results in a popup window"""
+
     def tabulate_dataframe(df) -> str:
         """Format a dataframe as a table"""
         header = ['Index'] + df.columns.tolist()
