@@ -89,8 +89,8 @@ def is_hiragana_char(character: str) -> bool:
     return u'\u3040' <= character <= u'\u309F'
 
 
-def today_date() -> Tuple:
-    """Return today's date in Japanese"""
+def get_today_date_jp() -> Tuple:
+    """Return today's date in both datetime and Japanese format"""
     now = datetime.now()
     return now, now.strftime(f'%Y年%m月%d日 {get_day_of_week_jp(now)} %H時%M分')
 
@@ -103,7 +103,7 @@ def get_day_of_week_jp(date) -> List:
 
 def generate_pronunciation_quiz(url: str, word_dict: Dict[str, str], questions=4) -> None:
     """Generate a pronunciation test for students"""
-    now, today = today_date()
+    today = get_today_date_jp()[1]
 
     # randomly remove questions until the number of questions reach a desired value
     while len(word_dict) > questions:
@@ -126,7 +126,7 @@ def generate_pronunciation_quiz(url: str, word_dict: Dict[str, str], questions=4
 
 def generate_definition_quiz(article, word_dict: Dict[str, str], word_list: List) -> str:
     """Generate a definition test for students and return the answer key"""
-    today = today_date()[1]
+    today = get_today_date_jp()[1]
 
     # randomly remove questions until the number of questions reach a desired value
     new_word_list_header = []
@@ -177,7 +177,7 @@ def generate_definition_quiz(article, word_dict: Dict[str, str], word_list: List
 
 def save_quiz_vocab(news_url: str) -> None:
     """Save pushed quiz vocabularies and news url to a file"""
-    now, today = today_date()
+    today = get_today_date_jp()[1]
     with open(NEWS_ARTICLE_TXT_LOCATION, 'r', encoding='utf-8') as f:
         content = f.read()
         parts = content.split('---')
@@ -327,7 +327,7 @@ def main(quiz_type: str, push: bool = False, questions: int = 5, progress_callba
 
     # Save quiz sent time and news url to a log file
     with open(LOG_LOCATION, 'w', encoding='utf-8') as f:
-        now = today_date()[0]
+        now = get_today_date_jp()[0]
         now = now.strftime(f'%Y-%m-%d %H:%M:%S')
         f.write(f'{now}\n{url}\n{def_answer}\n')
 
