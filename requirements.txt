@@ -6,3 +6,4 @@ line-bot-sdk
 pandas
 gspread
 tabulate
+customtkinter
