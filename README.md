@@ -30,6 +30,7 @@ See the `.txt` file in the repository for an example output.
 - `pandas`
 - `gspread`
 - `tabulate`
+- `customtkinter`
 
 ## Installation
 
