@@ -73,12 +73,8 @@ class MyTabView(ctk.CTkTabview):
         self.label_theme.grid(row=0, column=0, padx=(
             20, 0), pady=20, sticky="nw")
 
-        with open(SETTINGS_FILE, "r") as file:
-            settings = json.load(file)
-            theme = settings.get("theme")
+        self.optionmenu_var = ctk.StringVar(value=master.theme)
 
-        self.optionmenu_var = ctk.StringVar(value=theme)
-        ctk.set_appearance_mode(theme)
         self.appearance_mode_optionemenu = ctk.CTkOptionMenu(self.settings,
                                                              values=[
                                                                  "Light", "Dark", "System"],
@@ -120,14 +116,17 @@ class MyTabView(ctk.CTkTabview):
 
 class App(ctk.CTk):
     def __init__(self) -> None:
+        self.theme = self.read_settings()
+        ctk.set_appearance_mode(self.theme)
+
         super().__init__()
         self.geometry("1000x618")
-        # self.resizable(False, False)
         self.iconbitmap(NHK_ICON_LOCATION)
         self.title(f'NHK NEWS EASY クイズ作成 CTk GUI {VERSION}')
 
         # Create the tab view
-        self.tab_view = MyTabView(master=self, width=860, height=300)
+        self.tab_view = MyTabView(
+            master=self, width=860, height=300)
         self.tab_view.grid(row=4, column=0, padx=20, pady=20, sticky="nsew")
         self.load_saved_settings()
         self.font = ctk.CTkFont(family="Yu Gothic UI", size=16)
@@ -325,12 +324,20 @@ class App(ctk.CTk):
     def load_saved_settings(self) -> None:
         """Load the saved settings from the file."""
         if os.path.exists(SETTINGS_FILE):
-            try:
-                with open(SETTINGS_FILE, "r") as file:
-                    saved_settings = json.load(file)
-                    self.tab_view.update_settings(saved_settings)
-            except Exception as e:
-                print(f"Error loading settings: {e}")
+            with open(SETTINGS_FILE, "r") as file:
+                saved_settings = json.load(file)
+                self.tab_view.update_settings(saved_settings)
+
+    def read_settings(self) -> str:
+        """Read the settings from a file."""
+        try:
+            with open(SETTINGS_FILE, "r") as file:
+                settings = json.load(file)
+                theme = settings.get("theme")
+                return theme
+        except FileNotFoundError as e:
+            print(f"Settings file not found: {e}")
+            sys.exit(1)
 
 
 if __name__ == "__main__":
