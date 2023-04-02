@@ -1,15 +1,17 @@
-import customtkinter
+import customtkinter as ctk
 import threading
-from main import main, push_quiz
-from tkinter import messagebox
 import sys
 import os
 import json
-import webbrowser
+
+from main import main, push_quiz
+from tkinter import messagebox
+from webbrowser import open_new_tab
+
 
 VERSION = "v0.0.2b"
 button_colors = ['blue', 'green', 'dark-blue']
-customtkinter.set_default_color_theme(button_colors[2])
+ctk.set_default_color_theme(button_colors[2])
 
 DEFAULT_NUMBER_OF_QUESTIONS = "4"
 
@@ -22,15 +24,15 @@ SETTINGS_FILE = "settings.json"
 GRADE_BOOK_URL = "www.google.com"
 
 
-class MyTabView(customtkinter.CTkTabview):
+class MyTabView(ctk.CTkTabview):
     def __init__(self, master, **kwargs) -> None:
         super().__init__(master, **kwargs)
-        self.font = customtkinter.CTkFont(family="Yu Gothic UI", size=16)
+        self.font = ctk.CTkFont(family="Yu Gothic UI", size=16)
         self._segmented_button.configure(font=self.font)
 
         # *ファイル Tab
         self.add("ファイル表示")
-        self.sub_txt_tabs = customtkinter.CTkTabview(
+        self.sub_txt_tabs = ctk.CTkTabview(
             master=self.tab("ファイル表示"))
         self.sub_txt_tabs.pack(fill="both", expand=True)
         self.sub_txt_tabs._segmented_button.configure(
@@ -40,13 +42,13 @@ class MyTabView(customtkinter.CTkTabview):
         def create_txt_tab(self, tab_name, txt_file) -> None:
             """Create sub-tabs with textboxes that display the contents of txt files"""
             self.sub_txt_tabs.add(tab_name)
-            self.frame = customtkinter.CTkFrame(
+            self.frame = ctk.CTkFrame(
                 master=self.sub_txt_tabs.tab(tab_name))
 
             self.frame.pack(fill="both", expand=True)
 
-            self.textbox = customtkinter.CTkTextbox(
-                master=self.frame, wrap=customtkinter.WORD, font=self.font)
+            self.textbox = ctk.CTkTextbox(
+                master=self.frame, wrap=ctk.WORD, font=self.font)
             self.textbox.pack(fill="both", expand=True)
 
             if tab_name == "ログファイル":
@@ -63,10 +65,10 @@ class MyTabView(customtkinter.CTkTabview):
 
         # *設定 Tab
         self.add("設定")
-        self.settings = customtkinter.CTkFrame(master=self.tab("設定"))
+        self.settings = ctk.CTkFrame(master=self.tab("設定"))
         self.settings.pack(fill="both", expand=True)
         # Settings tab
-        self.label_theme = customtkinter.CTkLabel(
+        self.label_theme = ctk.CTkLabel(
             master=self.settings, text="テーマ:", font=self.font)
         self.label_theme.grid(row=0, column=0, padx=(
             20, 0), pady=20, sticky="nw")
@@ -75,17 +77,17 @@ class MyTabView(customtkinter.CTkTabview):
             settings = json.load(file)
             theme = settings.get("theme")
 
-        self.optionmenu_var = customtkinter.StringVar(value=theme)
-        customtkinter.set_appearance_mode(theme)
-        self.appearance_mode_optionemenu = customtkinter.CTkOptionMenu(self.settings,
-                                                                       values=[
-                                                                           "Light", "Dark", "System"],
-                                                                       command=self.change_appearance_mode_event,
-                                                                       variable=self.optionmenu_var)
+        self.optionmenu_var = ctk.StringVar(value=theme)
+        ctk.set_appearance_mode(theme)
+        self.appearance_mode_optionemenu = ctk.CTkOptionMenu(self.settings,
+                                                             values=[
+                                                                 "Light", "Dark", "System"],
+                                                             command=self.change_appearance_mode_event,
+                                                             variable=self.optionmenu_var)
         self.appearance_mode_optionemenu.grid(
             row=0, column=0, padx=(100, 0), pady=20, sticky="nw")
 
-        self.button_save = customtkinter.CTkButton(
+        self.button_save = ctk.CTkButton(
             master=self.settings, text="保存", font=self.font, command=self.save_settings)
         self.button_save.grid(row=1, column=0, padx=(
             20, 0), pady=20, sticky="sw")
@@ -94,7 +96,7 @@ class MyTabView(customtkinter.CTkTabview):
         self.settings.grid_columnconfigure(0, weight=1)
 
     def change_appearance_mode_event(self, new_appearance_mode: str) -> None:
-        customtkinter.set_appearance_mode(new_appearance_mode)
+        ctk.set_appearance_mode(new_appearance_mode)
 
     def save_settings(self) -> None:
         """Save the current settings to a file."""
@@ -116,7 +118,7 @@ class MyTabView(customtkinter.CTkTabview):
             self.optionmenu_var.set(theme)
 
 
-class App(customtkinter.CTk):
+class App(ctk.CTk):
     def __init__(self) -> None:
         super().__init__()
         self.geometry("1000x618")
@@ -128,77 +130,77 @@ class App(customtkinter.CTk):
         self.tab_view = MyTabView(master=self, width=860, height=300)
         self.tab_view.grid(row=4, column=0, padx=20, pady=20, sticky="nsew")
         self.load_saved_settings()
-        self.font = customtkinter.CTkFont(family="Yu Gothic UI", size=16)
+        self.font = ctk.CTkFont(family="Yu Gothic UI", size=16)
 
         # Create the test type radio buttons
         # ? self.line_push_var = tk.BooleanVar()
 
         # Create the progress bar
-        self.label_progress = customtkinter.CTkLabel(
+        self.label_progress = ctk.CTkLabel(
             master=self, text="プログレス:", font=self.font)
         self.label_progress.grid(
             row=0, column=0, padx=(0, 450), pady=10, sticky="ne")
 
-        self.progressbar = customtkinter.CTkProgressBar(
+        self.progressbar = ctk.CTkProgressBar(
             master=self, width=250, height=20)
         self.progressbar.grid(row=0, column=0, padx=(
             0, 180), pady=15, sticky="ne")
         self.progressbar.set(0)
 
-        self.reset_button = customtkinter.CTkButton(
+        self.reset_button = ctk.CTkButton(
             master=self, text="やり直す", font=self.font, command=self.start_over)
         self.reset_button.grid(
             row=0, column=0, padx=(0, 20), pady=10, sticky="ne")
         self.reset_button.configure(state="disabled")
 
-        self.label_type = customtkinter.CTkLabel(
+        self.label_type = ctk.CTkLabel(
             master=self, text="クイズタイプ:", font=self.font)
         self.label_type.grid(row=0, column=0, padx=(
             20, 0), pady=10, sticky="nw")
 
-        self.combobox = customtkinter.CTkComboBox(
+        self.combobox = ctk.CTkComboBox(
             master=self, values=["単語意味クイズ", "読み方クイズ"], font=self.font)
         self.combobox.grid(row=0, column=0, padx=(
             120, 10), pady=10, sticky="nw")
 
-        self.label_number = customtkinter.CTkLabel(
+        self.label_number = ctk.CTkLabel(
             master=self, text="最大問題数:", font=self.font)
         self.label_number.grid(
             row=1, column=0, padx=(20, 120), sticky="w")
-        self.number_entry = customtkinter.CTkEntry(
+        self.number_entry = ctk.CTkEntry(
             master=self, width=35, font=self.font)
         self.number_entry.grid(row=1, column=0, padx=(120, 0), sticky="nw")
         self.number_entry.insert(0, DEFAULT_NUMBER_OF_QUESTIONS)
 
         # Create the increment and decrement buttons
-        self.increment_button = customtkinter.CTkButton(
+        self.increment_button = ctk.CTkButton(
             master=self, text="▲", width=30)
         self.increment_button.grid(
             row=1, column=0, padx=(160, 0), pady=(0, 0), sticky="w")
-        self.decrement_button = customtkinter.CTkButton(
+        self.decrement_button = ctk.CTkButton(
             master=self, text="▼", width=30)
         self.decrement_button.grid(
             row=1, column=0, padx=(200, 0), pady=(0, 0), sticky="w")
         self.increment_button.configure(command=self.increment_questions)
         self.decrement_button.configure(command=self.decrement_questions)
 
-        self.check_box = customtkinter.CTkCheckBox(
+        self.check_box = ctk.CTkCheckBox(
             master=self, text="すぐLINEに発信", font=self.font)
         self.check_box.grid(row=2, column=0, padx=20, pady=10, sticky="w")
 
         # Create the make and send buttons
-        self.button_make = customtkinter.CTkButton(
+        self.button_make = ctk.CTkButton(
             master=self, text="クイズ作成", font=self.font)
         self.button_make.grid(row=3, column=0, padx=20, pady=10, sticky="w")
         self.button_make.configure(command=self.start_quiz_generation_thread)
 
-        self.button_send = customtkinter.CTkButton(
+        self.button_send = ctk.CTkButton(
             master=self, text="LINEに発信", font=self.font)
         self.button_send.grid(row=3, column=0, padx=180, pady=10, sticky="nw")
         self.button_send.configure(command=self.press_push_quiz_button)
         self.button_send.configure(state="disabled")
 
-        self.button_grade = customtkinter.CTkButton(
+        self.button_grade = ctk.CTkButton(
             master=self, text="成績チェック", command=self.open_grade_book, font=self.font)
         self.button_grade.grid(row=3, column=0, padx=340, pady=10, sticky="nw")
 
@@ -207,7 +209,7 @@ class App(customtkinter.CTk):
 
     def open_grade_book(self) -> None:
         """Open the grade book."""
-        webbrowser.open_new(GRADE_BOOK_URL)
+        open_new_tab(GRADE_BOOK_URL)
 
     def start_quiz_generation_thread(self) -> None:
         """Start a thread to run the quiz generation function in the background."""
@@ -249,23 +251,23 @@ class App(customtkinter.CTk):
         """Increase the value of the questions Entry."""
         current_value_str = self.number_entry.get().strip()
         if not current_value_str.isdigit():
-            self.number_entry.delete(0, customtkinter.END)
+            self.number_entry.delete(0, ctk.END)
             self.number_entry.insert(0, "1")
         else:
             current_value = int(current_value_str)
-            self.number_entry.delete(0, customtkinter.END)
+            self.number_entry.delete(0, ctk.END)
             self.number_entry.insert(0, str(current_value + 1))
 
     def decrement_questions(self) -> None:
         """Decrease the value of the questions Entry."""
         current_value_str = self.number_entry.get().strip()
         if not current_value_str.isdigit():
-            self.number_entry.delete(0, customtkinter.END)
+            self.number_entry.delete(0, ctk.END)
             self.number_entry.insert(0, "1")
         else:
             current_value = int(current_value_str)
             if current_value > 1:
-                self.number_entry.delete(0, customtkinter.END)
+                self.number_entry.delete(0, ctk.END)
                 self.number_entry.insert(0, str(current_value - 1))
 
     def update_progressbar(self, progress: float) -> None:
@@ -300,15 +302,15 @@ class App(customtkinter.CTk):
 
             # Clear the textbox content only if it's not the initial load and the tab is not "ログファイル"
             if not initial_load or tab_name != "ログファイル":
-                textbox.delete("1.0", customtkinter.END)
+                textbox.delete("1.0", ctk.END)
 
             with open(file_location, "r", encoding="utf-8") as file:
                 content = file.read()
-                textbox.insert(customtkinter.END, content)
+                textbox.insert(ctk.END, content)
 
     def start_over(self) -> None:
         """Reset the app to its initial state."""
-        self.number_entry.delete(0, customtkinter.END)
+        self.number_entry.delete(0, ctk.END)
         self.number_entry.insert(0, DEFAULT_NUMBER_OF_QUESTIONS)
         self.combobox.set("単語意味クイズ")
         self.check_box.configure(state="normal")
@@ -318,7 +320,7 @@ class App(customtkinter.CTk):
         # Clear the textboxes (except the log file)
         for tab_name, textbox in self.tab_view.textboxes.items():
             if tab_name != "ログファイル":
-                textbox.delete("1.0", customtkinter.END)
+                textbox.delete("1.0", ctk.END)
 
     def load_saved_settings(self) -> None:
         """Load the saved settings from the file."""
@@ -331,5 +333,6 @@ class App(customtkinter.CTk):
                 print(f"Error loading settings: {e}")
 
 
-app = App()
-app.mainloop()
+if __name__ == "__main__":
+    app = App()
+    app.mainloop()

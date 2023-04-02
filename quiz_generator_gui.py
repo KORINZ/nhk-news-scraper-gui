@@ -58,7 +58,7 @@ def enter_line_confidential() -> None:
     popup_height = 105
     x_position = main_window_x + (main_window_width // 2) - (popup_width // 2)
     y_position = main_window_y + \
-                 (main_window_height // 2) - (popup_height // 2)
+        (main_window_height // 2) - (popup_height // 2)
 
     # Set the position and dimensions of the popup
     line_confidential_popup.geometry(
@@ -344,4 +344,6 @@ load_log_button.grid(row=4, column=1, padx=(390, 0), sticky="w")
 root.grid_columnconfigure(1, weight=1)
 root.grid_rowconfigure(5, weight=1)
 
-root.mainloop()
+
+if __name__ == "__main__":
+    root.mainloop()
