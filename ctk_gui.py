@@ -3,10 +3,12 @@ import threading
 from main import main, push_quiz
 from tkinter import messagebox
 import sys
+import os
+import json
 
 VERSION = "v0.0.2b"
 customtkinter.set_default_color_theme("dark-blue")
-customtkinter.set_appearance_mode("dark")
+# customtkinter.set_appearance_mode("dark")
 
 DEFAULT_NUMBER_OF_QUESTIONS = "4"
 
@@ -15,6 +17,7 @@ DEF_QUIZ_LOCATION = r'txt_files/definition_quiz.txt'
 LOG_LOCATION = r'txt_files/push_log.txt'
 NEWS_ARTICLE_LOCATION = r'txt_files/news_article.txt'
 NHK_ICON_LOCATION = r'./icon/nhk.ico'
+SETTINGS_FILE = "settings.json"
 
 
 class MyTabView(customtkinter.CTkTabview):
@@ -65,7 +68,13 @@ class MyTabView(customtkinter.CTkTabview):
             master=self.settings, text="テーマ:", font=self.font)
         self.label_theme.grid(row=0, column=0, padx=(
             20, 0), pady=20, sticky="nw")
-        self.optionmenu_var = customtkinter.StringVar(value="Dark")
+
+        with open(SETTINGS_FILE, "r") as file:
+            settings = json.load(file)
+            theme = settings.get("theme")
+
+        self.optionmenu_var = customtkinter.StringVar(value=theme)
+        customtkinter.set_appearance_mode(theme)
         self.appearance_mode_optionemenu = customtkinter.CTkOptionMenu(self.settings,
                                                                        values=[
                                                                            "Light", "Dark", "System"],
@@ -74,8 +83,35 @@ class MyTabView(customtkinter.CTkTabview):
         self.appearance_mode_optionemenu.grid(
             row=0, column=0, padx=(100, 0), pady=20, sticky="nw")
 
+        self.button_save = customtkinter.CTkButton(
+            master=self.settings, text="保存", font=self.font, command=self.save_settings)
+        self.button_save.grid(row=1, column=0, padx=(
+            20, 0), pady=20, sticky="sw")
+
+        self.settings.grid_rowconfigure(1, weight=1)  # configure grid system
+        self.settings.grid_columnconfigure(0, weight=1)
+
     def change_appearance_mode_event(self, new_appearance_mode: str) -> None:
         customtkinter.set_appearance_mode(new_appearance_mode)
+
+    def save_settings(self) -> None:
+        """Save the current settings to a file."""
+        settings = {
+            "theme": self.optionmenu_var.get(),
+            # Add other settings here
+        }
+
+        try:
+            with open(SETTINGS_FILE, "w") as file:
+                json.dump(settings, file)
+        except Exception as e:
+            print(f"Error saving settings: {e}")
+
+    def update_settings(self, settings: dict) -> None:
+        """Update the UI according to the provided settings."""
+        theme = settings.get("theme")
+        if theme:
+            self.optionmenu_var.set(theme)
 
 
 class App(customtkinter.CTk):
@@ -86,6 +122,10 @@ class App(customtkinter.CTk):
         self.iconbitmap(NHK_ICON_LOCATION)
         self.title(f'NHK NEWS EASY クイズ作成 CTk GUI {VERSION}')
 
+        # Create the tab view
+        self.tab_view = MyTabView(master=self, width=860, height=300)
+        self.tab_view.grid(row=4, column=0, padx=20, pady=20, sticky="nsew")
+        self.load_saved_settings()
         self.font = customtkinter.CTkFont(family="Yu Gothic UI", size=16)
 
         # Create the test type radio buttons
@@ -159,10 +199,6 @@ class App(customtkinter.CTk):
         self.button_grade = customtkinter.CTkButton(
             master=self, text="成績チェック", font=self.font)
         self.button_grade.grid(row=3, column=0, padx=340, pady=10, sticky="nw")
-
-        # Create the tab view
-        self.tab_view = MyTabView(master=self, width=860, height=300)
-        self.tab_view.grid(row=4, column=0, padx=20, pady=20, sticky="nsew")
 
         self.grid_rowconfigure(4, weight=1)  # configure grid system
         self.grid_columnconfigure(0, weight=1)
@@ -277,6 +313,16 @@ class App(customtkinter.CTk):
         for tab_name, textbox in self.tab_view.textboxes.items():
             if tab_name != "ログファイル":
                 textbox.delete("1.0", customtkinter.END)
+
+    def load_saved_settings(self) -> None:
+        """Load the saved settings from the file."""
+        if os.path.exists(SETTINGS_FILE):
+            try:
+                with open(SETTINGS_FILE, "r") as file:
+                    saved_settings = json.load(file)
+                    self.tab_view.update_settings(saved_settings)
+            except Exception as e:
+                print(f"Error loading settings: {e}")
 
 
 app = App()
