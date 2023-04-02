@@ -1,9 +1,9 @@
 import customtkinter
 import threading
-from main import main
+from main import main, push_quiz
 from tkinter import messagebox
 
-VERSION = "v0.0.1a"
+VERSION = "v0.0.2b"
 customtkinter.set_appearance_mode("dark")
 
 DEFAULT_NUMBER_OF_QUESTIONS = "4"
@@ -65,7 +65,8 @@ class MyTabView(customtkinter.CTkTabview):
             20, 0), pady=20, sticky="nw")
         self.optionmenu_var = customtkinter.StringVar(value="Dark")
         self.appearance_mode_optionemenu = customtkinter.CTkOptionMenu(self.settings,
-                                                                       values=["Light", "Dark", "System"],
+                                                                       values=[
+                                                                           "Light", "Dark", "System"],
                                                                        command=self.change_appearance_mode_event,
                                                                        variable=self.optionmenu_var)
         self.appearance_mode_optionemenu.grid(
@@ -89,9 +90,14 @@ class App(customtkinter.CTk):
         # ? self.line_push_var = tk.BooleanVar()
 
         # Create the progress bar
+        self.label_progress = customtkinter.CTkLabel(
+            master=self, text="プログレス:", font=self.font)
+        self.label_progress.grid(
+            row=0, column=0, padx=(500, 10), pady=10, sticky="nw")
         self.progressbar = customtkinter.CTkProgressBar(
             master=self, width=200, height=20)
-        self.progressbar.grid(row=0, column=0, padx=300, pady=10, sticky="ne")
+        self.progressbar.grid(row=0, column=0, padx=(
+            575, 10), pady=15, sticky="nw")
         self.progressbar.set(0)
 
         self.label_type = customtkinter.CTkLabel(
@@ -138,7 +144,8 @@ class App(customtkinter.CTk):
         self.button_send = customtkinter.CTkButton(
             master=self, text="LINEに発信", font=self.font)
         self.button_send.grid(row=3, column=0, padx=180, pady=10, sticky="nw")
-        # self.button_make.configure(command=self.run_quiz_generation)
+        self.button_send.configure(command=self.press_push_quiz_button)
+        self.button_send.configure(state="disabled")
 
         self.button_grade = customtkinter.CTkButton(
             master=self, text="成績チェック", font=self.font)
@@ -153,15 +160,16 @@ class App(customtkinter.CTk):
 
     def start_quiz_generation_thread(self) -> None:
         """Start a thread to run the quiz generation function in the background."""
-        quiz_generation_thread = threading.Thread(
+        self.quiz_generation_thread = threading.Thread(
             target=self.run_quiz_generation)
-        quiz_generation_thread.start()
+        self.quiz_generation_thread.daemon = True  # Set the daemon attribute to True
+        self.quiz_generation_thread.start()
 
     def run_quiz_generation(self) -> None:
         """Run the quiz generation function in the background."""
         try:
-            # start_over()
             self.progressbar.set(0)
+            self.button_send.configure(state="disabled")
             main(self.combobox.get(), push=bool(self.check_box.get()),
                  questions=int(self.number_entry.get()), progress_callback=self.update_progressbar)
 
@@ -169,10 +177,9 @@ class App(customtkinter.CTk):
             self.update_textboxes()
             # Enable the send button
             self.button_send.configure(state="normal")
-            # Reset the status_label's text to an empty string after 5 seconds
 
-            # if self.line_push_var.get():
-            #     messagebox.showinfo("成功", "クイズがLINEに送信されました！")
+            if self.check_box.get():
+                messagebox.showinfo("成功", "クイズがLINEに送信されました！")
         except ValueError:
             messagebox.showerror("エラー", "最大問題数を指定してください。")
         except PermissionError as e:
@@ -181,7 +188,6 @@ class App(customtkinter.CTk):
             messagebox.showerror("エラー", f"クイズの発信に失敗しました: {e}")
         finally:
             self.progressbar.stop()
-            # self.progressbar.set(0)
 
     def increment_questions(self) -> None:
         """Increase the value of the questions Entry."""
@@ -209,6 +215,20 @@ class App(customtkinter.CTk):
     def update_progressbar(self, progress: float) -> None:
         app.progressbar.set(progress)
 
+    def press_push_quiz_button(self) -> None:
+        """Send the quiz to LINE."""
+        try:
+            if self.combobox.get() == "読み方クイズ":
+                push_quiz(PRONOUN_QUIZ_LOCATION)
+            else:
+                push_quiz(DEF_QUIZ_LOCATION)
+            messagebox.showinfo("成功", "クイズを発信しました！")
+            with open(LOG_LOCATION, 'a', encoding='utf-8') as f:
+                f.write('PUSHED\n')
+            self.update_textboxes()
+        except PermissionError as e:
+            messagebox.showerror("エラー", f"クイズの発信に失敗しました: {e}")
+
     def update_textboxes(self, initial_load: bool = False) -> None:
         """Clear and update the textboxes after quiz generation."""
         file_tab_mapping = {
@@ -228,6 +248,15 @@ class App(customtkinter.CTk):
             with open(file_location, "r", encoding="utf-8") as file:
                 content = file.read()
                 textbox.insert(customtkinter.END, content)
+
+    def start_over(self) -> None:
+        """Reset the app to its initial state."""
+        # article_text.delete("1.0", customtkinter.END)
+        self.number_entry.delete(0, customtkinter.END)
+        self.number_entry.insert(0, DEFAULT_NUMBER_OF_QUESTIONS)
+        self.combobox.set("読み方クイズ")
+        self.check_box.configure(state="normal")
+        self.button_send.configure(state="disabled")
 
 
 app = App()
