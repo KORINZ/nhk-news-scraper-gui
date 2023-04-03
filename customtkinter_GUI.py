@@ -4,7 +4,7 @@ import sys
 import os
 import json
 
-from main import main, push_quiz, get_today_date_jp
+from main import main, push_quiz
 from tkinter import messagebox
 from webbrowser import open_new_tab
 from datetime import datetime
@@ -96,7 +96,7 @@ class MyTabView(ctk.CTkTabview):
 
         # *保存 Button
         self.button_save = ctk.CTkButton(
-            master=self.settings, text="保存", font=self.font, command=self.save_settings)
+            master=self.settings, text="保存", font=self.font, fg_color="transparent", border_width=2, text_color=("gray10", "#DCE4EE"), command=self.save_settings)
         self.button_save.grid(row=2, column=0, padx=(
             20, 0), pady=20, sticky="sw")
 
