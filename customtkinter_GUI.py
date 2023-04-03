@@ -26,8 +26,9 @@ GRADE_BOOK_URL = "www.google.com"
 
 
 class MyTabView(ctk.CTkTabview):
-    def __init__(self, master, **kwargs) -> None:
+    def __init__(self, master, datetime_label, **kwargs) -> None:
         super().__init__(master, **kwargs)
+        self.datetime_label = datetime_label
         self.font = ctk.CTkFont(family="Yu Gothic UI", size=16)
         self._segmented_button.configure(font=self.font)
 
@@ -121,7 +122,7 @@ class MyTabView(ctk.CTkTabview):
 
         settings = {
             "theme": english_value,
-            "display_time": True if self.display_time_switch.get() == 1 else False,
+            "display_time": 1 if self.display_time_switch.get() == 1 else 0,
             # Add other settings (pending)
         }
 
@@ -138,21 +139,18 @@ class MyTabView(ctk.CTkTabview):
             self.update_optionmenu_var(theme)
 
         display_time = settings.get("display_time")
-        if display_time is not None:
-            if display_time:
-                self.display_time_switch.toggle()
-                self.toggle_datetime_display()
+        if display_time == 1:
+            self.display_time_switch.select()  # Set the switch to ON state
+        else:
+            self.display_time_switch.deselect()  # Set the switch to OFF state
+            self.toggle_datetime_display()  # Toggle display_time only if it is set to False
 
     def toggle_datetime_display(self) -> None:
         """Toggle the date and time label visibility."""
-        print(self.master)  # Debugging line: print the self.master object
-        # Debugging line: print the type of self.master
-        print(type(self.master))
-
-        if self.master.datetime_label.winfo_viewable():
-            self.master.datetime_label.grid_remove()
+        if self.display_time_switch.get() == 0:
+            self.datetime_label.grid_remove()
         else:
-            self.master.datetime_label.grid()
+            self.datetime_label.grid()
 
 
 class App(ctk.CTk):
@@ -164,13 +162,20 @@ class App(ctk.CTk):
         self.geometry("1000x618")
         self.iconbitmap(NHK_ICON_LOCATION)
         self.title(f'NHK NEWS EASY クイズ作成 CTk GUI {VERSION}')
+        self.font = ctk.CTkFont(family="Yu Gothic UI", size=16)
+
+        # Create a label to display the date and time
+        self.datetime_label = ctk.CTkLabel(
+            master=self, text="", font=self.font)
+        self.datetime_label.grid(
+            row=3, column=0, padx=(0, 20), pady=10, sticky="ne")
+        self.update_datetime_label()
 
         # Create the tab view
         self.tab_view = MyTabView(
-            master=self, width=860, height=300)
+            master=self, datetime_label=self.datetime_label, width=860, height=300)
         self.tab_view.grid(row=4, column=0, padx=20, pady=20, sticky="nsew")
         self.load_saved_settings()
-        self.font = ctk.CTkFont(family="Yu Gothic UI", size=16)
 
         # Create the test type radio buttons
         # ? self.line_push_var = tk.BooleanVar()
@@ -243,13 +248,6 @@ class App(ctk.CTk):
         self.button_grade = ctk.CTkButton(
             master=self, text="成績チェック", command=self.open_grade_book, font=self.font)
         self.button_grade.grid(row=3, column=0, padx=340, pady=10, sticky="nw")
-
-        # Create a label to display the date and time
-        self.datetime_label = ctk.CTkLabel(
-            master=self, text="", font=self.font)
-        self.datetime_label.grid(
-            row=3, column=0, padx=(0, 20), pady=10, sticky="ne")
-        self.update_datetime_label()
 
         self.grid_rowconfigure(4, weight=1)  # configure grid system
         self.grid_columnconfigure(0, weight=1)
