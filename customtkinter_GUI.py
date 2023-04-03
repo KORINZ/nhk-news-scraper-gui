@@ -91,7 +91,7 @@ class MyTabView(ctk.CTkTabview):
                                                              command=self.change_appearance_mode_event,
                                                              variable=self.optionmenu_var, font=self.font)
         self.appearance_mode_optionemenu.grid(
-            row=0, column=0, padx=(100, 0), pady=20, sticky="nw")
+            row=0, column=0, padx=(70, 0), pady=20, sticky="nw")
 
         # *テキストファイルフォルダー開く Button
         self.txt_file_folder_button = ctk.CTkButton(
@@ -99,17 +99,23 @@ class MyTabView(ctk.CTkTabview):
         self.txt_file_folder_button.grid(
             row=0, column=0, padx=(0, 20), pady=20, sticky="ne")
 
+        # *成績チェックURL入力 Button
+        self.grade_check_url_button = ctk.CTkButton(master=self.settings,
+                                                    text="成績チェックURL入力", command=self.open_input_dialog_event, font=self.font)
+        self.grade_check_url_button.grid(row=1, column=0, padx=(0, 20),
+                                         pady=0, sticky="ne")
+
         # *LINE機密情報入力 Button
         self.line_info_button = ctk.CTkButton(master=self.settings,
-                                              text="LINE機密情報入力", font=self.font)
-        self.line_info_button.grid(row=1, column=0, padx=(0, 20),
-                                   pady=0, sticky="ne")
+                                              text="LINE機密情報入力", command=self.open_input_dialog_event, font=self.font)
+        self.line_info_button.grid(row=2, column=0, padx=(0, 20),
+                                   pady=20, sticky="ne")
 
         # *ヘルプ Button
         self.help_button = ctk.CTkButton(master=self.settings,
                                          text="ヘルプ", command=self.open_project_page, font=self.font)
-        self.help_button.grid(row=2, column=0, padx=(0, 20),
-                              pady=20, sticky="ne")
+        self.help_button.grid(row=3, column=0, padx=(0, 20),
+                              pady=0, sticky="ne")
 
         # *時間表示 Switch
         self.display_time_switch = ctk.CTkSwitch(
@@ -117,30 +123,46 @@ class MyTabView(ctk.CTkTabview):
         self.display_time_switch.grid(
             row=1, column=0, padx=(20, 0), pady=0, sticky="nw")
 
+        # *デフォルトクイズタイプ OptionMenu
+        self.label_default_quiz_type = ctk.CTkLabel(master=self.settings,
+                                                    text="デフォルトクイズタイプ:", font=self.font)
+        self.label_default_quiz_type.grid(row=2, column=0, padx=(
+            20, 0), pady=20, sticky="nw")
+        self.default_quiz_type_dropdown = ctk.CTkOptionMenu(
+            master=self.settings, values=["単語意味クイズ", "読み方クイズ"], font=self.font)
+        self.default_quiz_type_dropdown.grid(row=2, column=0, padx=(170, 0),
+                                             pady=20, sticky="nw")
+
         # *デフォルト問題数 Entry
         self.label_default_number_of_questions = ctk.CTkLabel(master=self.settings,
                                                               text="デフォルト最大問題数:", font=self.font)
         self.label_default_number_of_questions.grid(
-            row=2, column=0, padx=(20, 0), pady=20, sticky="nw")
+            row=3, column=0, padx=(20, 0), pady=0, sticky="nw")
         self.set_default_number_of_questions_entry = ctk.CTkEntry(
-            master=self.settings, font=self.font, width=35)
+            master=self.settings, font=self.font, width=32)
         self.set_default_number_of_questions_entry.grid(
-            row=2, column=0, padx=(170, 0), pady=20, sticky="nw")
+            row=3, column=0, padx=(170, 0), pady=0, sticky="nw")
+
+        # *常にすぐLINEに送信 Checkbox
+        self.checkbox_always_send_to_line = ctk.CTkCheckBox(master=self.settings,
+                                                            text="常にすぐLINEに送信をチェック", font=self.font)
+        self.checkbox_always_send_to_line.grid(row=4, column=0, padx=(20, 0),
+                                               pady=20, sticky="nw")
 
         # *保存 Button
         self.button_save = ctk.CTkButton(
             master=self.settings, text="保存", font=self.font, fg_color="transparent", border_width=2, text_color=("gray10", "#DCE4EE"), command=self.save_settings)
-        self.button_save.grid(row=3, column=0, padx=(
+        self.button_save.grid(row=5, column=0, padx=(
             20, 0), pady=20, sticky="sw")
 
         # *バージョン Label
         self.label_version = ctk.CTkLabel(
             master=self.settings, text="バージョン: " + VERSION, font=self.font)
-        self.label_version.grid(row=3, column=0, padx=(
+        self.label_version.grid(row=5, column=0, padx=(
             0, 20), pady=20, sticky="se")
 
         # Configure grid system
-        self.settings.grid_rowconfigure(3, weight=1)
+        self.settings.grid_rowconfigure(4, weight=1)
         self.settings.grid_columnconfigure(0, weight=1)
 
     def change_appearance_mode_event(self, new_appearance_mode: str) -> None:
@@ -203,6 +225,10 @@ class MyTabView(ctk.CTkTabview):
         """Open the project page in the default browser."""
         open_new_tab(PROJECTION_URL)
 
+    def open_input_dialog_event(self) -> None:
+        line_token = ctk.CTkInputDialog(
+            text="アクセストークンを入力してください:", title="アクセストークン")
+
 
 class App(ctk.CTk):
     def __init__(self) -> None:
@@ -264,7 +290,7 @@ class App(ctk.CTk):
         self.label_number.grid(
             row=1, column=0, padx=(20, 120), sticky="w")
         self.number_entry = ctk.CTkEntry(
-            master=self, width=35, font=self.font)
+            master=self, font=self.font, width=32)
         self.number_entry.grid(row=1, column=0, padx=(120, 0), sticky="nw")
         self.number_entry.insert(0, DEFAULT_NUMBER_OF_QUESTIONS)
 
