@@ -202,9 +202,9 @@ class App(ctk.CTk):
         self.label_type.grid(row=0, column=0, padx=(
             20, 0), pady=10, sticky="nw")
 
-        self.combobox = ctk.CTkComboBox(
+        self.quiz_type_dropdown = ctk.CTkOptionMenu(
             master=self, values=["単語意味クイズ", "読み方クイズ"], font=self.font)
-        self.combobox.grid(row=0, column=0, padx=(
+        self.quiz_type_dropdown.grid(row=0, column=0, padx=(
             120, 10), pady=10, sticky="nw")
 
         self.label_number = ctk.CTkLabel(
@@ -271,7 +271,7 @@ class App(ctk.CTk):
             if self.number_entry.get() == "0":
                 messagebox.showerror("エラー", "最大問題数を指定してください。")
                 sys.exit(1)
-            main(self.combobox.get(), push=bool(self.check_box.get()),
+            main(self.quiz_type_dropdown.get(), push=bool(self.check_box.get()),
                  questions=int(self.number_entry.get()), progress_callback=self.update_progressbar)
 
             # Automatically update the Text widget after quiz generation
@@ -321,7 +321,7 @@ class App(ctk.CTk):
     def press_push_quiz_button(self) -> None:
         """Send the quiz to LINE."""
         try:
-            if self.combobox.get() == "読み方クイズ":
+            if self.quiz_type_dropdown.get() == "読み方クイズ":
                 push_quiz(PRONOUN_QUIZ_LOCATION)
             else:
                 push_quiz(DEF_QUIZ_LOCATION)
@@ -356,7 +356,7 @@ class App(ctk.CTk):
         """Reset the app to its initial state."""
         self.number_entry.delete(0, ctk.END)
         self.number_entry.insert(0, DEFAULT_NUMBER_OF_QUESTIONS)
-        self.combobox.set("単語意味クイズ")
+        self.quiz_type_dropdown.set("単語意味クイズ")
         self.check_box.configure(state="normal")
         self.button_send.configure(state="disabled")
         self.progressbar.set(0)
