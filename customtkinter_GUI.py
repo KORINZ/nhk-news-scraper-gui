@@ -2,9 +2,10 @@ import customtkinter as ctk
 import threading
 import sys
 import os
+import subprocess
 import json
 
-from main import main, push_quiz
+from main import main, push_quiz, save_quiz_vocab
 from tkinter import messagebox
 from webbrowser import open_new_tab
 from datetime import datetime
@@ -19,6 +20,7 @@ PRONOUN_QUIZ_LOCATION = r'txt_files/pronunciation_quiz.txt'
 DEF_QUIZ_LOCATION = r'txt_files/definition_quiz.txt'
 LOG_LOCATION = r'txt_files/push_log.txt'
 NEWS_ARTICLE_LOCATION = r'txt_files/news_article.txt'
+PAST_QUIZ_LOCATION = r'txt_files/past_quiz_data.txt'
 NHK_ICON_LOCATION = r'./icon/nhk.ico'
 SETTINGS_FILE = "settings.json"
 GRADE_BOOK_URL = "www.google.com"
@@ -30,6 +32,7 @@ class MyTabView(ctk.CTkTabview):
         self.datetime_label = datetime_label
         self.font = ctk.CTkFont(family="Yu Gothic UI", size=16)
         self._segmented_button.configure(font=self.font)
+        self.txt_folder_path = "txt_files"
 
         # *ファイル Tab
         self.add("ファイル表示")
@@ -52,7 +55,7 @@ class MyTabView(ctk.CTkTabview):
                 master=self.frame, wrap=ctk.WORD, font=self.font)
             self.textbox.pack(fill="both", expand=True)
 
-            if tab_name == "ログファイル":
+            if tab_name == "ログファイル" or tab_name == "過去のクイズ":
                 with open(txt_file, 'r', encoding='utf-8') as f:
                     self.textbox.insert('insert', f.read())
             # Store the textbox in the dictionary
@@ -63,6 +66,7 @@ class MyTabView(ctk.CTkTabview):
         create_txt_tab(self, "単語意味クイズ", DEF_QUIZ_LOCATION)
         create_txt_tab(self, "読み方クイズ", PRONOUN_QUIZ_LOCATION)
         create_txt_tab(self, "ログファイル", LOG_LOCATION)
+        create_txt_tab(self, "過去のクイズ", PAST_QUIZ_LOCATION)
 
         # *設定 Tab
         self.add("設定")
@@ -88,30 +92,54 @@ class MyTabView(ctk.CTkTabview):
         self.appearance_mode_optionemenu.grid(
             row=0, column=0, padx=(100, 0), pady=20, sticky="nw")
 
+        # *テキストファイルフォルダー開く Button
+        self.txt_file_folder_button = ctk.CTkButton(
+            master=self.settings, text="テキストファイルフォルダーを開く", command=self.open_txt_files_folder, font=self.font)
+        self.txt_file_folder_button.grid(
+            row=0, column=0, padx=(0, 20), pady=20, sticky="ne")
+
         # *時間表示 Switch
         self.display_time_switch = ctk.CTkSwitch(
             master=self.settings, text="時間表示", font=self.font, command=self.toggle_datetime_display)
         self.display_time_switch.grid(
             row=1, column=0, padx=(20, 0), pady=0, sticky="nw")
 
+        # *デフォルト問題数 Entry
+        self.label_default_number_of_questions = ctk.CTkLabel(master=self.settings,
+                                                              text="デフォルト最大問題数:", font=self.font)
+        self.label_default_number_of_questions.grid(
+            row=2, column=0, padx=(20, 0), pady=20, sticky="nw")
+        self.set_default_number_of_questions_entry = ctk.CTkEntry(
+            master=self.settings, font=self.font, width=35)
+        self.set_default_number_of_questions_entry.grid(
+            row=2, column=0, padx=(170, 0), pady=20, sticky="nw")
+
         # *保存 Button
         self.button_save = ctk.CTkButton(
             master=self.settings, text="保存", font=self.font, fg_color="transparent", border_width=2, text_color=("gray10", "#DCE4EE"), command=self.save_settings)
-        self.button_save.grid(row=2, column=0, padx=(
+        self.button_save.grid(row=3, column=0, padx=(
             20, 0), pady=20, sticky="sw")
 
-        self.settings.grid_rowconfigure(2, weight=1)  # configure grid system
+        self.settings.grid_rowconfigure(3, weight=1)  # configure grid system
         self.settings.grid_columnconfigure(0, weight=1)
 
     def change_appearance_mode_event(self, new_appearance_mode: str) -> None:
+        """Change the appearance mode when the OptionMenu value is changed"""
         english_value = {v: k for k, v in self.optionmenu_mapping.items()}[
             new_appearance_mode]
         ctk.set_appearance_mode(english_value)
 
     def update_optionmenu_var(self, english_value: str) -> None:
+        """Update the value of the OptionMenu variable"""
         japanese_value = self.optionmenu_mapping.get(english_value)
         if japanese_value:
             self.optionmenu_var.set(japanese_value)
+
+    def open_txt_files_folder(self) -> None:
+        """Open the folder containing the txt files."""
+        if not os.path.exists(self.txt_folder_path):
+            os.makedirs(self.txt_folder_path)
+        subprocess.run(['explorer', os.path.abspath(self.txt_folder_path)])
 
     def save_settings(self) -> None:
         """Save the current settings to a file."""
@@ -326,8 +354,11 @@ class App(ctk.CTk):
             else:
                 push_quiz(DEF_QUIZ_LOCATION)
             messagebox.showinfo("成功", "クイズを発信しました！")
-            with open(LOG_LOCATION, 'a', encoding='utf-8') as f:
+            with open(LOG_LOCATION, 'a+', encoding='utf-8') as f:
                 f.write('PUSHED\n')
+                f.seek(0)
+                url = f.readlines()[1]
+            save_quiz_vocab(url)
             self.update_textboxes()
         except PermissionError as e:
             messagebox.showerror("エラー", f"クイズの発信に失敗しました: {e}")
@@ -338,14 +369,15 @@ class App(ctk.CTk):
             "ニュース文章": NEWS_ARTICLE_LOCATION,
             "単語意味クイズ": DEF_QUIZ_LOCATION,
             "読み方クイズ": PRONOUN_QUIZ_LOCATION,
+            "過去のクイズ": PAST_QUIZ_LOCATION,
             "ログファイル": LOG_LOCATION,
         }
 
         for tab_name, file_location in file_tab_mapping.items():
             textbox = self.tab_view.textboxes[tab_name]
 
-            # Clear the textbox content only if it's not the initial load and the tab is not "ログファイル"
-            if not initial_load or tab_name != "ログファイル":
+            # Clear the textbox if it's not the log file or the past quiz file
+            if not initial_load or (tab_name != "ログファイル" and tab_name != "過去のクイズ"):
                 textbox.delete("1.0", ctk.END)
 
             with open(file_location, "r", encoding="utf-8") as file:
@@ -363,7 +395,7 @@ class App(ctk.CTk):
 
         # Clear the textboxes (except the log file)
         for tab_name, textbox in self.tab_view.textboxes.items():
-            if tab_name != "ログファイル":
+            if tab_name != "ログファイル" and tab_name != "過去のクイズ":
                 textbox.delete("1.0", ctk.END)
 
     def load_saved_settings(self) -> None:
