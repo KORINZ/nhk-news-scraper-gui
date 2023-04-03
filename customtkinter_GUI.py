@@ -90,7 +90,7 @@ class MyTabView(ctk.CTkTabview):
 
         # *時間表示 Switch
         self.display_time_switch = ctk.CTkSwitch(
-            master=self.settings, text="時間表示", font=self.font)
+            master=self.settings, text="時間表示", font=self.font, command=self.toggle_datetime_display)
         self.display_time_switch.grid(
             row=1, column=0, padx=(20, 0), pady=0, sticky="nw")
 
@@ -121,6 +121,7 @@ class MyTabView(ctk.CTkTabview):
 
         settings = {
             "theme": english_value,
+            "display_time": True if self.display_time_switch.get() == 1 else False,
             # Add other settings (pending)
         }
 
@@ -135,6 +136,23 @@ class MyTabView(ctk.CTkTabview):
         theme = settings.get("theme")
         if theme:
             self.update_optionmenu_var(theme)
+
+        display_time = settings.get("display_time")
+        if display_time is not None:
+            if display_time:
+                self.display_time_switch.toggle()
+                self.toggle_datetime_display()
+
+    def toggle_datetime_display(self) -> None:
+        """Toggle the date and time label visibility."""
+        print(self.master)  # Debugging line: print the self.master object
+        # Debugging line: print the type of self.master
+        print(type(self.master))
+
+        if self.master.datetime_label.winfo_viewable():
+            self.master.datetime_label.grid_remove()
+        else:
+            self.master.datetime_label.grid()
 
 
 class App(ctk.CTk):
@@ -225,6 +243,13 @@ class App(ctk.CTk):
         self.button_grade = ctk.CTkButton(
             master=self, text="成績チェック", command=self.open_grade_book, font=self.font)
         self.button_grade.grid(row=3, column=0, padx=340, pady=10, sticky="nw")
+
+        # Create a label to display the date and time
+        self.datetime_label = ctk.CTkLabel(
+            master=self, text="", font=self.font)
+        self.datetime_label.grid(
+            row=3, column=0, padx=(0, 20), pady=10, sticky="ne")
+        self.update_datetime_label()
 
         self.grid_rowconfigure(4, weight=1)  # configure grid system
         self.grid_columnconfigure(0, weight=1)
@@ -361,6 +386,12 @@ class App(ctk.CTk):
         except FileNotFoundError as e:
             print(f"Settings file not found: {e}")
             sys.exit(1)
+
+    def update_datetime_label(self) -> None:
+        """Update the date and time label with the current date and time."""
+        current_time = datetime.now().strftime("%Y-%m-%d %H:%M:%S")
+        self.datetime_label.configure(text=current_time)
+        self.after(1000, self.update_datetime_label)
 
 
 if __name__ == "__main__":
