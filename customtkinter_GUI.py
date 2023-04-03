@@ -10,7 +10,7 @@ from tkinter import messagebox
 from webbrowser import open_new_tab
 from datetime import datetime
 
-VERSION = "v0.0.2b"
+VERSION = "v0.0.3b"
 button_colors = ['blue', 'green', 'dark-blue']
 ctk.set_default_color_theme(button_colors[2])
 
@@ -98,6 +98,12 @@ class MyTabView(ctk.CTkTabview):
         self.txt_file_folder_button.grid(
             row=0, column=0, padx=(0, 20), pady=20, sticky="ne")
 
+        # *LINE機密情報入力 Button
+        self.line_info_button = ctk.CTkButton(master=self.settings,
+                                              text="LINE機密情報入力", font=self.font)
+        self.line_info_button.grid(row=1, column=0, padx=(0, 20),
+                                   pady=0, sticky="ne")
+
         # *時間表示 Switch
         self.display_time_switch = ctk.CTkSwitch(
             master=self.settings, text="時間表示", font=self.font, command=self.toggle_datetime_display)
@@ -120,7 +126,14 @@ class MyTabView(ctk.CTkTabview):
         self.button_save.grid(row=3, column=0, padx=(
             20, 0), pady=20, sticky="sw")
 
-        self.settings.grid_rowconfigure(3, weight=1)  # configure grid system
+        # *バージョン Label
+        self.label_version = ctk.CTkLabel(
+            master=self.settings, text="バージョン: " + VERSION, font=self.font)
+        self.label_version.grid(row=3, column=0, padx=(
+            0, 20), pady=20, sticky="se")
+
+        # Configure grid system
+        self.settings.grid_rowconfigure(3, weight=1)
         self.settings.grid_columnconfigure(0, weight=1)
 
     def change_appearance_mode_event(self, new_appearance_mode: str) -> None:
