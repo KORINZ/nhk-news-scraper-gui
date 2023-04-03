@@ -4,11 +4,10 @@ import sys
 import os
 import json
 
-from main import main, push_quiz
+from main import main, push_quiz, get_today_date_jp
 from tkinter import messagebox
 from webbrowser import open_new_tab
 from datetime import datetime
-import time
 
 VERSION = "v0.0.2b"
 button_colors = ['blue', 'green', 'dark-blue']
@@ -387,7 +386,13 @@ class App(ctk.CTk):
 
     def update_datetime_label(self) -> None:
         """Update the date and time label with the current date and time."""
-        current_time = datetime.now().strftime("%Y-%m-%d %H:%M:%S")
+        def weekday_in_jp(weekday: int) -> str:
+            japanese_weekdays = ["月", "火", "水", "木", "金", "土", "日"]
+            return japanese_weekdays[weekday]
+
+        now = datetime.now()
+        current_time = now.strftime(
+            f"%Y-%m-%d ({weekday_in_jp(now.weekday())}) %H:%M:%S")
         self.datetime_label.configure(text=current_time)
         self.after(1000, self.update_datetime_label)
 
