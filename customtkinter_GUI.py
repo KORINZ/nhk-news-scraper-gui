@@ -24,6 +24,7 @@ PAST_QUIZ_LOCATION = r'txt_files/past_quiz_data.txt'
 NHK_ICON_LOCATION = r'./icon/nhk.ico'
 SETTINGS_FILE = "settings.json"
 GRADE_BOOK_URL = "www.google.com"
+PROJECTION_URL = "https://github.com/KORINZ/nhk_news_web_easy_scraper"
 
 
 class MyTabView(ctk.CTkTabview):
@@ -103,6 +104,12 @@ class MyTabView(ctk.CTkTabview):
                                               text="LINE機密情報入力", font=self.font)
         self.line_info_button.grid(row=1, column=0, padx=(0, 20),
                                    pady=0, sticky="ne")
+
+        # *ヘルプ Button
+        self.help_button = ctk.CTkButton(master=self.settings,
+                                         text="ヘルプ", command=self.open_project_page, font=self.font)
+        self.help_button.grid(row=2, column=0, padx=(0, 20),
+                              pady=20, sticky="ne")
 
         # *時間表示 Switch
         self.display_time_switch = ctk.CTkSwitch(
@@ -191,6 +198,10 @@ class MyTabView(ctk.CTkTabview):
             self.datetime_label.grid_remove()
         else:
             self.datetime_label.grid()
+
+    def open_project_page(self) -> None:
+        """Open the project page in the default browser."""
+        open_new_tab(PROJECTION_URL)
 
 
 class App(ctk.CTk):
