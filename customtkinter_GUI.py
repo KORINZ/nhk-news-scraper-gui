@@ -7,7 +7,8 @@ import json
 from main import main, push_quiz
 from tkinter import messagebox
 from webbrowser import open_new_tab
-
+from datetime import datetime
+import time
 
 VERSION = "v0.0.2b"
 button_colors = ['blue', 'green', 'dark-blue']
@@ -67,12 +68,12 @@ class MyTabView(ctk.CTkTabview):
         self.add("設定")
         self.settings = ctk.CTkFrame(master=self.tab("設定"))
         self.settings.pack(fill="both", expand=True)
-        # Settings tab
+
+        # *テーマ OptionMenu
         self.label_theme = ctk.CTkLabel(
             master=self.settings, text="テーマ:", font=self.font)
         self.label_theme.grid(row=0, column=0, padx=(
             20, 0), pady=20, sticky="nw")
-
         self.optionmenu_var = ctk.StringVar(value=master.theme)
         self.optionmenu_mapping = {
             "Light": "ライト",
@@ -87,12 +88,19 @@ class MyTabView(ctk.CTkTabview):
         self.appearance_mode_optionemenu.grid(
             row=0, column=0, padx=(100, 0), pady=20, sticky="nw")
 
+        # *時間表示 Switch
+        self.display_time_switch = ctk.CTkSwitch(
+            master=self.settings, text="時間表示", font=self.font)
+        self.display_time_switch.grid(
+            row=1, column=0, padx=(20, 0), pady=0, sticky="nw")
+
+        # *保存 Button
         self.button_save = ctk.CTkButton(
             master=self.settings, text="保存", font=self.font, command=self.save_settings)
-        self.button_save.grid(row=1, column=0, padx=(
+        self.button_save.grid(row=2, column=0, padx=(
             20, 0), pady=20, sticky="sw")
 
-        self.settings.grid_rowconfigure(1, weight=1)  # configure grid system
+        self.settings.grid_rowconfigure(2, weight=1)  # configure grid system
         self.settings.grid_columnconfigure(0, weight=1)
 
     def change_appearance_mode_event(self, new_appearance_mode: str) -> None:
