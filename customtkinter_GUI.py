@@ -30,9 +30,12 @@ PROJECTION_URL = "https://github.com/KORINZ/nhk_news_web_easy_scraper"
 
 
 class MyTabView(ctk.CTkTabview):
-    def __init__(self, master, datetime_label, **kwargs) -> None:
+    def __init__(self, master, datetime_label, quiz_type_dropdown, quiz_number_entry, instant_push_check_box, **kwargs) -> None:
         super().__init__(master, **kwargs)
         self.datetime_label = datetime_label
+        self.quiz_type_dropdown = quiz_type_dropdown
+        self.quiz_number_entry = quiz_number_entry
+        self.instant_push_check_box = instant_push_check_box
         self.font = ctk.CTkFont(family="Yu Gothic UI", size=16)
         self._segmented_button.configure(font=self.font)
         self.txt_folder_path = "txt_files"
@@ -215,8 +218,8 @@ class MyTabView(ctk.CTkTabview):
             with open(SETTINGS_FILE, "w") as file:
                 json.dump(settings, file)
             self.show_saved_label()  # Call this function when saving is successful
-        except Exception as e:
-            print(f"Error saving settings: {e}")
+        except FileNotFoundError as e:
+            print(f"Error: {e}")
 
     def update_settings(self, settings_file: dict) -> None:
         """Update the UI according to the provided settings."""
@@ -236,17 +239,21 @@ class MyTabView(ctk.CTkTabview):
         # Update the default_question_type dropdown
         quiz_type = str(settings_file.get("default_question_type"))
         self.default_quiz_type_dropdown.set(quiz_type)
+        self.quiz_type_dropdown.set(quiz_type)
 
         # Update the default_number_of_questions entry
         number = settings_file.get("default_number_of_questions")
         self.set_default_number_of_questions_entry.insert(0, number)
+        self.quiz_number_entry.insert(0, number)
 
         # Update the always_send_to_line checkbox
         status = settings_file.get("always_send_to_line")
         if status == 1:
             self.checkbox_always_send_to_line.select()
+            self.instant_push_check_box.select()
         else:
             self.checkbox_always_send_to_line.deselect()
+            self.instant_push_check_box.deselect()
 
         # Update the scaling optionmenu
         scaling = str(settings_file.get("scaling"))
@@ -306,9 +313,38 @@ class App(ctk.CTk):
             row=3, column=0, padx=(0, 20), pady=10, sticky="ne")
         self.update_datetime_label()
 
-        # Create the tab view
+        # Create the quiz type dropdown
+        self.quiz_type_label = ctk.CTkLabel(
+            master=self, text="クイズタイプ:", font=self.font)
+        self.quiz_type_label.grid(row=0, column=0, padx=(
+            20, 0), pady=10, sticky="nw")
+
+        self.quiz_type_dropdown = ctk.CTkOptionMenu(
+            master=self, values=["単語意味クイズ", "読み方クイズ"], font=self.font)
+        self.quiz_type_dropdown.grid(row=0, column=0, padx=(
+            120, 10), pady=10, sticky="nw")
+
+        # Create the number of questions entry
+        self.label_number = ctk.CTkLabel(
+            master=self, text="最大問題数:", font=self.font)
+        self.label_number.grid(
+            row=1, column=0, padx=(20, 120), sticky="w")
+        self.quiz_number_entry = ctk.CTkEntry(
+            master=self, font=self.font, width=32)
+        self.quiz_number_entry.grid(
+            row=1, column=0, padx=(120, 0), sticky="nw")
+
+        # Create the check box for instant LINE push
+        self.instant_push_check_box = ctk.CTkCheckBox(
+            master=self, text="すぐLINEに発信", font=self.font)
+        self.instant_push_check_box.grid(
+            row=2, column=0, padx=20, pady=10, sticky="w")
+
+        # Create the tab view instance
         self.tab_view = MyTabView(
-            master=self, datetime_label=self.datetime_label, width=860, height=300)
+            master=self, datetime_label=self.datetime_label, quiz_type_dropdown=self.quiz_type_dropdown,
+            quiz_number_entry=self.quiz_number_entry, instant_push_check_box=self.instant_push_check_box,
+            width=860, height=300)
         self.tab_view.grid(row=4, column=0, padx=20, pady=20, sticky="nsew")
         self.load_saved_settings()
 
@@ -327,30 +363,12 @@ class App(ctk.CTk):
             0, 180), pady=15, sticky="ne")
         self.progressbar.set(0)
 
+        # Create the reset button
         self.reset_button = ctk.CTkButton(
             master=self, text="やり直す", font=self.font, command=self.start_over)
         self.reset_button.grid(
             row=0, column=0, padx=(0, 20), pady=10, sticky="ne")
         self.reset_button.configure(state="disabled")
-
-        self.label_type = ctk.CTkLabel(
-            master=self, text="クイズタイプ:", font=self.font)
-        self.label_type.grid(row=0, column=0, padx=(
-            20, 0), pady=10, sticky="nw")
-
-        self.quiz_type_dropdown = ctk.CTkOptionMenu(
-            master=self, values=["単語意味クイズ", "読み方クイズ"], font=self.font)
-        self.quiz_type_dropdown.grid(row=0, column=0, padx=(
-            120, 10), pady=10, sticky="nw")
-
-        self.label_number = ctk.CTkLabel(
-            master=self, text="最大問題数:", font=self.font)
-        self.label_number.grid(
-            row=1, column=0, padx=(20, 120), sticky="w")
-        self.number_entry = ctk.CTkEntry(
-            master=self, font=self.font, width=32)
-        self.number_entry.grid(row=1, column=0, padx=(120, 0), sticky="nw")
-        self.number_entry.insert(0, DEFAULT_NUMBER_OF_QUESTIONS)
 
         # Create the increment and decrement buttons
         self.increment_button = ctk.CTkButton(
@@ -363,10 +381,6 @@ class App(ctk.CTk):
             row=1, column=0, padx=(200, 0), pady=(0, 0), sticky="w")
         self.increment_button.configure(command=self.increment_questions)
         self.decrement_button.configure(command=self.decrement_questions)
-
-        self.check_box = ctk.CTkCheckBox(
-            master=self, text="すぐLINEに発信", font=self.font)
-        self.check_box.grid(row=2, column=0, padx=20, pady=10, sticky="w")
 
         # Create the make and send buttons
         self.button_make = ctk.CTkButton(
@@ -404,11 +418,11 @@ class App(ctk.CTk):
             self.progressbar.set(0)
             self.button_send.configure(state="disabled")
             self.reset_button.configure(state="disabled")
-            if self.number_entry.get() == "0":
+            if self.quiz_number_entry.get() <= "0":
                 messagebox.showerror("エラー", "最大問題数を指定してください。")
                 sys.exit(1)
-            main(self.quiz_type_dropdown.get(), push=bool(self.check_box.get()),
-                 questions=int(self.number_entry.get()), progress_callback=self.update_progressbar)
+            main(self.quiz_type_dropdown.get(), push=bool(self.instant_push_check_box.get()),
+                 questions=int(self.quiz_number_entry.get()), progress_callback=self.update_progressbar)
 
             # Automatically update the Text widget after quiz generation
             self.update_textboxes()
@@ -416,7 +430,7 @@ class App(ctk.CTk):
             self.button_send.configure(state="normal")
             self.reset_button.configure(state="normal")
 
-            if self.check_box.get():
+            if self.instant_push_check_box.get():
                 messagebox.showinfo("成功", "クイズがLINEに送信されました！")
         except ValueError:
             messagebox.showerror("エラー", "最大問題数を指定してください。")
@@ -429,26 +443,26 @@ class App(ctk.CTk):
 
     def increment_questions(self) -> None:
         """Increase the value of the questions Entry."""
-        current_value_str = self.number_entry.get().strip()
+        current_value_str = self.quiz_number_entry.get().strip()
         if not current_value_str.isdigit():
-            self.number_entry.delete(0, ctk.END)
-            self.number_entry.insert(0, "1")
+            self.quiz_number_entry.delete(0, ctk.END)
+            self.quiz_number_entry.insert(0, "1")
         else:
             current_value = int(current_value_str)
-            self.number_entry.delete(0, ctk.END)
-            self.number_entry.insert(0, str(current_value + 1))
+            self.quiz_number_entry.delete(0, ctk.END)
+            self.quiz_number_entry.insert(0, str(current_value + 1))
 
     def decrement_questions(self) -> None:
         """Decrease the value of the questions Entry."""
-        current_value_str = self.number_entry.get().strip()
+        current_value_str = self.quiz_number_entry.get().strip()
         if not current_value_str.isdigit():
-            self.number_entry.delete(0, ctk.END)
-            self.number_entry.insert(0, "1")
+            self.quiz_number_entry.delete(0, ctk.END)
+            self.quiz_number_entry.insert(0, "1")
         else:
             current_value = int(current_value_str)
             if current_value > 1:
-                self.number_entry.delete(0, ctk.END)
-                self.number_entry.insert(0, str(current_value - 1))
+                self.quiz_number_entry.delete(0, ctk.END)
+                self.quiz_number_entry.insert(0, str(current_value - 1))
 
     def update_progressbar(self, progress: float) -> None:
         """Update the progressbar in the main window."""
@@ -494,14 +508,13 @@ class App(ctk.CTk):
 
     def start_over(self) -> None:
         """Reset the app to its initial state."""
-        self.number_entry.delete(0, ctk.END)
-        self.number_entry.insert(0, DEFAULT_NUMBER_OF_QUESTIONS)
-        self.quiz_type_dropdown.set("単語意味クイズ")
-        self.check_box.configure(state="normal")
+        self.quiz_number_entry.delete(0, ctk.END)
         self.button_send.configure(state="disabled")
+        self.reset_button.configure(state="disabled")
         self.progressbar.set(0)
+        self.load_saved_settings()
 
-        # Clear the textboxes (except the log file)
+        # Clear the textboxes (except the log and past_quiz files)
         for tab_name, textbox in self.tab_view.textboxes.items():
             if tab_name != "ログファイル" and tab_name != "過去のクイズ":
                 textbox.delete("1.0", ctk.END)
