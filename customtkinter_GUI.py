@@ -12,6 +12,7 @@ from typing import Tuple, Callable
 
 # TODO: Fix scaling issue for pop-up windows
 # TODO: Create json file for token and user id
+# TODO: Add clear past quiz data button, prompt user to confirm
 
 VERSION = "v1.0.0"
 button_colors = ['blue', 'green', 'dark-blue']
