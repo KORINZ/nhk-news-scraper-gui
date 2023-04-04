@@ -12,7 +12,6 @@ from typing import Tuple, Callable
 
 # TODO: Add icons for pop-up windows
 # TODO: Create json file for token and user id
-# TODO: Add clear past quiz data button, prompt user to confirm
 
 VERSION = "v1.0.0"
 button_colors = ['blue', 'green', 'dark-blue']
@@ -119,20 +118,20 @@ class MyTabView(ctk.CTkTabview):
         # *成績チェックURL入力 Button
         self.grade_check_url_button = ctk.CTkButton(master=self.settings,
                                                     text="成績チェックURL入力", command=self.enter_grade_book_url, font=self.font)
-        self.grade_check_url_button.grid(row=1, column=0, padx=(0, 20),
-                                         pady=0, sticky="ne")
+        self.grade_check_url_button.grid(row=1, column=0, padx=(0, 0),
+                                         pady=0, sticky="n")
 
         # *LINE機密情報入力 Button
         self.line_info_button = ctk.CTkButton(master=self.settings,
                                               text="LINE機密情報入力", command=self.enter_line_confidential, font=self.font)
-        self.line_info_button.grid(row=2, column=0, padx=(0, 20),
-                                   pady=20, sticky="ne")
+        self.line_info_button.grid(row=2, column=0, padx=(0, 0),
+                                   pady=20, sticky="n")
 
         # *ヘルプ Button
         self.help_button = ctk.CTkButton(master=self.settings,
                                          text="ヘルプ", command=self.open_project_page, font=self.font)
-        self.help_button.grid(row=3, column=0, padx=(0, 20),
-                              pady=0, sticky="ne")
+        self.help_button.grid(row=2, column=0, padx=(0, 20),
+                              pady=20, sticky="ne")
 
         # *時間表示 Switch
         self.display_time_switch = ctk.CTkSwitch(
@@ -178,6 +177,12 @@ class MyTabView(ctk.CTkTabview):
         self.button_save.grid(row=5, column=0, padx=(
             20, 0), pady=20, sticky="sw")
 
+        # *消除した Label
+        self.past_quizzes_deleted_label = ctk.CTkLabel(
+            master=self.settings, text="", font=self.font)
+        self.past_quizzes_deleted_label.grid(
+            row=3, column=0, padx=(0, 20), pady=0, sticky="ne")
+
         # *バージョン Label
         self.label_version = ctk.CTkLabel(
             master=self.settings, text="(2023) NHK NEWS WEB EASY クイズ作成: " + VERSION, font=self.font)
@@ -194,9 +199,61 @@ class MyTabView(ctk.CTkTabview):
         self.scaling_optionemenu.grid(
             row=0, column=0, padx=(100, 0), pady=20, sticky="n")
 
+        # *過去のクイズを消除 Button
+        self.delete_past_quizzes_button = ctk.CTkButton(master=self.settings,
+                                                        text="過去のクイズを消除", command=self.confirm_delete_past_quizzes, font=self.font, fg_color="#8B0000")
+        self.delete_past_quizzes_button.grid(row=1, column=0, padx=(0, 20),
+                                             pady=0, sticky="ne")
+
         # Configure grid system
         self.settings.grid_rowconfigure(4, weight=1)
         self.settings.grid_columnconfigure(0, weight=1)
+
+    def confirm_delete_past_quizzes(self) -> None:
+        """Confirm delete past quizzes popup window"""
+        delete_past_quiz_popup = ctk.CTkToplevel(self)
+        delete_past_quiz_popup.title("過去のクイズを消除")
+        # delete_past_quiz_popup.iconbitmap(LINE_ICON_LOCATION)
+
+        pop_width, pop_height, x_position, y_position = self.calculate_window_size(
+            popup_width=600, popup_height=200)
+        delete_past_quiz_popup.geometry(
+            f"{pop_width}x{pop_height}+{x_position}+{y_position}")
+
+        ctk.CTkLabel(delete_past_quiz_popup, text="過去のクイズを完全に削除しますか？CONFIRMを入力してください。", font=self.font).grid(
+            row=0, column=0, padx=(0, 0), pady=20, sticky="n")
+        confirm_entry = ctk.CTkEntry(
+            delete_past_quiz_popup, width=400, font=self.font)
+        confirm_entry.grid(
+            row=1, column=0, padx=(0, 0), pady=0, sticky="n")
+
+        self.cancel_delete_past_quizzes_button = ctk.CTkButton(
+            delete_past_quiz_popup, text="キャンセル", font=self.font, command=delete_past_quiz_popup.destroy)
+        self.cancel_delete_past_quizzes_button.grid(
+            row=2, column=0, padx=(20, 0), pady=20, sticky="w")
+        self.confirm_delete_past_quizzes_button = ctk.CTkButton(
+            delete_past_quiz_popup, text="削除", font=self.font, command=lambda: self.delete_past_quizzes(delete_past_quiz_popup) if confirm_entry.get() == "CONFIRM" else None)
+        self.confirm_delete_past_quizzes_button.grid(row=2, column=0, padx=(
+            0, 20), pady=20, sticky="e")
+
+        # Configure the rows and columns to have weight for scaling
+        delete_past_quiz_popup.grid_rowconfigure(0, weight=1)
+        delete_past_quiz_popup.grid_rowconfigure(1, weight=1)
+        delete_past_quiz_popup.grid_rowconfigure(
+            2, weight=1)  # Added a row for the buttons
+        delete_past_quiz_popup.grid_columnconfigure(0, weight=1)
+
+        delete_past_quiz_popup.grab_set()
+
+    def delete_past_quizzes(self, popup) -> None:
+        """Delete all the past quizzes in the quizzes folder."""
+        with open(PAST_QUIZ_LOCATION, "w", encoding="utf-8") as f:
+            f.write("")
+            self.past_quizzes_deleted_label.configure(
+                text="過去のクイズを消除しました。")
+            self.past_quizzes_deleted_label.after(
+                3000, lambda: self.past_quizzes_deleted_label.configure(text=""))
+        popup.destroy()
 
     def change_appearance_mode_event(self, new_appearance_mode: str) -> None:
         """Change the appearance mode when the OptionMenu value is changed"""
@@ -444,7 +501,7 @@ class App(ctk.CTk):
         ctk.set_widget_scaling(self.scaling)
 
         super().__init__()
-        self.geometry("1150x710")
+        self.geometry("1160x717")
         self.iconbitmap(NHK_ICON_LOCATION)
         self.title(f'NHK NEWS EASY クイズ作成 CTk GUI {VERSION}')
         self.font = ctk.CTkFont(family="Yu Gothic UI", size=16)
