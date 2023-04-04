@@ -161,6 +161,16 @@ class MyTabView(ctk.CTkTabview):
         self.label_version.grid(row=5, column=0, padx=(
             0, 20), pady=20, sticky="se")
 
+        # *スケーリング OptionMenu
+        self.scaling_label = ctk.CTkLabel(
+            self.settings, text="スケーリング:", font=self.font)
+        self.scaling_label.grid(
+            row=0, column=0, padx=(0, 145), pady=20, sticky="n")
+        self.scaling_optionemenu = ctk.CTkOptionMenu(self.settings, values=["80%", "90%", "100%", "110%", "120%"],
+                                                     command=self.change_scaling_event, font=self.font)
+        self.scaling_optionemenu.grid(
+            row=0, column=0, padx=(100, 0), pady=20, sticky="n")
+
         # Configure grid system
         self.settings.grid_rowconfigure(4, weight=1)
         self.settings.grid_columnconfigure(0, weight=1)
@@ -195,6 +205,7 @@ class MyTabView(ctk.CTkTabview):
             "default_question_type": self.default_quiz_type_dropdown.get(),
             "default_number_of_questions": self.set_default_number_of_questions_entry.get(),
             "always_send_to_line": 1 if self.checkbox_always_send_to_line.get() == 1 else 0,
+            "scaling": self.scaling_optionemenu.get()
             # Add other settings (pending)
         }
 
@@ -234,6 +245,10 @@ class MyTabView(ctk.CTkTabview):
         else:
             self.checkbox_always_send_to_line.deselect()
 
+        # Update the scaling optionmenu
+        scaling = str(settings_file.get("scaling"))
+        self.scaling_optionemenu.set(scaling)
+
     def toggle_datetime_display(self) -> None:
         """Toggle the date and time label visibility."""
         if self.display_time_switch.get() == 0:
@@ -248,6 +263,10 @@ class MyTabView(ctk.CTkTabview):
     def open_input_dialog_event(self) -> None:
         line_token = ctk.CTkInputDialog(
             text="アクセストークンを入力してください:", title="アクセストークン")
+
+    def change_scaling_event(self, new_scaling: str) -> None:
+        new_scaling_float = int(new_scaling.replace("%", "")) / 100
+        ctk.set_widget_scaling(new_scaling_float)
 
 
 class App(ctk.CTk):
