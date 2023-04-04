@@ -9,6 +9,7 @@ from main import main, push_quiz, save_quiz_vocab
 from tkinter import messagebox
 from webbrowser import open_new_tab
 from datetime import datetime
+from typing import Tuple
 
 VERSION = "v0.0.3b"
 button_colors = ['blue', 'green', 'dark-blue']
@@ -265,14 +266,16 @@ class MyTabView(ctk.CTkTabview):
             text="アクセストークンを入力してください:", title="アクセストークン")
 
     def change_scaling_event(self, new_scaling: str) -> None:
-        new_scaling_float = int(new_scaling.replace("%", "")) / 100
+        new_scaling_float = int(new_scaling.strip("%")) / 100
         ctk.set_widget_scaling(new_scaling_float)
 
 
 class App(ctk.CTk):
     def __init__(self) -> None:
-        self.theme = self.read_settings()
+        self.theme = self.read_settings()[0]
+        self.scaling = int(self.read_settings()[1].strip("%")) / 100
         ctk.set_appearance_mode(self.theme)
+        ctk.set_widget_scaling(self.scaling)
 
         super().__init__()
         self.geometry("1000x618")
@@ -494,13 +497,14 @@ class App(ctk.CTk):
                 saved_settings = json.load(file)
                 self.tab_view.update_settings(saved_settings)
 
-    def read_settings(self) -> str:
+    def read_settings(self) -> Tuple[str, ...]:
         """Read the settings from a file."""
         try:
             with open(SETTINGS_FILE, "r") as file:
                 settings = json.load(file)
                 theme = settings.get("theme")
-                return theme
+                scaling = settings.get("scaling")
+                return theme, scaling
         except FileNotFoundError as e:
             print(f"Settings file not found: {e}")
             sys.exit(1)
