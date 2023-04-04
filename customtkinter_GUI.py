@@ -667,6 +667,8 @@ class App(ctk.CTk):
             self.update_textboxes()
         except PermissionError:
             self.error_handler("LINEのTOKENを確認してください。")
+        finally:
+            self.send_quiz_button.configure(state="disabled")
 
     def update_textboxes(self, initial_load: bool = False) -> None:
         """Clear and update the textboxes after quiz generation."""
