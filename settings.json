@@ -3,7 +3,7 @@
     "display_time": 1,
     "default_question_type": "単語意味クイズ",
     "default_number_of_questions": "4",
-    "always_send_to_line": 0,
+    "always_send_to_line": 1,
     "scaling": "110%",
     "grade_book_url": ""
 }

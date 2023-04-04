@@ -10,7 +10,6 @@ from webbrowser import open_new_tab
 from datetime import datetime
 from typing import Tuple, Callable
 
-# TODO: Add icons for pop-up windows
 # TODO: Create json file for token and user id
 
 VERSION = "v1.0.0"
@@ -23,7 +22,10 @@ DEF_QUIZ_LOCATION = r'txt_files/definition_quiz.txt'
 LOG_LOCATION = r'txt_files/push_log.txt'
 NEWS_ARTICLE_LOCATION = r'txt_files/news_article.txt'
 PAST_QUIZ_LOCATION = r'txt_files/past_quiz_data.txt'
-NHK_ICON_LOCATION = r'./icon/nhk.ico'
+NHK_ICON_LOCATION = r'./icons/nhk.ico'
+LINE_ICON_LOCATION = r'./icons/LINE.ico'
+ALERT_ICON_LOCATION = r'./icons/alert.ico'
+SHEET_ICON_LOCATION = r'./icons/sheet.ico'
 SETTINGS_FILE = "settings.json"
 
 
@@ -213,7 +215,9 @@ class MyTabView(ctk.CTkTabview):
         """Confirm delete past quizzes popup window"""
         delete_past_quiz_popup = ctk.CTkToplevel(self)
         delete_past_quiz_popup.title("過去のクイズを消除")
-        # delete_past_quiz_popup.iconbitmap(LINE_ICON_LOCATION)
+        # ?Bug from customtkinter
+        self.after(200, lambda: delete_past_quiz_popup.iconbitmap(
+            ALERT_ICON_LOCATION))
 
         pop_width, pop_height, x_position, y_position = self.calculate_window_size(
             popup_width=600, popup_height=200)
@@ -374,8 +378,9 @@ class MyTabView(ctk.CTkTabview):
         """Enter the grade book URL popup."""
         grade_book_url_popup = ctk.CTkToplevel(self)
         grade_book_url_popup.title("成績簿URL入力")
-        grade_book_url_popup.resizable(False, False)
-        # grade_book_url_popup.iconbitmap(LINE_ICON_LOCATION)
+        # ?Bug from customtkinter
+        self.after(200, lambda: grade_book_url_popup.iconbitmap(
+            SHEET_ICON_LOCATION))
 
         pop_width, pop_height, x_position, y_position = self.calculate_window_size(
             popup_width=520, popup_height=120)
@@ -403,8 +408,11 @@ class MyTabView(ctk.CTkTabview):
         """Display a popup to enter LINE confidential information popup."""
         line_confidential_popup = ctk.CTkToplevel(self)
         line_confidential_popup.title("LINE機密情報入力")
-        line_confidential_popup.resizable(False, False)
-        # line_confidential_popup.iconbitmap(LINE_ICON_LOCATION)
+        # line_confidential_popup.resizable(False, False)
+
+        # ?Bug from customtkinter
+        self.after(200, lambda: line_confidential_popup.iconbitmap(
+            LINE_ICON_LOCATION))
 
         # Calculate the position for the center of the main window
         popup_width, popup_height, x_position, y_position = self.calculate_window_size(

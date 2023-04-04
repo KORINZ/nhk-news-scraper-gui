@@ -13,8 +13,8 @@ PRONOUN_QUIZ_LOCATION = r'txt_files/pronunciation_quiz.txt'
 DEF_QUIZ_LOCATION = r'txt_files/definition_quiz.txt'
 LOG_LOCATION = r'txt_files/push_log.txt'
 NEWS_ARTICLE_LOCATION = r'txt_files/news_article.txt'
-LINE_ICON_LOCATION = r'./icon/LINE.ico'
-NHK_ICON_LOCATION = r'./icon/nhk.ico'
+LINE_ICON_LOCATION = r'./icons/LINE.ico'
+NHK_ICON_LOCATION = r'./icons/nhk.ico'
 is_blinking = False
 
 
