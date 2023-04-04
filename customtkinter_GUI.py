@@ -210,7 +210,7 @@ class MyTabView(ctk.CTkTabview):
             "default_question_type": self.default_quiz_type_dropdown.get(),
             "default_number_of_questions": self.set_default_number_of_questions_entry.get(),
             "always_send_to_line": 1 if self.checkbox_always_send_to_line.get() == 1 else 0,
-            "scaling": self.scaling_optionemenu.get()
+            "scaling": self.scaling_optionemenu.get(),
             # Add other settings (pending)
         }
 
@@ -281,12 +281,12 @@ class MyTabView(ctk.CTkTabview):
         ctk.set_widget_scaling(new_scaling_float)
 
     def show_saved_label(self) -> None:
-        """Display a 'Saved!' label for 1.5 seconds."""
+        """Display a 'Saved!' label for 2.5 seconds."""
         saved_label = ctk.CTkLabel(
-            self.settings, text="保存しました！", font=self.font)
+            self.settings, text="保存しました！再起動後に反映されます。", font=self.font)
         saved_label.grid(row=5, column=0, padx=(
             170, 0), pady=20, sticky="sw")
-        self.settings.after(1500,
+        self.settings.after(2500,
                             self.remove_saved_label, saved_label)
 
     def remove_saved_label(self, saved_label: ctk.CTkLabel) -> None:
@@ -341,7 +341,7 @@ class App(ctk.CTk):
         self.instant_push_check_box.grid(
             row=2, column=0, padx=20, pady=10, sticky="w")
 
-        # Create the tab view instance
+        # *Create the tab view instance
         self.tab_view = MyTabView(
             master=self, datetime_label=self.datetime_label, quiz_type_dropdown=self.quiz_type_dropdown,
             quiz_number_entry=self.quiz_number_entry, instant_push_check_box=self.instant_push_check_box,
@@ -349,8 +349,11 @@ class App(ctk.CTk):
         self.tab_view.grid(row=4, column=0, padx=20, pady=20, sticky="nsew")
         self.load_saved_settings()
 
-        # Create the test type radio buttons
-        # ? self.line_push_var = tk.BooleanVar()
+        # Create feedback message label
+        self.feedback_label = ctk.CTkLabel(
+            master=self, text="", font=self.font)
+        self.feedback_label.grid(
+            row=1, column=0, padx=(0, 20), pady=0, sticky="ne")
 
         # Create the progress bar
         self.label_progress = ctk.CTkLabel(
@@ -363,6 +366,12 @@ class App(ctk.CTk):
         self.progressbar.grid(row=0, column=0, padx=(
             0, 180), pady=15, sticky="ne")
         self.progressbar.set(0)
+
+        # Create progress text label
+        self.progress_text_label = ctk.CTkLabel(
+            master=self, text="", font=self.font)
+        self.progress_text_label.grid(
+            row=1, column=0, padx=(570, 0), pady=0, sticky="nw")
 
         # Create the reset button
         self.reset_button = ctk.CTkButton(
@@ -419,20 +428,44 @@ class App(ctk.CTk):
             self.progressbar.set(0)
             self.button_send.configure(state="disabled")
             self.reset_button.configure(state="disabled")
+
+            self.instant_push_check_box.configure(state="disabled")
+            self.quiz_number_entry.configure(state="disabled")
+            self.increment_button.configure(state="disabled")
+            self.decrement_button.configure(state="disabled")
+            self.feedback_label.configure(text="")
             if self.quiz_number_entry.get() <= "0":
-                messagebox.showerror("エラー", "最大問題数を指定してください。")
+                self.show_feedback_label("最大問題数を指定してください。")
                 sys.exit(1)
+
+            if self.instant_push_check_box.get() == 1:
+                self.quiz_type_dropdown.configure(state="disabled")
+
+            self.progress_text_label.configure(
+                text="クイズを作成中")
+            self.blink_progress_text_label()
+
+            # *Run the main function from the main module
             main(self.quiz_type_dropdown.get(), push=bool(self.instant_push_check_box.get()),
                  questions=int(self.quiz_number_entry.get()), progress_callback=self.update_progressbar)
 
+            if not bool(self.instant_push_check_box.get()):
+                self.show_feedback_label("作成完了！")
+                self.button_send.configure(state="normal")
+            else:
+                self.show_feedback_label("作成完了！LINEに送信済み！")
+                self.button_send.configure(state="disabled")
+
             # Automatically update the Text widget after quiz generation
             self.update_textboxes()
-            # Enable the send button
-            self.button_send.configure(state="normal")
-            self.reset_button.configure(state="normal")
 
-            if self.instant_push_check_box.get():
-                messagebox.showinfo("成功", "クイズがLINEに送信されました！")
+            self.reset_button.configure(state="normal")
+            self.quiz_type_dropdown.configure(state="normal")
+            self.instant_push_check_box.configure(state="normal")
+            self.quiz_number_entry.configure(state="normal")
+            self.increment_button.configure(state="normal")
+            self.decrement_button.configure(state="normal")
+
         except ValueError:
             messagebox.showerror("エラー", "最大問題数を指定してください。")
         except PermissionError as e:
@@ -476,7 +509,7 @@ class App(ctk.CTk):
                 push_quiz(PRONOUN_QUIZ_LOCATION)
             else:
                 push_quiz(DEF_QUIZ_LOCATION)
-            messagebox.showinfo("成功", "クイズを発信しました！")
+            self.feedback_label.configure(text="LINEに送信しました！")
             with open(LOG_LOCATION, 'a+', encoding='utf-8') as f:
                 f.write('PUSHED\n')
                 f.seek(0)
@@ -514,6 +547,7 @@ class App(ctk.CTk):
         self.reset_button.configure(state="disabled")
         self.progressbar.set(0)
         self.load_saved_settings()
+        self.feedback_label.configure(text="")
 
         # Clear the textboxes (except the log and past_quiz files)
         for tab_name, textbox in self.tab_view.textboxes.items():
@@ -550,6 +584,27 @@ class App(ctk.CTk):
             f"%Y-%m-%d ({weekday_in_jp(now.weekday())}) %H:%M:%S")
         self.datetime_label.configure(text=current_time)
         self.after(1000, self.update_datetime_label)
+
+    def show_feedback_label(self, text) -> None:
+        """Show the success label."""
+        self.feedback_label.configure(text=text)
+
+    def blink_progress_text_label(self) -> None:
+        """Blink the progress text label."""
+        if self.feedback_label.cget("text") == "":
+            current_text = self.progress_text_label.cget("text")
+            if current_text == "クイズ作成中":
+                new_text = "クイズ作成中・"
+            elif current_text == "クイズ作成中・":
+                new_text = "クイズ作成中・・"
+            elif current_text == "クイズ作成中・・":
+                new_text = "クイズ作成中・・・"
+            else:
+                new_text = "クイズ作成中"
+            self.progress_text_label.configure(text=new_text)
+            self.after(750, self.blink_progress_text_label)
+        else:
+            self.progress_text_label.configure(text="")
 
 
 if __name__ == "__main__":
