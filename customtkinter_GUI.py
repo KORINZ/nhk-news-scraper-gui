@@ -11,6 +11,7 @@ from webbrowser import open_new_tab
 from datetime import datetime
 from typing import Tuple
 
+
 VERSION = "v0.0.3b"
 button_colors = ['blue', 'green', 'dark-blue']
 ctk.set_default_color_theme(button_colors[2])
@@ -213,6 +214,7 @@ class MyTabView(ctk.CTkTabview):
         try:
             with open(SETTINGS_FILE, "w") as file:
                 json.dump(settings, file)
+            self.show_saved_label()  # Call this function when saving is successful
         except Exception as e:
             print(f"Error saving settings: {e}")
 
@@ -266,8 +268,22 @@ class MyTabView(ctk.CTkTabview):
             text="アクセストークンを入力してください:", title="アクセストークン")
 
     def change_scaling_event(self, new_scaling: str) -> None:
+        """Change the scaling when the OptionMenu value is changed"""
         new_scaling_float = int(new_scaling.strip("%")) / 100
         ctk.set_widget_scaling(new_scaling_float)
+
+    def show_saved_label(self) -> None:
+        """Display a 'Saved!' label for 1.5 seconds."""
+        saved_label = ctk.CTkLabel(
+            self.settings, text="保存しました！", font=self.font)
+        saved_label.grid(row=5, column=0, padx=(
+            170, 0), pady=20, sticky="sw")
+        self.settings.after(1500,
+                            self.remove_saved_label, saved_label)
+
+    def remove_saved_label(self, saved_label: ctk.CTkLabel) -> None:
+        """Remove the 'Saved!' label from the grid."""
+        saved_label.grid_remove()
 
 
 class App(ctk.CTk):
