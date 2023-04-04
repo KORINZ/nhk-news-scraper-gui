@@ -10,7 +10,6 @@ from webbrowser import open_new_tab
 from datetime import datetime
 from typing import Tuple, Callable
 
-# TODO: Fix scaling issue for pop-up windows
 # TODO: Create json file for token and user id
 # TODO: Add clear past quiz data button, prompt user to confirm
 
@@ -39,15 +38,6 @@ def load_grade_book_url() -> str:
 GRADE_BOOK_URL = load_grade_book_url()
 
 PROJECTION_URL = "https://github.com/KORINZ/nhk_news_web_easy_scraper"
-
-
-class ToplevelWindow(ctk.CTkToplevel):
-    def __init__(self, *args, **kwargs):
-        super().__init__(*args, **kwargs)
-        self.geometry("400x300")
-
-        self.label = ctk.CTkLabel(self, text="ToplevelWindow")
-        self.label.pack(padx=20, pady=20)
 
 
 class MyTabView(ctk.CTkTabview):
@@ -315,45 +305,50 @@ class MyTabView(ctk.CTkTabview):
         save_button = ctk.CTkButton(
             popup, text="保存", command=command, font=self.font)
         save_button.grid(row=row, column=column,
-                         padx=(230, 0), pady=5, sticky="se")
+                         padx=(0, 15), pady=10, sticky="se")
 
         cancel_button = ctk.CTkButton(
             popup, text="キャンセル", command=popup.destroy, font=self.font)
         cancel_button.grid(row=row, column=column,
-                           padx=(20, 0), pady=5, sticky="sw")
+                           padx=(15, 0), pady=10, sticky="sw")
 
     def enter_grade_book_url(self) -> None:
         """Enter the grade book URL popup."""
         grade_book_url_popup = ctk.CTkToplevel(self)
         grade_book_url_popup.title("成績簿URL入力")
-        grade_book_url_popup.resizable(False, False)
+        # grade_book_url_popup.iconbitmap(LINE_ICON_LOCATION)
 
         pop_width, pop_height, x_position, y_position = self.calculate_window_size(
-            popup_width=450, popup_height=95)
+            popup_width=520, popup_height=120)
         grade_book_url_popup.geometry(
             f"{pop_width}x{pop_height}+{x_position}+{y_position}")
 
         ctk.CTkLabel(grade_book_url_popup, text="成績簿URL:", font=self.font).grid(
-            row=0, column=0, padx=20, pady=10, sticky="nw")
+            row=0, column=0, padx=(20, 0), pady=10, sticky="nw")
         grade_book_url_entry = ctk.CTkEntry(
             grade_book_url_popup, width=300, font=self.font)
         grade_book_url_entry.grid(
-            row=0, column=0, padx=(130, 0), pady=10, sticky="ne")
+            row=0, column=0, padx=(0, 20), pady=10, sticky="ne")
         grade_book_url_entry.insert(0, GRADE_BOOK_URL)
         self.add_save_cancel_buttons(
             grade_book_url_popup, 1, 0, command=lambda: self.save_grade_book_url(grade_book_url_entry.get(), grade_book_url_popup))
+
+        # Configure the rows and columns to have weight for scaling
+        grade_book_url_popup.grid_rowconfigure(0, weight=1)
+        grade_book_url_popup.grid_rowconfigure(1, weight=1)
+        grade_book_url_popup.grid_columnconfigure(0, weight=1)
+
         grade_book_url_popup.grab_set()
 
     def enter_line_confidential(self) -> None:
         """Display a popup to enter LINE confidential information popup."""
         line_confidential_popup = ctk.CTkToplevel(self)
         line_confidential_popup.title("LINE機密情報入力")
-        line_confidential_popup.resizable(False, False)
         # line_confidential_popup.iconbitmap(LINE_ICON_LOCATION)
 
         # Calculate the position for the center of the main window
         popup_width, popup_height, x_position, y_position = self.calculate_window_size(
-            popup_width=450, popup_height=140)
+            popup_width=520, popup_height=180)
 
         # Set the position and dimensions of the popup
         line_confidential_popup.geometry(
@@ -361,21 +356,28 @@ class MyTabView(ctk.CTkTabview):
 
         # Add a "Channel Access Token" label and entry
         ctk.CTkLabel(line_confidential_popup, text="CHANNEL_ACCESS_TOKEN:", font=self.font).grid(
-            row=0, column=0, padx=20, pady=10, sticky="nw")
+            row=0, column=0, padx=15, pady=10, sticky="nw")
         channel_access_token_entry = ctk.CTkEntry(
             line_confidential_popup, width=200, font=self.font)
         channel_access_token_entry.grid(
-            row=0, column=0, padx=(230, 0), pady=10, sticky="ne")
+            row=0, column=0, padx=(0, 15), pady=10, sticky="ne")
 
         # Add a "User ID" label and entry
         ctk.CTkLabel(line_confidential_popup, text="USER_ID:", font=self.font).grid(
-            row=1, column=0, padx=20, pady=10, sticky="sw")
+            row=1, column=0, padx=(15, 0), pady=10, sticky="sw")
         user_id_entry = ctk.CTkEntry(
             line_confidential_popup, width=200, font=self.font)
         user_id_entry.grid(row=1, column=0, padx=(
-            230, 0), pady=10, sticky="se")
+            0, 15), pady=10, sticky="se")
         self.add_save_cancel_buttons(
             line_confidential_popup, 2, 0, command=lambda: self.save_line_confidential(channel_access_token_entry.get(), user_id_entry.get(), line_confidential_popup))
+
+        # Configure the rows and columns to have weight for scaling
+        line_confidential_popup.grid_rowconfigure(0, weight=1)
+        line_confidential_popup.grid_rowconfigure(1, weight=1)
+        line_confidential_popup.grid_rowconfigure(2, weight=1)
+        line_confidential_popup.grid_columnconfigure(0, weight=1)
+
         line_confidential_popup.grab_set()
 
     def save_grade_book_url(self, grade_book_url: str, grade_book_url_popup) -> None:
@@ -439,7 +441,7 @@ class App(ctk.CTk):
         ctk.set_widget_scaling(self.scaling)
 
         super().__init__()
-        self.geometry("1000x618")
+        self.geometry("1150x710")
         self.iconbitmap(NHK_ICON_LOCATION)
         self.title(f'NHK NEWS EASY クイズ作成 CTk GUI {VERSION}')
         self.font = ctk.CTkFont(family="Yu Gothic UI", size=16)
