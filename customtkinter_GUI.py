@@ -6,10 +6,9 @@ import subprocess
 import json
 
 from main import main, push_quiz, save_quiz_vocab
-from tkinter import messagebox
 from webbrowser import open_new_tab
 from datetime import datetime
-from typing import Tuple
+from typing import Tuple, Optional
 
 
 VERSION = "v0.0.3b"
@@ -393,16 +392,19 @@ class App(ctk.CTk):
         self.decrement_button.configure(command=self.decrement_questions)
 
         # Create the make and send buttons
-        self.button_make = ctk.CTkButton(
+        self.generate_quiz_button = ctk.CTkButton(
             master=self, text="クイズ作成", font=self.font)
-        self.button_make.grid(row=3, column=0, padx=20, pady=10, sticky="w")
-        self.button_make.configure(command=self.start_quiz_generation_thread)
+        self.generate_quiz_button.grid(
+            row=3, column=0, padx=20, pady=10, sticky="w")
+        self.generate_quiz_button.configure(
+            command=self.start_quiz_generation_thread)
 
-        self.button_send = ctk.CTkButton(
+        self.send_quiz_button = ctk.CTkButton(
             master=self, text="LINEに発信", font=self.font)
-        self.button_send.grid(row=3, column=0, padx=180, pady=10, sticky="nw")
-        self.button_send.configure(command=self.press_push_quiz_button)
-        self.button_send.configure(state="disabled")
+        self.send_quiz_button.grid(
+            row=3, column=0, padx=180, pady=10, sticky="nw")
+        self.send_quiz_button.configure(command=self.press_push_quiz_button)
+        self.send_quiz_button.configure(state="disabled")
 
         self.button_grade = ctk.CTkButton(
             master=self, text="成績チェック", command=self.open_grade_book, font=self.font)
@@ -425,15 +427,18 @@ class App(ctk.CTk):
     def run_quiz_generation(self) -> None:
         """Run the quiz generation function in the background."""
         try:
+            self.current_index = 0
+            self.total_ids = 0
             self.progressbar.set(0)
-            self.button_send.configure(state="disabled")
+            self.send_quiz_button.configure(state="disabled")
             self.reset_button.configure(state="disabled")
-
+            self.progress_text_label.configure(text="")
             self.instant_push_check_box.configure(state="disabled")
             self.quiz_number_entry.configure(state="disabled")
             self.increment_button.configure(state="disabled")
             self.decrement_button.configure(state="disabled")
-            self.feedback_label.configure(text="")
+            self.generate_quiz_button.configure(state="disabled")
+            # self.feedback_label.configure(text="")
             if self.quiz_number_entry.get() <= "0":
                 self.show_feedback_label("最大問題数を指定してください。")
                 sys.exit(1)
@@ -442,7 +447,7 @@ class App(ctk.CTk):
                 self.quiz_type_dropdown.configure(state="disabled")
 
             self.progress_text_label.configure(
-                text="クイズを作成中")
+                text="初期化中")
             self.blink_progress_text_label()
 
             # *Run the main function from the main module
@@ -451,10 +456,10 @@ class App(ctk.CTk):
 
             if not bool(self.instant_push_check_box.get()):
                 self.show_feedback_label("作成完了！")
-                self.button_send.configure(state="normal")
+                self.send_quiz_button.configure(state="normal")
             else:
                 self.show_feedback_label("作成完了！LINEに送信済み！")
-                self.button_send.configure(state="disabled")
+                self.send_quiz_button.configure(state="disabled")
 
             # Automatically update the Text widget after quiz generation
             self.update_textboxes()
@@ -465,15 +470,17 @@ class App(ctk.CTk):
             self.quiz_number_entry.configure(state="normal")
             self.increment_button.configure(state="normal")
             self.decrement_button.configure(state="normal")
+            self.generate_quiz_button.configure(state="normal")
 
         except ValueError:
-            messagebox.showerror("エラー", "最大問題数を指定してください。")
-        except PermissionError as e:
-            messagebox.showerror("エラー", f"クイズの発信に失敗しました: {e}")
-        except ConnectionError as e:
-            messagebox.showerror("エラー", f"クイズの発信に失敗しました: {e}")
+            self.error_handler("最大問題数を指定してください。")
+        except PermissionError:
+            self.error_handler("LINEのTOKENを確認してください。")
+        except ConnectionError:
+            self.error_handler("インターネット接続を確認してください。")
         finally:
             self.progressbar.stop()
+            self.progress_text_label.configure(text="")
 
     def increment_questions(self) -> None:
         """Increase the value of the questions Entry."""
@@ -498,9 +505,12 @@ class App(ctk.CTk):
                 self.quiz_number_entry.delete(0, ctk.END)
                 self.quiz_number_entry.insert(0, str(current_value - 1))
 
-    def update_progressbar(self, progress: float) -> None:
+    def update_progressbar(self, progress: float, index: int, total_ids: int) -> None:
         """Update the progressbar in the main window."""
-        app.progressbar.set(progress)
+        self.progressbar.set(progress)
+        self.current_index = index
+        self.total_ids = total_ids
+        self.blink_progress_text_label()
 
     def press_push_quiz_button(self) -> None:
         """Send the quiz to LINE."""
@@ -516,8 +526,8 @@ class App(ctk.CTk):
                 url = f.readlines()[1]
             save_quiz_vocab(url)
             self.update_textboxes()
-        except PermissionError as e:
-            messagebox.showerror("エラー", f"クイズの発信に失敗しました: {e}")
+        except PermissionError:
+            self.error_handler("LINEのTOKENを確認してください。")
 
     def update_textboxes(self, initial_load: bool = False) -> None:
         """Clear and update the textboxes after quiz generation."""
@@ -543,11 +553,13 @@ class App(ctk.CTk):
     def start_over(self) -> None:
         """Reset the app to its initial state."""
         self.quiz_number_entry.delete(0, ctk.END)
-        self.button_send.configure(state="disabled")
+        self.generate_quiz_button.configure(state="normal")
+        self.send_quiz_button.configure(state="disabled")
         self.reset_button.configure(state="disabled")
         self.progressbar.set(0)
+        self.progress_text_label.configure(text="")
+        self.feedback_label.configure(text=" ")
         self.load_saved_settings()
-        self.feedback_label.configure(text="")
 
         # Clear the textboxes (except the log and past_quiz files)
         for tab_name, textbox in self.tab_view.textboxes.items():
@@ -591,20 +603,39 @@ class App(ctk.CTk):
 
     def blink_progress_text_label(self) -> None:
         """Blink the progress text label."""
-        if self.feedback_label.cget("text") == "":
+        if self.current_index == 0 and not self.feedback_label:
             current_text = self.progress_text_label.cget("text")
-            if current_text == "クイズ作成中":
-                new_text = "クイズ作成中・"
-            elif current_text == "クイズ作成中・":
-                new_text = "クイズ作成中・・"
-            elif current_text == "クイズ作成中・・":
-                new_text = "クイズ作成中・・・"
+            if current_text == "初期化中":
+                new_text = "初期化中・"
+            elif current_text == "初期化中・":
+                new_text = "初期化中・・"
+            elif current_text == "初期化中・・":
+                new_text = "初期化中・・・"
             else:
-                new_text = "クイズ作成中"
+                new_text = "初期化中"
             self.progress_text_label.configure(text=new_text)
-            self.after(750, self.blink_progress_text_label)
+            self.after(300, self.blink_progress_text_label)
+        elif self.feedback_label.cget("text") == "" and self.total_ids != 0:
+            base_text = f"クイズを作成中({self.current_index}/{self.total_ids})"
+            # Get the dot_counter or set it to 0 if not exists
+            dot_counter = getattr(self, "dot_counter", 0)
+
+            dots = "・" * dot_counter  # Generate dots based on the dot_counter value
+            new_text = base_text + dots
+            self.progress_text_label.configure(text=new_text)
+
+            # Cycle through 0, 1, 2, 3 for the dot_counter
+            dot_counter = (dot_counter + 1) % 4
+            self.dot_counter = dot_counter
+            self.after(2000, self.blink_progress_text_label)
         else:
             self.progress_text_label.configure(text="")
+
+    def error_handler(self, error_text: str) -> None:
+        """Handle errors."""
+        self.progress_text_label.configure(text="")
+        self.feedback_label.configure(text=f"エラー：{error_text}")
+        self.reset_button.configure(state="normal")
 
 
 if __name__ == "__main__":

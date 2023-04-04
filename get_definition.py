@@ -63,11 +63,10 @@ def get_definition_list(url: str, progress_callback: Optional[Callable] = None) 
         text_content = text_content.replace('1', '： 1', 1)
         print(text_content)
         definition_list.append(text_content)
-
         # Update the progress bar
         if progress_callback:
             progress = index / total_ids
-            progress_callback(progress)
+            progress_callback(progress, index, total_ids)
 
     return definition_list
 
