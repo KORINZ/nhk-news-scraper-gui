@@ -192,6 +192,9 @@ class MyTabView(ctk.CTkTabview):
         settings = {
             "theme": english_value,
             "display_time": 1 if self.display_time_switch.get() == 1 else 0,
+            "default_question_type": self.default_quiz_type_dropdown.get(),
+            "default_number_of_questions": self.set_default_number_of_questions_entry.get(),
+            "always_send_to_line": 1 if self.checkbox_always_send_to_line.get() == 1 else 0,
             # Add other settings (pending)
         }
 
@@ -201,18 +204,35 @@ class MyTabView(ctk.CTkTabview):
         except Exception as e:
             print(f"Error saving settings: {e}")
 
-    def update_settings(self, settings: dict) -> None:
+    def update_settings(self, settings_file: dict) -> None:
         """Update the UI according to the provided settings."""
-        theme = settings.get("theme")
+        # Update the OptionMenu value
+        theme = settings_file.get("theme")
         if theme:
             self.update_optionmenu_var(theme)
 
-        display_time = settings.get("display_time")
+        # Update the display_time switch and toggle the datetime label
+        display_time = settings_file.get("display_time")
         if display_time == 1:
             self.display_time_switch.select()  # Set the switch to ON state
         else:
             self.display_time_switch.deselect()  # Set the switch to OFF state
             self.toggle_datetime_display()  # Toggle display_time only if it is set to False
+
+        # Update the default_question_type dropdown
+        quiz_type = str(settings_file.get("default_question_type"))
+        self.default_quiz_type_dropdown.set(quiz_type)
+
+        # Update the default_number_of_questions entry
+        number = settings_file.get("default_number_of_questions")
+        self.set_default_number_of_questions_entry.insert(0, number)
+
+        # Update the always_send_to_line checkbox
+        status = settings_file.get("always_send_to_line")
+        if status == 1:
+            self.checkbox_always_send_to_line.select()
+        else:
+            self.checkbox_always_send_to_line.deselect()
 
     def toggle_datetime_display(self) -> None:
         """Toggle the date and time label visibility."""
