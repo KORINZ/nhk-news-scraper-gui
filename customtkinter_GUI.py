@@ -11,7 +11,7 @@ from datetime import datetime
 from typing import Tuple, Optional
 
 
-VERSION = "v0.0.3b"
+VERSION = "v1.0.0"
 button_colors = ['blue', 'green', 'dark-blue']
 ctk.set_default_color_theme(button_colors[2])
 
@@ -161,7 +161,7 @@ class MyTabView(ctk.CTkTabview):
 
         # *バージョン Label
         self.label_version = ctk.CTkLabel(
-            master=self.settings, text="バージョン: " + VERSION, font=self.font)
+            master=self.settings, text="(2023) NHK NEWS WEB EASY クイズ作成: " + VERSION, font=self.font)
         self.label_version.grid(row=5, column=0, padx=(
             0, 20), pady=20, sticky="se")
 
