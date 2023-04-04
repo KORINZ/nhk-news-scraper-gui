@@ -243,6 +243,7 @@ class MyTabView(ctk.CTkTabview):
 
         # Update the default_number_of_questions entry
         number = settings_file.get("default_number_of_questions")
+        self.set_default_number_of_questions_entry.delete(0, "end")
         self.set_default_number_of_questions_entry.insert(0, number)
         self.quiz_number_entry.insert(0, number)
 
