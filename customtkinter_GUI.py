@@ -8,14 +8,13 @@ import json
 from main import main, push_quiz, save_quiz_vocab
 from webbrowser import open_new_tab
 from datetime import datetime
-from typing import Tuple, Optional
+from typing import Tuple, Callable
 
 
 VERSION = "v1.0.0"
 button_colors = ['blue', 'green', 'dark-blue']
 ctk.set_default_color_theme(button_colors[2])
 
-DEFAULT_NUMBER_OF_QUESTIONS = "4"
 
 PRONOUN_QUIZ_LOCATION = r'txt_files/pronunciation_quiz.txt'
 DEF_QUIZ_LOCATION = r'txt_files/definition_quiz.txt'
@@ -24,8 +23,28 @@ NEWS_ARTICLE_LOCATION = r'txt_files/news_article.txt'
 PAST_QUIZ_LOCATION = r'txt_files/past_quiz_data.txt'
 NHK_ICON_LOCATION = r'./icon/nhk.ico'
 SETTINGS_FILE = "settings.json"
-GRADE_BOOK_URL = "www.google.com"
+
+
+def load_grade_book_url() -> str:
+    """Load the grade book URL from the JSON file."""
+    with open(SETTINGS_FILE, "r", encoding="utf-8") as settings_file:
+        data = json.load(settings_file)
+
+    return data.get("grade_book_url", "")
+
+
+GRADE_BOOK_URL = load_grade_book_url()
+
 PROJECTION_URL = "https://github.com/KORINZ/nhk_news_web_easy_scraper"
+
+
+class ToplevelWindow(ctk.CTkToplevel):
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+        self.geometry("400x300")
+
+        self.label = ctk.CTkLabel(self, text="ToplevelWindow")
+        self.label.pack(padx=20, pady=20)
 
 
 class MyTabView(ctk.CTkTabview):
@@ -105,13 +124,13 @@ class MyTabView(ctk.CTkTabview):
 
         # *成績チェックURL入力 Button
         self.grade_check_url_button = ctk.CTkButton(master=self.settings,
-                                                    text="成績チェックURL入力", command=self.open_input_dialog_event, font=self.font)
+                                                    text="成績チェックURL入力", command=self.enter_grade_book_url, font=self.font)
         self.grade_check_url_button.grid(row=1, column=0, padx=(0, 20),
                                          pady=0, sticky="ne")
 
         # *LINE機密情報入力 Button
         self.line_info_button = ctk.CTkButton(master=self.settings,
-                                              text="LINE機密情報入力", command=self.open_input_dialog_event, font=self.font)
+                                              text="LINE機密情報入力", command=self.enter_line_confidential, font=self.font)
         self.line_info_button.grid(row=2, column=0, padx=(0, 20),
                                    pady=20, sticky="ne")
 
@@ -152,6 +171,12 @@ class MyTabView(ctk.CTkTabview):
                                                             text="常にすぐLINEに送信をチェック", font=self.font)
         self.checkbox_always_send_to_line.grid(row=4, column=0, padx=(20, 0),
                                                pady=20, sticky="nw")
+
+        # *URL・LINE機密情報の保存成功 Label
+        self.url_line_confidential_saved_label = ctk.CTkLabel(master=self.settings,
+                                                              text="", font=self.font)
+        self.url_line_confidential_saved_label.grid(row=4, column=0, padx=(0, 20),
+                                                    pady=20, sticky="ne")
 
         # *保存 Button
         self.button_save = ctk.CTkButton(
@@ -214,7 +239,7 @@ class MyTabView(ctk.CTkTabview):
         }
 
         try:
-            with open(SETTINGS_FILE, "w") as file:
+            with open(SETTINGS_FILE, "w", encoding="utf-8") as file:
                 json.dump(settings, file)
             self.show_saved_label()  # Call this function when saving is successful
         except FileNotFoundError as e:
@@ -270,9 +295,119 @@ class MyTabView(ctk.CTkTabview):
         """Open the project page in the default browser."""
         open_new_tab(PROJECTION_URL)
 
-    def open_input_dialog_event(self) -> None:
-        line_token = ctk.CTkInputDialog(
-            text="アクセストークンを入力してください:", title="アクセストークン")
+    def calculate_window_size(self, popup_width, popup_height) -> Tuple:
+        """Calculate the window size based on the screen size."""
+        main_window_width = self.master.winfo_width()
+        main_window_height = self.master.winfo_height()
+        main_window_x = self.master.winfo_x() - 100
+        main_window_y = self.master.winfo_y()
+        x_position = main_window_x + \
+            (main_window_width // 2) - (popup_width // 2)
+        y_position = main_window_y + \
+            (main_window_height // 2) - (popup_height // 2)
+        return (popup_width, popup_height, x_position, y_position)
+
+    def add_save_cancel_buttons(self, popup: ctk.CTkToplevel, row: int, column: int, command: Callable) -> None:
+        """Add the save and cancel buttons to the popup."""
+        save_button = ctk.CTkButton(
+            popup, text="保存", command=command, font=self.font)
+        save_button.grid(row=row, column=column,
+                         padx=(230, 0), pady=5, sticky="se")
+
+        cancel_button = ctk.CTkButton(
+            popup, text="キャンセル", command=popup.destroy, font=self.font)
+        cancel_button.grid(row=row, column=column,
+                           padx=(20, 0), pady=5, sticky="sw")
+
+    def enter_grade_book_url(self) -> None:
+        """Enter the grade book URL popup."""
+        grade_book_url_popup = ctk.CTkToplevel(self)
+        grade_book_url_popup.title("成績簿URL入力")
+        grade_book_url_popup.resizable(False, False)
+
+        pop_width, pop_height, x_position, y_position = self.calculate_window_size(
+            popup_width=450, popup_height=95)
+        grade_book_url_popup.geometry(
+            f"{pop_width}x{pop_height}+{x_position}+{y_position}")
+
+        ctk.CTkLabel(grade_book_url_popup, text="成績簿URL:", font=self.font).grid(
+            row=0, column=0, padx=20, pady=10, sticky="nw")
+        grade_book_url_entry = ctk.CTkEntry(
+            grade_book_url_popup, width=300, font=self.font)
+        grade_book_url_entry.grid(
+            row=0, column=0, padx=(130, 0), pady=10, sticky="ne")
+        grade_book_url_entry.insert(0, GRADE_BOOK_URL)
+        self.add_save_cancel_buttons(
+            grade_book_url_popup, 1, 0, command=lambda: self.save_grade_book_url(grade_book_url_entry.get(), grade_book_url_popup))
+        grade_book_url_popup.grab_set()
+
+    def enter_line_confidential(self) -> None:
+        """Display a popup to enter LINE confidential information popup."""
+        line_confidential_popup = ctk.CTkToplevel(self)
+        line_confidential_popup.title("LINE機密情報入力")
+        line_confidential_popup.resizable(False, False)
+        # line_confidential_popup.iconbitmap(LINE_ICON_LOCATION)
+
+        # Calculate the position for the center of the main window
+        popup_width, popup_height, x_position, y_position = self.calculate_window_size(
+            popup_width=450, popup_height=140)
+
+        # Set the position and dimensions of the popup
+        line_confidential_popup.geometry(
+            f"{popup_width}x{popup_height}+{x_position}+{y_position}")
+
+        # Add a "Channel Access Token" label and entry
+        ctk.CTkLabel(line_confidential_popup, text="CHANNEL_ACCESS_TOKEN:", font=self.font).grid(
+            row=0, column=0, padx=20, pady=10, sticky="nw")
+        channel_access_token_entry = ctk.CTkEntry(
+            line_confidential_popup, width=200, font=self.font)
+        channel_access_token_entry.grid(
+            row=0, column=0, padx=(230, 0), pady=10, sticky="ne")
+
+        # Add a "User ID" label and entry
+        ctk.CTkLabel(line_confidential_popup, text="USER_ID:", font=self.font).grid(
+            row=1, column=0, padx=20, pady=10, sticky="sw")
+        user_id_entry = ctk.CTkEntry(
+            line_confidential_popup, width=200, font=self.font)
+        user_id_entry.grid(row=1, column=0, padx=(
+            230, 0), pady=10, sticky="se")
+        self.add_save_cancel_buttons(
+            line_confidential_popup, 2, 0, command=lambda: self.save_line_confidential(channel_access_token_entry.get(), user_id_entry.get(), line_confidential_popup))
+        line_confidential_popup.grab_set()
+
+    def save_grade_book_url(self, grade_book_url: str, grade_book_url_popup) -> None:
+        """Save the entered URL to a JSON file."""
+        # Read the existing JSON file
+        with open(SETTINGS_FILE, "r", encoding="utf-8") as settings_file:
+            data = json.load(settings_file)
+
+        # Update the JSON object with the new URL
+        data['grade_book_url'] = grade_book_url
+
+        # Write the updated JSON object back to the file
+        with open(SETTINGS_FILE, "w", encoding="utf-8") as settings_file:
+            json.dump(data, settings_file, ensure_ascii=False, indent=4)
+
+        self.url_line_confidential_saved_label.configure(
+            text="URL情報の保存は成功しました！再起動後に反映されます。", font=self.font)
+        self.after(4000, lambda: self.url_line_confidential_saved_label.configure(
+            text=""))
+
+        grade_book_url_popup.destroy()
+
+    def save_line_confidential(self, channel_access_token: str, user_id: str, line_confidential_popup) -> None:
+        """Save the LINE confidential information to a config.py file."""
+        with open("config.py", "w", encoding="utf-8") as config_file:
+            config_file.write(
+                f"CHANNEL_ACCESS_TOKEN = '{channel_access_token}'\n")
+            config_file.write(f"USER_ID = '{user_id}'\n")
+
+        self.url_line_confidential_saved_label.configure(
+            text="機密情報の保存は成功しました！再起動後に反映されます。", font=self.font)
+        self.after(4000, lambda: self.url_line_confidential_saved_label.configure(
+            text=""))
+
+        line_confidential_popup.destroy()
 
     def change_scaling_event(self, new_scaling: str) -> None:
         """Change the scaling when the OptionMenu value is changed"""
@@ -280,12 +415,12 @@ class MyTabView(ctk.CTkTabview):
         ctk.set_widget_scaling(new_scaling_float)
 
     def show_saved_label(self) -> None:
-        """Display a 'Saved!' label for 2.5 seconds."""
+        """Display a 'Saved!' label for 4 seconds."""
         saved_label = ctk.CTkLabel(
             self.settings, text="保存しました！再起動後に反映されます。", font=self.font)
         saved_label.grid(row=5, column=0, padx=(
             170, 0), pady=20, sticky="sw")
-        self.settings.after(2500,
+        self.settings.after(4000,
                             self.remove_saved_label, saved_label)
 
     def remove_saved_label(self, saved_label: ctk.CTkLabel) -> None:
@@ -469,11 +604,6 @@ class App(ctk.CTk):
             # Enable buttons
             self.reset_button.configure(state="normal")
             self.quiz_type_dropdown.configure(state="normal")
-            self.instant_push_check_box.configure(state="normal")
-            self.quiz_number_entry.configure(state="normal")
-            self.increment_button.configure(state="normal")
-            self.decrement_button.configure(state="normal")
-            self.generate_quiz_button.configure(state="normal")
 
         # Handle errors
         except ValueError:
@@ -484,6 +614,11 @@ class App(ctk.CTk):
             self.error_handler("インターネット接続を確認してください。")
         finally:
             self.progressbar.stop()
+            self.generate_quiz_button.configure(state="normal")
+            self.instant_push_check_box.configure(state="normal")
+            self.quiz_number_entry.configure(state="normal")
+            self.increment_button.configure(state="normal")
+            self.decrement_button.configure(state="normal")
             self.progress_text_label.configure(text="")
 
     def increment_questions(self) -> None:
@@ -573,14 +708,14 @@ class App(ctk.CTk):
     def load_saved_settings(self) -> None:
         """Load the saved settings from the file."""
         if os.path.exists(SETTINGS_FILE):
-            with open(SETTINGS_FILE, "r") as file:
+            with open(SETTINGS_FILE, "r", encoding="utf-8") as file:
                 saved_settings = json.load(file)
                 self.tab_view.update_settings(saved_settings)
 
     def read_settings(self) -> Tuple[str, ...]:
         """Read the settings from a file."""
         try:
-            with open(SETTINGS_FILE, "r") as file:
+            with open(SETTINGS_FILE, "r", encoding="utf-8") as file:
                 settings = json.load(file)
                 theme = settings.get("theme")
                 scaling = settings.get("scaling")
