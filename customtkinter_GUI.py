@@ -10,6 +10,7 @@ from webbrowser import open_new_tab
 from datetime import datetime
 from typing import Tuple, Callable
 
+# TODO: Fix scaling issue for pop-up windows
 
 VERSION = "v1.0.0"
 button_colors = ['blue', 'green', 'dark-blue']
