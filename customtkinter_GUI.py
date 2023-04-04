@@ -10,6 +10,7 @@ from webbrowser import open_new_tab
 from datetime import datetime
 from typing import Tuple, Callable
 
+# TODO: Add icons for pop-up windows
 # TODO: Create json file for token and user id
 # TODO: Add clear past quiz data button, prompt user to confirm
 
@@ -316,6 +317,7 @@ class MyTabView(ctk.CTkTabview):
         """Enter the grade book URL popup."""
         grade_book_url_popup = ctk.CTkToplevel(self)
         grade_book_url_popup.title("成績簿URL入力")
+        grade_book_url_popup.resizable(False, False)
         # grade_book_url_popup.iconbitmap(LINE_ICON_LOCATION)
 
         pop_width, pop_height, x_position, y_position = self.calculate_window_size(
@@ -344,6 +346,7 @@ class MyTabView(ctk.CTkTabview):
         """Display a popup to enter LINE confidential information popup."""
         line_confidential_popup = ctk.CTkToplevel(self)
         line_confidential_popup.title("LINE機密情報入力")
+        line_confidential_popup.resizable(False, False)
         # line_confidential_popup.iconbitmap(LINE_ICON_LOCATION)
 
         # Calculate the position for the center of the main window
