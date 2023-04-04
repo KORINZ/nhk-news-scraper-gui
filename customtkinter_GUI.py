@@ -607,7 +607,7 @@ class App(ctk.CTk):
 
     def blink_progress_text_label(self) -> None:
         """Blink the progress text label."""
-        if self.current_index == 0 and self.feedback_label:
+        if self.current_index == 0 and self.feedback_label and "エラー" not in self.feedback_label.cget("text"):
             current_text = self.progress_text_label.cget("text")
             if current_text == "初期化中":
                 new_text = "初期化中・"
@@ -620,7 +620,7 @@ class App(ctk.CTk):
 
             self.progress_text_label.configure(text=new_text)
             self.after(300, self.blink_progress_text_label)
-        elif self.generate_quiz_button.cget("state") == "disabled":
+        elif self.generate_quiz_button.cget("state") == "disabled" and "エラー" not in self.feedback_label.cget("text"):
             base_text = f"クイズを作成中({self.current_index}/{self.total_ids})"
             # Get the dot_counter or set it to 0 if not exists
             dot_counter = getattr(self, "dot_counter", 0)
@@ -641,6 +641,7 @@ class App(ctk.CTk):
         self.progress_text_label.configure(text="")
         self.feedback_label.configure(text=f"エラー：{error_text}")
         self.reset_button.configure(state="normal")
+        self.generate_quiz_button.configure(state="normal")
 
 
 if __name__ == "__main__":
