@@ -13,7 +13,7 @@ from typing import Tuple, Callable
 # TODO: Complete broadcast_switch function
 # TODO: Add maximize screen switch
 
-VERSION = "v1.1.0"
+VERSION = "v1.2.0"
 button_colors = ['blue', 'green', 'dark-blue']
 ctk.set_default_color_theme(button_colors[2])
 
@@ -74,6 +74,7 @@ class MyTabView(ctk.CTkTabview):
         self.font = ctk.CTkFont(family="Yu Gothic UI", size=16)
         self._segmented_button.configure(font=self.font)
         self.txt_folder_path = "txt_files"
+        self.json_folder_path = "json_files"
 
         # *ファイル Tab
         self.add("ファイル表示")
@@ -165,8 +166,8 @@ class MyTabView(ctk.CTkTabview):
         # *ヘルプ Button
         self.help_button = ctk.CTkButton(master=self.settings,
                                          text="ヘルプ", command=self.open_project_page, font=self.font)
-        self.help_button.grid(row=2, column=0, padx=(0, 20),
-                              pady=20, sticky="ne")
+        self.help_button.grid(row=3, column=0, padx=(0, 20),
+                              pady=0, sticky="ne")
 
         # *時間表示 Switch
         self.display_time_switch = ctk.CTkSwitch(
@@ -240,11 +241,17 @@ class MyTabView(ctk.CTkTabview):
         self.scaling_optionemenu.grid(
             row=0, column=0, padx=(100, 0), pady=20, sticky="n")
 
+        # *JSONフォルダーを開く Button
+        self.open_json_folder = ctk.CTkButton(master=self.settings,
+                                              text="JSONフォルダーを開く", font=self.font, command=self.open_json_files_folder)
+        self.open_json_folder.grid(row=1, column=0, padx=(0, 20),
+                                   pady=0, sticky="ne")
+
         # *過去のクイズを消除 Button
         self.delete_past_quizzes_button = ctk.CTkButton(master=self.settings,
                                                         text="過去のクイズを消除", command=self.confirm_delete_past_quizzes, font=self.font, fg_color="#8B0000")
-        self.delete_past_quizzes_button.grid(row=1, column=0, padx=(0, 20),
-                                             pady=0, sticky="ne")
+        self.delete_past_quizzes_button.grid(row=2, column=0, padx=(0, 20),
+                                             pady=20, sticky="ne")
 
         # Configure grid system
         self.settings.grid_rowconfigure(4, weight=1)
@@ -315,6 +322,12 @@ class MyTabView(ctk.CTkTabview):
         if not os.path.exists(self.txt_folder_path):
             os.makedirs(self.txt_folder_path)
         subprocess.run(['explorer', os.path.abspath(self.txt_folder_path)])
+
+    def open_json_files_folder(self) -> None:
+        """Open the folder containing the json files."""
+        if not os.path.exists(self.json_folder_path):
+            os.makedirs(self.json_folder_path)
+        subprocess.run(['explorer', os.path.abspath(self.json_folder_path)])
 
     def save_settings(self) -> None:
         """Save the current settings to a file."""
