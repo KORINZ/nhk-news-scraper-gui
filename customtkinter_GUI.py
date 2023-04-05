@@ -14,7 +14,7 @@ from typing import Tuple, Callable
 # Initial setup
 VERSION = "v1.3.2"
 button_colors = ['blue', 'green', 'dark-blue']
-ctk.set_default_color_theme(button_colors[1])
+ctk.set_default_color_theme(button_colors[2])
 PRONOUN_QUIZ_LOCATION = r'./txt_files/pronunciation_quiz.txt'
 DEF_QUIZ_LOCATION = r'./txt_files/definition_quiz.txt'
 LOG_LOCATION = r'./txt_files/push_log.txt'
@@ -26,6 +26,8 @@ ALERT_ICON_LOCATION = r'./icons/alert.ico'
 SHEET_ICON_LOCATION = r'./icons/sheet.ico'
 TOKEN_ID_LOCATION = r'./json_files/secrets.json'
 SETTINGS_FILE_LOCATION = r'./json_files/settings.json'
+JSON_FOLDER_PATH = r'./json_files'
+TXT_FOLDER_PATH = r'./txt_files'
 
 
 def create_default_settings_file() -> None:
@@ -74,8 +76,8 @@ class MyTabView(ctk.CTkTabview):
         self.broadcast_on_label = broadcast_on_label
         self.font = ctk.CTkFont(family="Yu Gothic UI", size=16)
         self._segmented_button.configure(font=self.font)
-        self.txt_folder_path = "txt_files"
-        self.json_folder_path = "json_files"
+        self.txt_folder_path = TXT_FOLDER_PATH
+        self.json_folder_path = JSON_FOLDER_PATH
 
         # *ファイル Tab
         self.add("ファイル表示")
