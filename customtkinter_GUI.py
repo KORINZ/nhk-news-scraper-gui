@@ -649,10 +649,13 @@ class App(ctk.CTk):
         self.tab_view.grid(row=4, column=0, padx=20, pady=20, sticky="nsew")
         self.load_saved_settings()
 
+        # Set initial window size
         if self.tab_view.maximize_screen_check_box.get():
             self.after_idle(lambda: self.state("zoomed"))
+            self.minsize(1160, 717)
         else:
             self.after_idle(lambda: self.geometry("1160x717"))
+            self.minsize(1160, 717)
 
         # Create feedback message label
         self.feedback_label = ctk.CTkLabel(
