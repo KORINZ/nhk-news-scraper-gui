@@ -31,8 +31,27 @@ TOKEN_ID_LOCATION = r'./secrets.json'
 SETTINGS_FILE = "settings.json"
 
 
+def create_default_settings_file() -> None:
+    default_settings = {
+        "theme": "Dark",
+        "display_time": "0",
+        "default_question_type": "単語意味クイズ",
+        "default_number_of_questions": "1",
+        "always_send_to_line": "0",
+        "send_to_all": "0",
+        "scaling": "100%",
+        "grade_book_url": "http://www.google.com",
+    }
+
+    with open(SETTINGS_FILE, "w", encoding="utf-8") as settings_file:
+        json.dump(default_settings, settings_file, indent=4)
+
+
 def load_grade_book_url() -> str:
     """Load the grade book URL from the JSON file."""
+    if not os.path.exists(SETTINGS_FILE):
+        create_default_settings_file()
+
     with open(SETTINGS_FILE, "r", encoding="utf-8") as settings_file:
         data = json.load(settings_file)
 
@@ -320,6 +339,7 @@ class MyTabView(ctk.CTkTabview):
         display_time = settings_file.get("display_time")
         if display_time == 1:
             self.display_time_switch.select()  # Set the switch to ON state
+            self.toggle_datetime_display()  # Toggle display_time only if it is set to True
         else:
             self.display_time_switch.deselect()  # Set the switch to OFF state
             self.toggle_datetime_display()  # Toggle display_time only if it is set to False
@@ -807,15 +827,14 @@ class App(ctk.CTk):
 
     def read_settings(self) -> Tuple[str, ...]:
         """Read the settings from a file."""
-        try:
-            with open(SETTINGS_FILE, "r", encoding="utf-8") as file:
-                settings = json.load(file)
-                theme = settings.get("theme")
-                scaling = settings.get("scaling")
-                return theme, scaling
-        except FileNotFoundError as e:
-            print(f"Settings file not found: {e}")
-            sys.exit(1)
+        if not os.path.exists(SETTINGS_FILE):
+            create_default_settings_file()
+
+        with open(SETTINGS_FILE, "r", encoding="utf-8") as file:
+            settings = json.load(file)
+            theme = settings.get("theme")
+            scaling = settings.get("scaling")
+            return theme, scaling
 
     def update_datetime_label(self) -> None:
         """Update the date and time label with the current date and time."""
