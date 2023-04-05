@@ -342,7 +342,7 @@ def main(quiz_type: str, push=False, broadcasting=False, questions=5, progress_c
 
         # Save quiz sent time and news url to a log file
         with open(LOG_LOCATION, 'a', encoding='utf-8') as f:
-            f.write('PUSHED\n')
+            f.write('送信済み\n')
 
 
 if __name__ == '__main__':

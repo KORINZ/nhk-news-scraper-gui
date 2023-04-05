@@ -13,7 +13,7 @@ from tabulate import tabulate
 LINE_INCOMING_MESSAGE_FILENAME = 'LINE_Messages'
 LOG_LOCATION = r'txt_files/push_log.txt'
 GRADE_BOOK_FILENAME = '日本語ニュース成績表'
-SERVICE_ACCOUNT_PATH = Path() / 'savvy-temple-381905-6e78e62d4ee5.json'
+SERVICE_ACCOUNT_PATH = Path() / r'./json_files/savvy-temple-381905-6e78e62d4ee5.json'
 
 try:
     SERVICE_ACCOUNT = gspread.service_account(SERVICE_ACCOUNT_PATH)

@@ -13,7 +13,7 @@ from typing import Tuple, Callable
 # TODO: Complete broadcast_switch function
 # TODO: Add maximize screen switch
 
-VERSION = "v1.2.0"
+VERSION = "v1.3.1"
 button_colors = ['blue', 'green', 'dark-blue']
 ctk.set_default_color_theme(button_colors[2])
 
@@ -40,6 +40,7 @@ def create_default_settings_file() -> None:
         "always_send_to_line": "0",
         "send_to_all": "0",
         "scaling": "100%",
+        "maximize_screen_check_box": "0",
         "grade_book_url": "http://www.google.com",
     }
 
@@ -115,10 +116,10 @@ class MyTabView(ctk.CTkTabview):
             self.textboxes[tab_name] = self.textbox
 
         # add widgets on tabs in nested Tabview
+        create_txt_tab(self, "ログファイル", LOG_LOCATION)
         create_txt_tab(self, "ニュース文章", NEWS_ARTICLE_LOCATION)
         create_txt_tab(self, "単語意味クイズ", DEF_QUIZ_LOCATION)
         create_txt_tab(self, "読み方クイズ", PRONOUN_QUIZ_LOCATION)
-        create_txt_tab(self, "ログファイル", LOG_LOCATION)
         create_txt_tab(self, "過去のクイズ", PAST_QUIZ_LOCATION)
 
         # *設定 Tab
@@ -154,14 +155,14 @@ class MyTabView(ctk.CTkTabview):
         # *成績チェックURL入力 Button
         self.grade_check_url_button = ctk.CTkButton(master=self.settings,
                                                     text="成績チェックURL入力", command=self.enter_grade_book_url, font=self.font)
-        self.grade_check_url_button.grid(row=1, column=0, padx=(0, 0),
-                                         pady=0, sticky="n")
+        self.grade_check_url_button.grid(row=2, column=0, padx=(0, 0),
+                                         pady=20, sticky="n")
 
         # *LINE機密情報入力 Button
         self.line_info_button = ctk.CTkButton(master=self.settings,
                                               text="LINE機密情報入力", command=self.enter_line_confidential, font=self.font)
-        self.line_info_button.grid(row=2, column=0, padx=(0, 0),
-                                   pady=20, sticky="n")
+        self.line_info_button.grid(row=3, column=0, padx=(0, 0),
+                                   pady=0, sticky="n")
 
         # *ヘルプ Button
         self.help_button = ctk.CTkButton(master=self.settings,
@@ -179,7 +180,13 @@ class MyTabView(ctk.CTkTabview):
         self.broadcast_switch = ctk.CTkSwitch(
             master=self.settings, text="全員に発信", font=self.font, command=self.toggle_send_to_all_label)
         self.broadcast_switch.grid(
-            row=3, column=0, padx=(0, 0), pady=0, sticky="n")
+            row=4, column=0, padx=(0, 0), pady=20, sticky="n")
+
+        # *起動時ウィンドウ最大化 Checkbox
+        self.maximize_screen_check_box = ctk.CTkCheckBox(
+            master=self.settings, text="起動時ウィンドウ最大化", font=self.font,)
+        self.maximize_screen_check_box.grid(
+            row=1, column=0, padx=(0, 0), pady=0, sticky="n")
 
         # *デフォルトクイズタイプ OptionMenu
         self.label_default_quiz_type = ctk.CTkLabel(master=self.settings,
@@ -343,6 +350,7 @@ class MyTabView(ctk.CTkTabview):
             "always_send_to_line": 1 if self.checkbox_always_send_to_line.get() == 1 else 0,
             "send_to_all": 1 if self.broadcast_switch.get() == 1 else 0,
             "scaling": self.scaling_optionemenu.get(),
+            "maximize_screen_check_box": 1 if self.maximize_screen_check_box.get() == 1 else 0,
         }
 
         try:
@@ -389,13 +397,18 @@ class MyTabView(ctk.CTkTabview):
         self.quiz_number_entry.insert(0, number)
 
         # Update the always_send_to_line checkbox
-        status = settings_file.get("always_send_to_line")
-        if status == 1:
+        if settings_file.get("always_send_to_line") == 1:
             self.checkbox_always_send_to_line.select()
             self.instant_push_check_box.select()
         else:
             self.checkbox_always_send_to_line.deselect()
             self.instant_push_check_box.deselect()
+
+        # Update the maximize_screen_check_box
+        if settings_file.get("maximize_screen_check_box") == 1:
+            self.maximize_screen_check_box.select()
+        else:
+            self.maximize_screen_check_box.deselect()
 
         # Update the scaling optionmenu
         scaling = str(settings_file.get("scaling"))
@@ -583,7 +596,7 @@ class App(ctk.CTk):
         ctk.set_widget_scaling(self.scaling)
 
         super().__init__()
-        self.geometry("1160x717")
+
         self.iconbitmap(NHK_ICON_LOCATION)
         self.title(f'NHK NEWS EASY クイズ作成 CTk GUI {VERSION}')
         self.font = ctk.CTkFont(family="Yu Gothic UI", size=16)
@@ -635,6 +648,11 @@ class App(ctk.CTk):
             broadcast_on_label=self.broadcast_on_label, width=860, height=300)
         self.tab_view.grid(row=4, column=0, padx=20, pady=20, sticky="nsew")
         self.load_saved_settings()
+
+        if self.tab_view.maximize_screen_check_box.get():
+            self.after_idle(lambda: self.state("zoomed"))
+        else:
+            self.after_idle(lambda: self.geometry("1160x717"))
 
         # Create feedback message label
         self.feedback_label = ctk.CTkLabel(
@@ -767,6 +785,7 @@ class App(ctk.CTk):
             self.error_handler("最大問題数を指定してください。")
         except PermissionError:
             self.error_handler("LINEのTOKENを確認してください。")
+            self.send_quiz_button.configure(state="normal")
         except ConnectionError:
             self.error_handler("インターネット接続を確認してください。")
         finally:
@@ -817,7 +836,7 @@ class App(ctk.CTk):
                 push_quiz(DEF_QUIZ_LOCATION)
             self.feedback_label.configure(text="LINEに送信しました！")
             with open(LOG_LOCATION, 'a+', encoding='utf-8') as f:
-                f.write('PUSHED\n')
+                f.write('送信済み\n')
                 f.seek(0)
                 url = f.readlines()[1]
             save_quiz_vocab(url)
