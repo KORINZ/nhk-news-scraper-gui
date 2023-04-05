@@ -324,6 +324,7 @@ class MyTabView(ctk.CTkTabview):
             "always_send_to_line": 1 if self.checkbox_always_send_to_line.get() == 1 else 0,
             "send_to_all": 1 if self.broadcast_switch.get() == 1 else 0,
             "scaling": self.scaling_optionemenu.get(),
+            "grade_book_url": self.enter_grade_book_url.entry.get(),
         }
 
         try:
