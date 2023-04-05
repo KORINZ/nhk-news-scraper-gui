@@ -10,14 +10,11 @@ from webbrowser import open_new_tab
 from datetime import datetime
 from typing import Tuple, Callable
 
-# TODO: Complete broadcast_switch function
-# TODO: Add maximize screen switch
 
+# Initial setup
 VERSION = "v1.3.2"
 button_colors = ['blue', 'green', 'dark-blue']
 ctk.set_default_color_theme(button_colors[2])
-
-
 PRONOUN_QUIZ_LOCATION = r'./txt_files/pronunciation_quiz.txt'
 DEF_QUIZ_LOCATION = r'./txt_files/definition_quiz.txt'
 LOG_LOCATION = r'./txt_files/push_log.txt'
@@ -32,6 +29,7 @@ SETTINGS_FILE_LOCATION = r'./json_files/settings.json'
 
 
 def create_default_settings_file() -> None:
+    """Create a default settings file if it doesn't exist."""
     default_settings = {
         "theme": "Dark",
         "display_time": "0",
@@ -59,12 +57,14 @@ def load_grade_book_url() -> str:
     return data.get("grade_book_url", "")
 
 
+# Load the URLs from the JSON file
 GRADE_BOOK_URL = load_grade_book_url()
-
 PROJECTION_URL = "https://github.com/KORINZ/nhk_news_web_easy_scraper"
 
 
 class MyTabView(ctk.CTkTabview):
+    """Custom Tabview class that contains article and settings tab."""
+
     def __init__(self, master, datetime_label, quiz_type_dropdown, quiz_number_entry, instant_push_check_box, broadcast_on_label, **kwargs) -> None:
         super().__init__(master, **kwargs)
         self.datetime_label = datetime_label
@@ -337,12 +337,20 @@ class MyTabView(ctk.CTkTabview):
         subprocess.run(['explorer', os.path.abspath(self.json_folder_path)])
 
     def save_settings(self) -> None:
-        """Save the current settings to a file."""
+        """Save the current settings to a file without overwriting grade_book_url."""
         japanese_value = self.optionmenu_var.get()
         english_value = {v: k for k, v in self.optionmenu_mapping.items()}.get(
             japanese_value)
 
-        settings = {
+        # Load existing settings
+        try:
+            with open(SETTINGS_FILE_LOCATION, "r", encoding="utf-8") as file:
+                settings = json.load(file)
+        except FileNotFoundError:
+            settings = {}
+
+        # Update settings with new values
+        settings.update({
             "theme": english_value,
             "display_time": 1 if self.display_time_switch.get() == 1 else 0,
             "default_question_type": self.default_quiz_type_dropdown.get(),
@@ -351,7 +359,7 @@ class MyTabView(ctk.CTkTabview):
             "send_to_all": 1 if self.broadcast_switch.get() == 1 else 0,
             "scaling": self.scaling_optionemenu.get(),
             "maximize_screen_check_box": 1 if self.maximize_screen_check_box.get() == 1 else 0,
-        }
+        })
 
         try:
             with open(SETTINGS_FILE_LOCATION, "w", encoding="utf-8") as file:
@@ -589,6 +597,8 @@ class MyTabView(ctk.CTkTabview):
 
 
 class App(ctk.CTk):
+    """The main application window."""
+
     def __init__(self) -> None:
         self.theme = self.read_settings()[0]
         self.scaling = int(self.read_settings()[1].strip("%")) / 100
@@ -596,7 +606,6 @@ class App(ctk.CTk):
         ctk.set_widget_scaling(self.scaling)
 
         super().__init__()
-
         self.iconbitmap(NHK_ICON_LOCATION)
         self.title(f'NHK NEWS EASY クイズ作成 CTk GUI {VERSION}')
         self.font = ctk.CTkFont(family="Yu Gothic UI", size=16)
@@ -663,12 +672,13 @@ class App(ctk.CTk):
         self.feedback_label.grid(
             row=1, column=0, padx=(0, 20), pady=0, sticky="ne")
 
-        # Create the progress bar
+        # Create the progress bar label
         self.label_progress = ctk.CTkLabel(
             master=self, text="プログレス:", font=self.font)
         self.label_progress.grid(
             row=0, column=0, padx=(0, 450), pady=10, sticky="ne")
 
+        # Create the progress bar
         self.progressbar = ctk.CTkProgressBar(
             master=self, width=250, height=20)
         self.progressbar.grid(row=0, column=0, padx=(
@@ -700,7 +710,7 @@ class App(ctk.CTk):
         self.increment_button.configure(command=self.increment_questions)
         self.decrement_button.configure(command=self.decrement_questions)
 
-        # Create the make and send buttons
+        # Create the make quiz button
         self.generate_quiz_button = ctk.CTkButton(
             master=self, text="クイズ作成", font=self.font)
         self.generate_quiz_button.grid(
@@ -708,6 +718,7 @@ class App(ctk.CTk):
         self.generate_quiz_button.configure(
             command=self.start_quiz_generation_thread)
 
+        # Create the send quiz button
         self.send_quiz_button = ctk.CTkButton(
             master=self, text="LINEに発信", font=self.font)
         self.send_quiz_button.grid(
@@ -715,11 +726,13 @@ class App(ctk.CTk):
         self.send_quiz_button.configure(command=self.press_push_quiz_button)
         self.send_quiz_button.configure(state="disabled")
 
+        # Create the grade book button
         self.button_grade = ctk.CTkButton(
             master=self, text="成績チェック", command=self.open_grade_book, font=self.font)
         self.button_grade.grid(row=3, column=0, padx=340, pady=10, sticky="nw")
 
-        self.grid_rowconfigure(4, weight=1)  # configure grid system
+        # Configure the grid
+        self.grid_rowconfigure(4, weight=1)
         self.grid_columnconfigure(0, weight=1)
 
     def open_grade_book(self) -> None:
@@ -754,7 +767,6 @@ class App(ctk.CTk):
                 sys.exit(1)
 
             self.broadcast_bool = bool(self.tab_view.broadcast_switch.get())
-            print(self.broadcast_bool)
 
             if self.instant_push_check_box.get() == 1:
                 self.quiz_type_dropdown.configure(state="disabled")
@@ -910,6 +922,7 @@ class App(ctk.CTk):
             japanese_weekdays = ["月", "火", "水", "木", "金", "土", "日"]
             return japanese_weekdays[weekday]
 
+        # Update the date and time label
         now = datetime.now()
         current_time = now.strftime(
             f"%Y-%m-%d ({weekday_in_jp(now.weekday())}) %H:%M:%S")
