@@ -10,13 +10,22 @@ from linebot.models import TextSendMessage, StickerSendMessage
 from linebot.exceptions import LineBotApiError
 from typing import Optional
 
-if not os.path.isfile('secrets.json'):
-    with open('secrets.json', 'w') as f:
-        json.dump({'channel_access_token': '', 'user_id': ''}, f, indent=4)
-        print('secrets.json created. Please fill in the values and run the script again.')
-        sys.exit(1)
+TOKEN_ID_FILE = r'./json_files/secrets.json'
 
-with open('secrets.json', 'r') as f:
+# Check if the directory exists, and create it if it doesn't
+directory = os.path.dirname(TOKEN_ID_FILE)
+if not os.path.exists(directory):
+    os.makedirs(directory)
+
+# Create the secrets.json file if it doesn't exist
+if not os.path.isfile(TOKEN_ID_FILE):
+    with open(TOKEN_ID_FILE, 'w') as f:
+        json.dump({'channel_access_token': '', 'user_id': ''}, f, indent=4)
+        print('secrets.json created. Please fill in the values.')
+        # sys.exit(1)
+
+# Read the secrets from the file
+with open(TOKEN_ID_FILE, 'r') as f:
     secrets = json.load(f)
     CHANNEL_ACCESS_TOKEN = secrets.get('channel_access_token')
     USER_ID = secrets.get('user_id')

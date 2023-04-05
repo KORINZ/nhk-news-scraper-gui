@@ -18,17 +18,17 @@ button_colors = ['blue', 'green', 'dark-blue']
 ctk.set_default_color_theme(button_colors[2])
 
 
-PRONOUN_QUIZ_LOCATION = r'txt_files/pronunciation_quiz.txt'
-DEF_QUIZ_LOCATION = r'txt_files/definition_quiz.txt'
-LOG_LOCATION = r'txt_files/push_log.txt'
-NEWS_ARTICLE_LOCATION = r'txt_files/news_article.txt'
-PAST_QUIZ_LOCATION = r'txt_files/past_quiz_data.txt'
+PRONOUN_QUIZ_LOCATION = r'./txt_files/pronunciation_quiz.txt'
+DEF_QUIZ_LOCATION = r'./txt_files/definition_quiz.txt'
+LOG_LOCATION = r'./txt_files/push_log.txt'
+NEWS_ARTICLE_LOCATION = r'./txt_files/news_article.txt'
+PAST_QUIZ_LOCATION = r'./txt_files/past_quiz_data.txt'
 NHK_ICON_LOCATION = r'./icons/nhk.ico'
 LINE_ICON_LOCATION = r'./icons/LINE.ico'
 ALERT_ICON_LOCATION = r'./icons/alert.ico'
 SHEET_ICON_LOCATION = r'./icons/sheet.ico'
-TOKEN_ID_LOCATION = r'./secrets.json'
-SETTINGS_FILE = "settings.json"
+TOKEN_ID_LOCATION = r'./json_files/secrets.json'
+SETTINGS_FILE_LOCATION = r'./json_files/settings.json'
 
 
 def create_default_settings_file() -> None:
@@ -43,16 +43,16 @@ def create_default_settings_file() -> None:
         "grade_book_url": "http://www.google.com",
     }
 
-    with open(SETTINGS_FILE, "w", encoding="utf-8") as settings_file:
+    with open(SETTINGS_FILE_LOCATION, "w", encoding="utf-8") as settings_file:
         json.dump(default_settings, settings_file, indent=4)
 
 
 def load_grade_book_url() -> str:
     """Load the grade book URL from the JSON file."""
-    if not os.path.exists(SETTINGS_FILE):
+    if not os.path.exists(SETTINGS_FILE_LOCATION):
         create_default_settings_file()
 
-    with open(SETTINGS_FILE, "r", encoding="utf-8") as settings_file:
+    with open(SETTINGS_FILE_LOCATION, "r", encoding="utf-8") as settings_file:
         data = json.load(settings_file)
 
     return data.get("grade_book_url", "")
@@ -64,12 +64,13 @@ PROJECTION_URL = "https://github.com/KORINZ/nhk_news_web_easy_scraper"
 
 
 class MyTabView(ctk.CTkTabview):
-    def __init__(self, master, datetime_label, quiz_type_dropdown, quiz_number_entry, instant_push_check_box, **kwargs) -> None:
+    def __init__(self, master, datetime_label, quiz_type_dropdown, quiz_number_entry, instant_push_check_box, broadcast_on_label, **kwargs) -> None:
         super().__init__(master, **kwargs)
         self.datetime_label = datetime_label
         self.quiz_type_dropdown = quiz_type_dropdown
         self.quiz_number_entry = quiz_number_entry
         self.instant_push_check_box = instant_push_check_box
+        self.broadcast_on_label = broadcast_on_label
         self.font = ctk.CTkFont(family="Yu Gothic UI", size=16)
         self._segmented_button.configure(font=self.font)
         self.txt_folder_path = "txt_files"
@@ -95,9 +96,20 @@ class MyTabView(ctk.CTkTabview):
                 master=self.frame, wrap=ctk.WORD, font=self.font)
             self.textbox.pack(fill="both", expand=True)
 
+            # Check if the directory exists, and create it if it doesn't
+            directory = os.path.dirname(txt_file)
+            if not os.path.exists(directory):
+                os.makedirs(directory)
+
+            # Create the file if it doesn't exist
+            if not os.path.isfile(txt_file):
+                with open(txt_file, 'w', encoding='utf-8') as f:
+                    pass
+
             if tab_name == "ログファイル" or tab_name == "過去のクイズ":
                 with open(txt_file, 'r', encoding='utf-8') as f:
                     self.textbox.insert('insert', f.read())
+
             # Store the textbox in the dictionary
             self.textboxes[tab_name] = self.textbox
 
@@ -167,12 +179,6 @@ class MyTabView(ctk.CTkTabview):
             master=self.settings, text="全員に発信", font=self.font, command=self.toggle_send_to_all_label)
         self.broadcast_switch.grid(
             row=3, column=0, padx=(0, 0), pady=0, sticky="n")
-
-        # *全員に発信ON時のラベル Label
-        self.broadcast_on_label = ctk.CTkLabel(
-            master=self.settings, text="※全員に発信ON", font=self.font, fg_color="transparent", bg_color="green")
-        self.broadcast_on_label.grid(
-            row=4, column=0, padx=(0, 0), pady=20, sticky="n")
 
         # *デフォルトクイズタイプ OptionMenu
         self.label_default_quiz_type = ctk.CTkLabel(master=self.settings,
@@ -324,11 +330,10 @@ class MyTabView(ctk.CTkTabview):
             "always_send_to_line": 1 if self.checkbox_always_send_to_line.get() == 1 else 0,
             "send_to_all": 1 if self.broadcast_switch.get() == 1 else 0,
             "scaling": self.scaling_optionemenu.get(),
-            "grade_book_url": self.enter_grade_book_url.entry.get(),
         }
 
         try:
-            with open(SETTINGS_FILE, "w", encoding="utf-8") as file:
+            with open(SETTINGS_FILE_LOCATION, "w", encoding="utf-8") as file:
                 json.dump(settings, file, indent=4)
             self.show_saved_label()  # Call this function when saving is successful
         except FileNotFoundError as e:
@@ -502,14 +507,14 @@ class MyTabView(ctk.CTkTabview):
     def save_grade_book_url(self, grade_book_url: str, grade_book_url_popup) -> None:
         """Save the entered URL to a JSON file."""
         # Read the existing JSON file
-        with open(SETTINGS_FILE, "r", encoding="utf-8") as settings_file:
+        with open(SETTINGS_FILE_LOCATION, "r", encoding="utf-8") as settings_file:
             data = json.load(settings_file)
 
         # Update the JSON object with the new URL
         data['grade_book_url'] = grade_book_url
 
         # Write the updated JSON object back to the file
-        with open(SETTINGS_FILE, "w", encoding="utf-8") as settings_file:
+        with open(SETTINGS_FILE_LOCATION, "w", encoding="utf-8") as settings_file:
             json.dump(data, settings_file, ensure_ascii=False, indent=4)
 
         self.url_line_confidential_saved_label.configure(
@@ -577,6 +582,12 @@ class App(ctk.CTk):
             row=3, column=0, padx=(0, 20), pady=10, sticky="ne")
         self.update_datetime_label()
 
+        # *全員に発信ON時のラベル Label
+        self.broadcast_on_label = ctk.CTkLabel(
+            master=self, text=" ※全員に発信ON ", font=self.font, bg_color="green")
+        self.broadcast_on_label.grid(
+            row=3, column=0, padx=(505, 0), pady=10, sticky="nw")
+
         # Create the quiz type dropdown
         self.quiz_type_label = ctk.CTkLabel(
             master=self, text="クイズタイプ:", font=self.font)
@@ -607,7 +618,8 @@ class App(ctk.CTk):
         # *Create the tab view instance
         self.tab_view = MyTabView(
             master=self, datetime_label=self.datetime_label, quiz_type_dropdown=self.quiz_type_dropdown,
-            quiz_number_entry=self.quiz_number_entry, instant_push_check_box=self.instant_push_check_box, width=860, height=300)
+            quiz_number_entry=self.quiz_number_entry, instant_push_check_box=self.instant_push_check_box,
+            broadcast_on_label=self.broadcast_on_label, width=860, height=300)
         self.tab_view.grid(row=4, column=0, padx=20, pady=20, sticky="nsew")
         self.load_saved_settings()
 
@@ -633,7 +645,7 @@ class App(ctk.CTk):
         self.progress_text_label = ctk.CTkLabel(
             master=self, text="", font=self.font)
         self.progress_text_label.grid(
-            row=1, column=0, padx=(570, 0), pady=0, sticky="nw")
+            row=1, column=0, padx=(650, 0), pady=0, sticky="w")
 
         # Create the reset button
         self.reset_button = ctk.CTkButton(
@@ -841,17 +853,17 @@ class App(ctk.CTk):
 
     def load_saved_settings(self) -> None:
         """Load the saved settings from the file."""
-        if os.path.exists(SETTINGS_FILE):
-            with open(SETTINGS_FILE, "r", encoding="utf-8") as file:
+        if os.path.exists(SETTINGS_FILE_LOCATION):
+            with open(SETTINGS_FILE_LOCATION, "r", encoding="utf-8") as file:
                 saved_settings = json.load(file)
                 self.tab_view.update_settings(saved_settings)
 
     def read_settings(self) -> Tuple[str, ...]:
         """Read the settings from a file."""
-        if not os.path.exists(SETTINGS_FILE):
+        if not os.path.exists(SETTINGS_FILE_LOCATION):
             create_default_settings_file()
 
-        with open(SETTINGS_FILE, "r", encoding="utf-8") as file:
+        with open(SETTINGS_FILE_LOCATION, "r", encoding="utf-8") as file:
             settings = json.load(file)
             theme = settings.get("theme")
             scaling = settings.get("scaling")
