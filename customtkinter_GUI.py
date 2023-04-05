@@ -10,7 +10,7 @@ from webbrowser import open_new_tab
 from datetime import datetime
 from typing import Tuple, Callable
 
-# TODO: Create json file for token and user id
+# TODO: Complete broadcast_switch function
 
 VERSION = "v1.0.0"
 button_colors = ['blue', 'green', 'dark-blue']
