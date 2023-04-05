@@ -188,7 +188,7 @@ def save_quiz_vocab(news_url: str) -> None:
         f.write('---\n\n')
 
 
-def push_quiz(test_type: str) -> None:
+def push_quiz(test_type: str, broadcasting=False) -> None:
     """Send message via LINE API to students"""
     with open(test_type, 'r', encoding='utf-8') as f:
         content = f.read()
@@ -196,11 +196,11 @@ def push_quiz(test_type: str) -> None:
         instruction = parts[0].strip()
         questions = parts[1].strip()
 
-        send_message('text', instruction)
-        send_message('text', questions)
+        send_message('text', instruction, broadcasting=broadcasting)
+        send_message('text', questions, broadcasting=broadcasting)
 
 
-def main(quiz_type: str, push: bool = False, questions: int = 5, progress_callback: Optional[Callable] = None) -> None:
+def main(quiz_type: str, push=False, broadcasting=False, questions=5, progress_callback: Optional[Callable] = None) -> None:
     """Establish request connection and randomly scrap a Japanese news article's content and vocabularies"""
     # Get and encode a random news url; parsing the HTML content
     url = get_news_url()
@@ -334,10 +334,10 @@ def main(quiz_type: str, push: bool = False, questions: int = 5, progress_callba
     # Push quiz to LINE if push is True
     if push:
         if quiz_type == '単語意味クイズ':
-            push_quiz(DEF_QUIZ_LOCATION)
+            push_quiz(DEF_QUIZ_LOCATION, broadcasting=broadcasting)
             save_quiz_vocab(url)
         elif quiz_type == '読み方クイズ':
-            push_quiz(PRONOUN_QUIZ_LOCATION)
+            push_quiz(PRONOUN_QUIZ_LOCATION, broadcasting=broadcasting)
             save_quiz_vocab(url)
 
         # Save quiz sent time and news url to a log file
@@ -351,4 +351,4 @@ if __name__ == '__main__':
         'win32') else os.system('clear')
 
     # quiz_type: '単語意味クイズ' or '読み方クイズ'
-    main(quiz_type='単語意味クイズ', push=False, questions=5)
+    main(quiz_type='単語意味クイズ', push=False, broadcasting=False, questions=5)

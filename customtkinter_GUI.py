@@ -26,6 +26,7 @@ NHK_ICON_LOCATION = r'./icons/nhk.ico'
 LINE_ICON_LOCATION = r'./icons/LINE.ico'
 ALERT_ICON_LOCATION = r'./icons/alert.ico'
 SHEET_ICON_LOCATION = r'./icons/sheet.ico'
+TOKEN_ID_LOCATION = r'./secrets.json'
 SETTINGS_FILE = "settings.json"
 
 
@@ -140,6 +141,12 @@ class MyTabView(ctk.CTkTabview):
             master=self.settings, text="時間表示", font=self.font, command=self.toggle_datetime_display)
         self.display_time_switch.grid(
             row=1, column=0, padx=(20, 0), pady=0, sticky="nw")
+
+        # *全員に発信 Switch
+        self.broadcast_switch = ctk.CTkSwitch(
+            master=self.settings, text="全員に発信", font=self.font)
+        self.broadcast_switch.grid(
+            row=3, column=0, padx=(0, 0), pady=0, sticky="n")
 
         # *デフォルトクイズタイプ OptionMenu
         self.label_default_quiz_type = ctk.CTkLabel(master=self.settings,
@@ -289,6 +296,7 @@ class MyTabView(ctk.CTkTabview):
             "default_question_type": self.default_quiz_type_dropdown.get(),
             "default_number_of_questions": self.set_default_number_of_questions_entry.get(),
             "always_send_to_line": 1 if self.checkbox_always_send_to_line.get() == 1 else 0,
+            "send_to_all": 1 if self.broadcast_switch.get() == 1 else 0,
             "scaling": self.scaling_optionemenu.get(),
             # Add other settings (pending)
         }
@@ -314,6 +322,12 @@ class MyTabView(ctk.CTkTabview):
         else:
             self.display_time_switch.deselect()  # Set the switch to OFF state
             self.toggle_datetime_display()  # Toggle display_time only if it is set to False
+
+        # Update the broadcast switch
+        if settings_file.get("send_to_all") == 1:
+            self.broadcast_switch.select()
+        else:
+            self.broadcast_switch.deselect()
 
         # Update the default_question_type dropdown
         quiz_type = str(settings_file.get("default_question_type"))
@@ -469,11 +483,14 @@ class MyTabView(ctk.CTkTabview):
         grade_book_url_popup.destroy()
 
     def save_line_confidential(self, channel_access_token: str, user_id: str, line_confidential_popup) -> None:
-        """Save the LINE confidential information to a config.py file."""
-        with open("config.py", "w", encoding="utf-8") as config_file:
-            config_file.write(
-                f"CHANNEL_ACCESS_TOKEN = '{channel_access_token}'\n")
-            config_file.write(f"USER_ID = '{user_id}'\n")
+        """Save the LINE confidential information to a file."""
+        confidential_data = {
+            "channel_access_token": channel_access_token,
+            "user_id": user_id
+        }
+
+        with open(TOKEN_ID_LOCATION, "w", encoding="utf-8") as config_file:
+            json.dump(confidential_data, config_file, indent=4)
 
         self.url_line_confidential_saved_label.configure(
             text="機密情報の保存は成功しました！再起動後に反映されます。", font=self.font)
@@ -661,7 +678,7 @@ class App(ctk.CTk):
 
             # *Run the main function from the main module
             main(self.quiz_type_dropdown.get(), push=bool(self.instant_push_check_box.get()),
-                 questions=int(self.quiz_number_entry.get()), progress_callback=self.update_progressbar)
+                 questions=int(self.quiz_number_entry.get()), broadcasting=False, progress_callback=self.update_progressbar)
 
             # Update the progress bar and text label
             if not bool(self.instant_push_check_box.get()):

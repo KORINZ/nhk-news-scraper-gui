@@ -1,10 +1,11 @@
 import tkinter as tk
-from tkinter import messagebox
-from main import main, push_quiz
 import tkinter.ttk as ttk
 import threading
+import json
 
 from tkinter import filedialog
+from tkinter import messagebox
+from main import main, push_quiz
 
 # Global variables
 VERSION = "v1.1.0"
@@ -15,6 +16,7 @@ LOG_LOCATION = r'txt_files/push_log.txt'
 NEWS_ARTICLE_LOCATION = r'txt_files/news_article.txt'
 LINE_ICON_LOCATION = r'./icons/LINE.ico'
 NHK_ICON_LOCATION = r'./icons/nhk.ico'
+TOKEN_ID_LOCATION = r'./secrets.json'
 is_blinking = False
 
 
@@ -89,10 +91,15 @@ def enter_line_confidential() -> None:
 
 
 def save_line_confidential(channel_access_token: str, user_id: str, line_confidential_popup: tk.Toplevel) -> None:
-    """Save the LINE confidential information to a config.py file."""
-    with open("config.py", "w", encoding="utf-8") as config_file:
-        config_file.write(f"CHANNEL_ACCESS_TOKEN = '{channel_access_token}'\n")
-        config_file.write(f"USER_ID = '{user_id}'\n")
+    """Save the LINE confidential information to a secrets.json file."""
+    confidential_data = {
+        "channel_access_token": channel_access_token,
+        "user_id": user_id
+    }
+
+    with open(TOKEN_ID_LOCATION, "w", encoding="utf-8") as config_file:
+        json.dump(confidential_data, config_file, indent=4)
+
     messagebox.showinfo("成功", "LINE機密情報が保存されました！\nGUIを再起動してください。")
     line_confidential_popup.destroy()
 

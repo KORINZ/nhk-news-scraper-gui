@@ -1,36 +1,46 @@
 import datetime
 import locale
 import requests
+import os
 import sys
+import json
 
 from linebot import LineBotApi
 from linebot.models import TextSendMessage, StickerSendMessage
 from linebot.exceptions import LineBotApiError
 from typing import Optional
 
-# Import config.py if it exists, otherwise create it
-try:
-    from config import CHANNEL_ACCESS_TOKEN, USER_ID
-except ImportError:
-    with open('config.py', 'w') as f:
-        f.write("CHANNEL_ACCESS_TOKEN = ''\n")
-        f.write("USER_ID = ''\n")
-        print('config.py created. Please fill in the values and run the script again.')
+if not os.path.isfile('secrets.json'):
+    with open('secrets.json', 'w') as f:
+        json.dump({'channel_access_token': '', 'user_id': ''}, f, indent=4)
+        print('secrets.json created. Please fill in the values and run the script again.')
         sys.exit(1)
+
+with open('secrets.json', 'r') as f:
+    secrets = json.load(f)
+    CHANNEL_ACCESS_TOKEN = secrets.get('channel_access_token')
+    USER_ID = secrets.get('user_id')
 
 NEWS_ARTICLE_TXT_LOCATION = r'txt_files/news_article.txt'
 
 
-def send_message(message_type: str, content: Optional[str] = None, package_id=None, sticker_id=None) -> None:
+def send_message(message_type: str, content: Optional[str] = None, broadcasting=False, package_id=None, sticker_id=None) -> None:
     """Login to LINE bot API and send text message"""
     line_bot_api = LineBotApi(CHANNEL_ACCESS_TOKEN)
     try:
-        if message_type == 'text':
-            line_bot_api.push_message(USER_ID, TextSendMessage(text=content))
-            # line_bot_api.broadcast(TextSendMessage(text=content))
-        elif message_type == 'stamp':
-            line_bot_api.push_message(
-                USER_ID, StickerSendMessage(package_id=package_id, sticker_id=sticker_id))
+        if not broadcasting:
+            if message_type == 'text':
+                line_bot_api.push_message(
+                    USER_ID, TextSendMessage(text=content))
+            elif message_type == 'stamp':
+                line_bot_api.push_message(
+                    USER_ID, StickerSendMessage(package_id=package_id, sticker_id=sticker_id))
+        else:
+            if message_type == 'text':
+                line_bot_api.broadcast(TextSendMessage(text=content))
+            elif message_type == 'stamp':
+                line_bot_api.broadcast(
+                    StickerSendMessage(package_id=package_id, sticker_id=sticker_id))
     except LineBotApiError:
         raise PermissionError(
             '認証に失敗しました。アクセストークンが有効であることを確認してください。') from None
@@ -67,9 +77,6 @@ if __name__ == "__main__":
 
     # Sending announcement and sticker
     '''See https://developers.line.biz/ja/docs/messaging-api/sticker-list/ for valid sticker IDs'''
-    send_message('text', announcement)
-    send_message('stamp', package_id='6359', sticker_id='11069859')
-
-    '''broadcast(self, messages, notification_disabled=False, timeout=None)'''
-    # line_bot_api = LineBotApi(CHANNEL_ACCESS_TOKEN)
-    # line_bot_api.broadcast(TextSendMessage(text=announcement))
+    send_message('text', announcement, broadcasting=False)
+    send_message('stamp', broadcasting=False,
+                 package_id='6359', sticker_id='11069859')
