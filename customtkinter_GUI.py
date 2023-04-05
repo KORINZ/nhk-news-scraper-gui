@@ -11,6 +11,7 @@ from datetime import datetime
 from typing import Tuple, Callable
 
 # TODO: Complete broadcast_switch function
+# TODO: Add change window size function
 
 VERSION = "v1.0.0"
 button_colors = ['blue', 'green', 'dark-blue']
