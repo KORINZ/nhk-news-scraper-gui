@@ -164,9 +164,15 @@ class MyTabView(ctk.CTkTabview):
 
         # *全員に発信 Switch
         self.broadcast_switch = ctk.CTkSwitch(
-            master=self.settings, text="全員に発信", font=self.font)
+            master=self.settings, text="全員に発信", font=self.font, command=self.toggle_send_to_all_label)
         self.broadcast_switch.grid(
             row=3, column=0, padx=(0, 0), pady=0, sticky="n")
+
+        # *全員に発信ON時のラベル Label
+        self.broadcast_on_label = ctk.CTkLabel(
+            master=self.settings, text="※全員に発信ON", font=self.font, fg_color="transparent", bg_color="green")
+        self.broadcast_on_label.grid(
+            row=4, column=0, padx=(0, 0), pady=20, sticky="n")
 
         # *デフォルトクイズタイプ OptionMenu
         self.label_default_quiz_type = ctk.CTkLabel(master=self.settings,
@@ -318,12 +324,11 @@ class MyTabView(ctk.CTkTabview):
             "always_send_to_line": 1 if self.checkbox_always_send_to_line.get() == 1 else 0,
             "send_to_all": 1 if self.broadcast_switch.get() == 1 else 0,
             "scaling": self.scaling_optionemenu.get(),
-            # Add other settings (pending)
         }
 
         try:
             with open(SETTINGS_FILE, "w", encoding="utf-8") as file:
-                json.dump(settings, file)
+                json.dump(settings, file, indent=4)
             self.show_saved_label()  # Call this function when saving is successful
         except FileNotFoundError as e:
             print(f"Error: {e}")
@@ -345,10 +350,13 @@ class MyTabView(ctk.CTkTabview):
             self.toggle_datetime_display()  # Toggle display_time only if it is set to False
 
         # Update the broadcast switch
-        if settings_file.get("send_to_all") == 1:
+        send_to_all = settings_file.get("send_to_all")
+        if send_to_all == 1:
             self.broadcast_switch.select()
+            self.toggle_send_to_all_label()
         else:
             self.broadcast_switch.deselect()
+            self.toggle_send_to_all_label()
 
         # Update the default_question_type dropdown
         quiz_type = str(settings_file.get("default_question_type"))
@@ -373,6 +381,13 @@ class MyTabView(ctk.CTkTabview):
         # Update the scaling optionmenu
         scaling = str(settings_file.get("scaling"))
         self.scaling_optionemenu.set(scaling)
+
+    def toggle_send_to_all_label(self) -> None:
+        """Display the send to all label."""
+        if self.broadcast_switch.get() == 0:
+            self.broadcast_on_label.grid_remove()
+        else:
+            self.broadcast_on_label.grid()
 
     def toggle_datetime_display(self) -> None:
         """Toggle the date and time label visibility."""
@@ -524,11 +539,13 @@ class MyTabView(ctk.CTkTabview):
         """Change the scaling when the OptionMenu value is changed"""
         new_scaling_float = int(new_scaling.strip("%")) / 100
         ctk.set_widget_scaling(new_scaling_float)
+        self.toggle_send_to_all_label()
+        self.toggle_datetime_display()
 
     def show_saved_label(self) -> None:
         """Display a 'Saved!' label for 4 seconds."""
         saved_label = ctk.CTkLabel(
-            self.settings, text="保存しました！再起動後に反映されます。", font=self.font)
+            self.settings, text="保存しました！", font=self.font)
         saved_label.grid(row=5, column=0, padx=(
             170, 0), pady=20, sticky="sw")
         self.settings.after(4000,
@@ -589,8 +606,7 @@ class App(ctk.CTk):
         # *Create the tab view instance
         self.tab_view = MyTabView(
             master=self, datetime_label=self.datetime_label, quiz_type_dropdown=self.quiz_type_dropdown,
-            quiz_number_entry=self.quiz_number_entry, instant_push_check_box=self.instant_push_check_box,
-            width=860, height=300)
+            quiz_number_entry=self.quiz_number_entry, instant_push_check_box=self.instant_push_check_box, width=860, height=300)
         self.tab_view.grid(row=4, column=0, padx=20, pady=20, sticky="nsew")
         self.load_saved_settings()
 
@@ -690,6 +706,9 @@ class App(ctk.CTk):
                 self.show_feedback_label("最大問題数を指定してください。")
                 sys.exit(1)
 
+            self.broadcast_bool = bool(self.tab_view.broadcast_switch.get())
+            print(self.broadcast_bool)
+
             if self.instant_push_check_box.get() == 1:
                 self.quiz_type_dropdown.configure(state="disabled")
 
@@ -699,7 +718,8 @@ class App(ctk.CTk):
 
             # *Run the main function from the main module
             main(self.quiz_type_dropdown.get(), push=bool(self.instant_push_check_box.get()),
-                 questions=int(self.quiz_number_entry.get()), broadcasting=False, progress_callback=self.update_progressbar)
+                 questions=int(self.quiz_number_entry.get()), broadcasting=self.broadcast_bool,
+                 progress_callback=self.update_progressbar)
 
             # Update the progress bar and text label
             if not bool(self.instant_push_check_box.get()):
