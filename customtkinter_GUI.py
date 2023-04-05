@@ -13,7 +13,7 @@ from typing import Tuple, Callable
 # TODO: Complete broadcast_switch function
 # TODO: Add maximize screen switch
 
-VERSION = "v1.0.0"
+VERSION = "v1.1.0"
 button_colors = ['blue', 'green', 'dark-blue']
 ctk.set_default_color_theme(button_colors[2])
 
@@ -405,7 +405,7 @@ class MyTabView(ctk.CTkTabview):
         """Calculate the window size based on the screen size."""
         main_window_width = self.master.winfo_width()
         main_window_height = self.master.winfo_height()
-        main_window_x = self.master.winfo_x() - 100
+        main_window_x = self.master.winfo_x()
         main_window_y = self.master.winfo_y()
         x_position = main_window_x + \
             (main_window_width // 2) - (popup_width // 2)
