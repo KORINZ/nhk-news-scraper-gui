@@ -14,7 +14,7 @@ from typing import Tuple, Callable
 # Initial setup
 VERSION = "v1.3.2"
 button_colors = ['blue', 'green', 'dark-blue']
-ctk.set_default_color_theme(button_colors[2])
+ctk.set_default_color_theme(button_colors[1])
 PRONOUN_QUIZ_LOCATION = r'./txt_files/pronunciation_quiz.txt'
 DEF_QUIZ_LOCATION = r'./txt_files/definition_quiz.txt'
 LOG_LOCATION = r'./txt_files/push_log.txt'
@@ -221,9 +221,9 @@ class MyTabView(ctk.CTkTabview):
                                                     pady=20, sticky="ne")
 
         # *保存 Button
-        self.button_save = ctk.CTkButton(
+        self.save_settings_button = ctk.CTkButton(
             master=self.settings, text="保存", font=self.font, fg_color="transparent", border_width=2, text_color=("gray10", "#DCE4EE"), command=self.save_settings)
-        self.button_save.grid(row=5, column=0, padx=(
+        self.save_settings_button.grid(row=5, column=0, padx=(
             20, 0), pady=20, sticky="sw")
 
         # *消除した Label
@@ -343,11 +343,8 @@ class MyTabView(ctk.CTkTabview):
             japanese_value)
 
         # Load existing settings
-        try:
-            with open(SETTINGS_FILE_LOCATION, "r", encoding="utf-8") as file:
-                settings = json.load(file)
-        except FileNotFoundError:
-            settings = {}
+        with open(SETTINGS_FILE_LOCATION, "r", encoding="utf-8") as file:
+            settings = json.load(file)
 
         # Update settings with new values
         settings.update({
@@ -579,6 +576,8 @@ class MyTabView(ctk.CTkTabview):
         """Change the scaling when the OptionMenu value is changed"""
         new_scaling_float = int(new_scaling.strip("%")) / 100
         ctk.set_widget_scaling(new_scaling_float)
+
+        # Remove the unwanted widgets (bugs)
         self.toggle_send_to_all_label()
         self.toggle_datetime_display()
 
@@ -588,8 +587,7 @@ class MyTabView(ctk.CTkTabview):
             self.settings, text="保存しました！", font=self.font)
         saved_label.grid(row=5, column=0, padx=(
             170, 0), pady=20, sticky="sw")
-        self.settings.after(4000,
-                            self.remove_saved_label, saved_label)
+        self.settings.after(3000, lambda: saved_label.configure(text=""))
 
     def remove_saved_label(self, saved_label: ctk.CTkLabel) -> None:
         """Remove the 'Saved!' label from the grid."""
