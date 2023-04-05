@@ -8,7 +8,7 @@ from tkinter import messagebox
 from main import main, push_quiz
 
 # Global variables
-VERSION = "v1.1.0"
+VERSION = "v1.1.0 (deprecated)"
 DEFAULT_NUMBER_OF_QUESTIONS = "4"
 PRONOUN_QUIZ_LOCATION = r'txt_files/pronunciation_quiz.txt'
 DEF_QUIZ_LOCATION = r'txt_files/definition_quiz.txt'
@@ -16,7 +16,7 @@ LOG_LOCATION = r'txt_files/push_log.txt'
 NEWS_ARTICLE_LOCATION = r'txt_files/news_article.txt'
 LINE_ICON_LOCATION = r'./icons/LINE.ico'
 NHK_ICON_LOCATION = r'./icons/nhk.ico'
-TOKEN_ID_LOCATION = r'./secrets.json'
+TOKEN_ID_LOCATION = r'./json_files/secrets.json'
 is_blinking = False
 
 
