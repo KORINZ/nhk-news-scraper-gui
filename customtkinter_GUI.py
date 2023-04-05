@@ -13,7 +13,7 @@ from typing import Tuple, Callable
 # TODO: Complete broadcast_switch function
 # TODO: Add maximize screen switch
 
-VERSION = "v1.3.1"
+VERSION = "v1.3.2"
 button_colors = ['blue', 'green', 'dark-blue']
 ctk.set_default_color_theme(button_colors[2])
 
