@@ -4,8 +4,8 @@
     "default_question_type": "\u5358\u8a9e\u610f\u5473\u30af\u30a4\u30ba",
     "default_number_of_questions": "5",
     "always_send_to_line": 0,
-    "send_to_all": 0,
-    "scaling": "100%",
+    "send_to_all": 1,
+    "scaling": "120%",
     "maximize_screen_check_box": 0,
     "grade_book_url": "www.google.com"
 }

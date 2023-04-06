@@ -621,7 +621,7 @@ class App(ctk.CTk):
         self.datetime_label = ctk.CTkLabel(
             master=self, text="", font=self.font)
         self.datetime_label.grid(
-            row=3, column=0, padx=(0, 20), pady=0, sticky="ne")
+            row=3, column=0, padx=(0, 20), pady=10, sticky="ne")
         self.update_datetime_label()
 
         # *全員に発信ON時のラベル Label
@@ -723,7 +723,7 @@ class App(ctk.CTk):
         self.generate_quiz_button = ctk.CTkButton(
             master=self, text="クイズ作成", font=self.font)
         self.generate_quiz_button.grid(
-            row=3, column=0, padx=20, pady=10, sticky="w")
+            row=3, column=0, padx=20, pady=0, sticky="w")
         self.generate_quiz_button.configure(
             command=self.start_quiz_generation_thread)
 
