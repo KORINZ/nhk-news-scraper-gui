@@ -13,7 +13,7 @@ from typing import Tuple, Callable
 # TODO focus on main window not selenium window
 
 # Initial setup
-VERSION = "v1.4.1"
+VERSION = "v1.4.2"
 button_colors = ['blue', 'green', 'dark-blue']
 ctk.set_default_color_theme(button_colors[1])
 PRONOUN_QUIZ_LOCATION = r'./txt_files/pronunciation_quiz.txt'
@@ -175,9 +175,9 @@ class MyTabView(ctk.CTkTabview):
                               pady=0, sticky="ne")
 
         # *時間表示 Switch
-        self.display_time_switch = ctk.CTkSwitch(
+        self.display_datetime_switch = ctk.CTkSwitch(
             master=self.settings, text="時間表示", font=self.font, command=self.toggle_datetime_display)
-        self.display_time_switch.grid(
+        self.display_datetime_switch.grid(
             row=1, column=0, padx=(20, 0), pady=0, sticky="nw")
 
         # *全員に発信 Switch
@@ -351,7 +351,7 @@ class MyTabView(ctk.CTkTabview):
         # Update settings with new values
         settings.update({
             "theme": english_value,
-            "display_time": 1 if self.display_time_switch.get() == 1 else 0,
+            "display_time": 1 if self.display_datetime_switch.get() == 1 else 0,
             "default_question_type": self.default_quiz_type_dropdown.get(),
             "default_number_of_questions": self.set_default_number_of_questions_entry.get(),
             "always_send_to_line": 1 if self.checkbox_always_send_to_line.get() == 1 else 0,
@@ -377,10 +377,10 @@ class MyTabView(ctk.CTkTabview):
         # Update the display_time switch and toggle the datetime label
         display_time = settings_file.get("display_time")
         if display_time == 1:
-            self.display_time_switch.select()  # Set the switch to ON state
+            self.display_datetime_switch.select()  # Set the switch to ON state
             self.toggle_datetime_display()  # Toggle display_time only if it is set to True
         else:
-            self.display_time_switch.deselect()  # Set the switch to OFF state
+            self.display_datetime_switch.deselect()  # Set the switch to OFF state
             self.toggle_datetime_display()  # Toggle display_time only if it is set to False
 
         # Update the broadcast switch
@@ -430,7 +430,7 @@ class MyTabView(ctk.CTkTabview):
 
     def toggle_datetime_display(self) -> None:
         """Toggle the date and time label visibility."""
-        if self.display_time_switch.get() == 0:
+        if self.display_datetime_switch.get() == 0:
             self.datetime_label.grid_remove()
         else:
             self.datetime_label.grid()
@@ -621,7 +621,7 @@ class App(ctk.CTk):
         self.datetime_label = ctk.CTkLabel(
             master=self, text="", font=self.font)
         self.datetime_label.grid(
-            row=3, column=0, padx=(0, 20), pady=10, sticky="ne")
+            row=3, column=0, padx=(0, 20), pady=0, sticky="ne")
         self.update_datetime_label()
 
         # *全員に発信ON時のラベル Label

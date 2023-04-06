@@ -5,7 +5,7 @@
     "default_number_of_questions": "5",
     "always_send_to_line": 0,
     "send_to_all": 0,
-    "scaling": "120%",
+    "scaling": "100%",
     "maximize_screen_check_box": 0,
     "grade_book_url": "www.google.com"
 }
