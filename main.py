@@ -16,6 +16,10 @@ from selenium.webdriver.common.by import By
 from typing import Dict, List, Tuple, Optional, Callable
 from get_definition import get_definition_list, get_number_of_word
 
+if sys.platform.startswith('win32'):
+    from selenium.webdriver.chrome.service import Service as ChromeService
+    from subprocess import CREATE_NO_WINDOW
+
 '''
 NEWS WEB EASY
 平日のみ、4つのニュースを更新される
@@ -52,8 +56,10 @@ def get_news_url() -> str:
     opt = webdriver.ChromeOptions()
     opt.add_argument('headless')
     opt.add_experimental_option('excludeSwitches', ['enable-logging'])
+    chrome_service = ChromeService('chromedriver')
+    chrome_service.creation_flags = CREATE_NO_WINDOW
     try:
-        driver = webdriver.Chrome(options=opt)
+        driver = webdriver.Chrome(options=opt, service=chrome_service)
         driver.get(PATH)
     except WebDriverException:
         raise ConnectionError(

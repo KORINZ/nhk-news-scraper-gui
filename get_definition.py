@@ -8,6 +8,10 @@ import requests
 import re
 import sys
 
+if sys.platform.startswith('win32'):
+    from selenium.webdriver.chrome.service import Service as ChromeService
+    from subprocess import CREATE_NO_WINDOW
+
 # Regular expression to match word ids which contain RSHOK- prefix
 PATTERN = re.compile(r'^RSHOK-')
 
@@ -32,11 +36,13 @@ def get_definition_list(url: str, progress_callback: Optional[Callable] = None) 
     matching_ids = get_number_of_word(url)[1]
 
     # Selenium setup
+    chrome_service = ChromeService('chromedriver')
+    chrome_service.creation_flags = CREATE_NO_WINDOW
     options = webdriver.ChromeOptions()
     options.add_argument("--window-size=1920,1080")
     options.add_argument("--headless")
     options.add_experimental_option('excludeSwitches', ['enable-logging'])
-    driver = webdriver.Chrome(options=options)
+    driver = webdriver.Chrome(options=options, service=chrome_service)
     driver.get(url)
 
     # Turn off furigana and transform scale

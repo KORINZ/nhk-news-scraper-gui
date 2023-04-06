@@ -36,14 +36,15 @@ def create_default_settings_file() -> None:
         "theme": "Dark",
         "display_time": "0",
         "default_question_type": "単語意味クイズ",
-        "default_number_of_questions": "1",
+        "default_number_of_questions": "5",
         "always_send_to_line": "0",
         "send_to_all": "0",
         "scaling": "100%",
         "maximize_screen_check_box": "0",
         "grade_book_url": "http://www.google.com",
     }
-
+    if not os.path.exists(JSON_FOLDER_PATH):
+        os.makedirs(JSON_FOLDER_PATH)
     with open(SETTINGS_FILE_LOCATION, "w", encoding="utf-8") as settings_file:
         json.dump(default_settings, settings_file, indent=4)
 
@@ -334,8 +335,6 @@ class MyTabView(ctk.CTkTabview):
 
     def open_json_files_folder(self) -> None:
         """Open the folder containing the json files."""
-        if not os.path.exists(self.json_folder_path):
-            os.makedirs(self.json_folder_path)
         subprocess.run(['explorer', os.path.abspath(self.json_folder_path)])
 
     def save_settings(self) -> None:
