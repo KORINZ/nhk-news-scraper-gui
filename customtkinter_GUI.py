@@ -482,7 +482,14 @@ class MyTabView(ctk.CTkTabview):
             grade_book_url_popup, width=300, font=self.font)
         grade_book_url_entry.grid(
             row=0, column=0, padx=(0, 20), pady=10, sticky="ne")
+
+        # Load the grade book URL from the settings file
+        with open(SETTINGS_FILE_LOCATION, "r", encoding="utf-8") as settings_file:
+            settings_data = json.load(settings_file)
+        GRADE_BOOK_URL = settings_data['grade_book_url']
+
         grade_book_url_entry.insert(0, GRADE_BOOK_URL)
+
         self.add_save_cancel_buttons(
             grade_book_url_popup, 1, 0, command=lambda: self.save_grade_book_url(grade_book_url_entry.get(), grade_book_url_popup))
 
@@ -551,7 +558,7 @@ class MyTabView(ctk.CTkTabview):
             json.dump(data, settings_file, ensure_ascii=False, indent=4)
 
         self.url_line_confidential_saved_label.configure(
-            text="URLの保存は成功しました！再起動後に反映されます。", font=self.font)
+            text="成績チェックURLの保存は成功しました！", font=self.font)
         self.after(4000, lambda: self.url_line_confidential_saved_label.configure(
             text=""))
 
@@ -568,7 +575,7 @@ class MyTabView(ctk.CTkTabview):
             json.dump(confidential_data, config_file, indent=4)
 
         self.url_line_confidential_saved_label.configure(
-            text="情報の保存は成功しました！再起動後に反映されます。", font=self.font)
+            text="機密情報の保存は成功しました！", font=self.font)
         self.after(4000, lambda: self.url_line_confidential_saved_label.configure(
             text=""))
 
@@ -739,7 +746,12 @@ class App(ctk.CTk):
 
     def open_grade_book(self) -> None:
         """Open the grade book."""
-        open_new_tab(GRADE_BOOK_URL)
+        with open(SETTINGS_FILE_LOCATION, "r", encoding="utf-8") as settings_file:
+            settings_data = json.load(settings_file)
+
+        # Extract the grade_book_url value from the JSON data
+        grade_book_url = settings_data['grade_book_url']
+        open_new_tab(grade_book_url)
 
     def start_quiz_generation_thread(self) -> None:
         """Start a thread to run the quiz generation function in the background."""
@@ -857,8 +869,9 @@ class App(ctk.CTk):
             self.update_textboxes()
         except PermissionError:
             self.error_handler("LINEのTOKENを確認してください。")
-        finally:
             self.send_quiz_button.configure(state="normal")
+        else:
+            self.send_quiz_button.configure(state="disabled")
 
     def update_textboxes(self, initial_load: bool = False) -> None:
         """Clear and update the textboxes after quiz generation."""

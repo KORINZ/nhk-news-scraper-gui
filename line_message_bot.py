@@ -8,7 +8,7 @@ import json
 from linebot import LineBotApi
 from linebot.models import TextSendMessage, StickerSendMessage
 from linebot.exceptions import LineBotApiError
-from typing import Optional
+from typing import Tuple, Optional
 
 TOKEN_ID_FILE = r'./json_files/secrets.json'
 
@@ -24,17 +24,21 @@ if not os.path.isfile(TOKEN_ID_FILE):
         print('secrets.json created. Please fill in the values.')
         # sys.exit(1)
 
-# Read the secrets from the file
-with open(TOKEN_ID_FILE, 'r') as f:
-    secrets = json.load(f)
-    CHANNEL_ACCESS_TOKEN = secrets.get('channel_access_token')
-    USER_ID = secrets.get('user_id')
-
 NEWS_ARTICLE_TXT_LOCATION = r'txt_files/news_article.txt'
+
+
+def read_secrets() -> Tuple:
+    """Read the secrets from the secrets.json file"""
+    with open(TOKEN_ID_FILE, 'r') as f:
+        secrets = json.load(f)
+        CHANNEL_ACCESS_TOKEN = secrets.get('channel_access_token')
+        USER_ID = secrets.get('user_id')
+    return CHANNEL_ACCESS_TOKEN, USER_ID
 
 
 def send_message(message_type: str, content: Optional[str] = None, broadcasting=False, package_id=None, sticker_id=None) -> None:
     """Login to LINE bot API and send text message"""
+    CHANNEL_ACCESS_TOKEN, USER_ID = read_secrets()
     line_bot_api = LineBotApi(CHANNEL_ACCESS_TOKEN)
     try:
         if not broadcasting:
