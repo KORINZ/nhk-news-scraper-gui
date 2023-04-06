@@ -10,6 +10,7 @@ from webbrowser import open_new_tab
 from datetime import datetime
 from typing import Tuple, Callable
 
+# TODO focus on main window not selenium window
 
 # Initial setup
 VERSION = "v1.3.2"
