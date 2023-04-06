@@ -800,9 +800,6 @@ class App(ctk.CTk):
         # Handle errors
         except ValueError:
             self.error_handler("最大問題数を指定してください。")
-        except PermissionError:
-            self.error_handler("LINEのTOKENを確認してください。")
-            self.send_quiz_button.configure(state="normal")
         except ConnectionError:
             self.error_handler("インターネット接続を確認してください。")
         finally:
@@ -861,7 +858,7 @@ class App(ctk.CTk):
         except PermissionError:
             self.error_handler("LINEのTOKENを確認してください。")
         finally:
-            self.send_quiz_button.configure(state="disabled")
+            self.send_quiz_button.configure(state="normal")
 
     def update_textboxes(self, initial_load: bool = False) -> None:
         """Clear and update the textboxes after quiz generation."""
