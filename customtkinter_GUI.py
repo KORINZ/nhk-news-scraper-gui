@@ -13,9 +13,9 @@ from typing import Tuple, Callable
 # TODO focus on main window not selenium window
 
 # Initial setup
-VERSION = "v1.3.2"
+VERSION = "v1.3.5"
 button_colors = ['blue', 'green', 'dark-blue']
-ctk.set_default_color_theme(button_colors[2])
+ctk.set_default_color_theme(button_colors[1])
 PRONOUN_QUIZ_LOCATION = r'./txt_files/pronunciation_quiz.txt'
 DEF_QUIZ_LOCATION = r'./txt_files/definition_quiz.txt'
 LOG_LOCATION = r'./txt_files/push_log.txt'
@@ -260,7 +260,7 @@ class MyTabView(ctk.CTkTabview):
 
         # *過去のクイズを消除 Button
         self.delete_past_quizzes_button = ctk.CTkButton(master=self.settings,
-                                                        text="過去のクイズを消除", command=self.confirm_delete_past_quizzes, font=self.font, fg_color="#8B0000")
+                                                        text="過去のクイズを消除", command=self.confirm_delete_past_quizzes, font=self.font, hover_color="#8B0000")
         self.delete_past_quizzes_button.grid(row=2, column=0, padx=(0, 20),
                                              pady=20, sticky="ne")
 
@@ -551,7 +551,7 @@ class MyTabView(ctk.CTkTabview):
             json.dump(data, settings_file, ensure_ascii=False, indent=4)
 
         self.url_line_confidential_saved_label.configure(
-            text="URL情報の保存は成功しました！再起動後に反映されます。", font=self.font)
+            text="URLの保存は成功しました！再起動後に反映されます。", font=self.font)
         self.after(4000, lambda: self.url_line_confidential_saved_label.configure(
             text=""))
 
@@ -568,7 +568,7 @@ class MyTabView(ctk.CTkTabview):
             json.dump(confidential_data, config_file, indent=4)
 
         self.url_line_confidential_saved_label.configure(
-            text="機密情報の保存は成功しました！再起動後に反映されます。", font=self.font)
+            text="情報の保存は成功しました！再起動後に反映されます。", font=self.font)
         self.after(4000, lambda: self.url_line_confidential_saved_label.configure(
             text=""))
 
@@ -619,7 +619,7 @@ class App(ctk.CTk):
 
         # *全員に発信ON時のラベル Label
         self.broadcast_on_label = ctk.CTkLabel(
-            master=self, text=" ※全員に発信ON ", font=self.font, bg_color="green")
+            master=self, text=" ※全員に発信ON ", font=self.font)
         self.broadcast_on_label.grid(
             row=3, column=0, padx=(505, 0), pady=10, sticky="nw")
 
@@ -662,9 +662,11 @@ class App(ctk.CTk):
         if self.tab_view.maximize_screen_check_box.get():
             self.after_idle(lambda: self.state("zoomed"))
             self.minsize(1160, 717)
+            self.focus_force()
         else:
             self.after_idle(lambda: self.geometry("1160x717"))
             self.minsize(1160, 717)
+            self.focus_force()
 
         # Create feedback message label
         self.feedback_label = ctk.CTkLabel(
