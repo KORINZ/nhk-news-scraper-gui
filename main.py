@@ -61,6 +61,7 @@ def get_news_url() -> str:
     options.add_argument("--disable-notifications")
     options.add_argument("--disable-features=WebRtcHideLocalIpsWithMdns")
     options.add_argument("--blink-settings=imagesEnabled=false")
+    options.add_argument("--disable-blink-features=Video")
     options.add_experimental_option('excludeSwitches', ['enable-logging'])
     chrome_service = ChromeService('chromedriver')
     chrome_service.creation_flags = CREATE_NO_WINDOW

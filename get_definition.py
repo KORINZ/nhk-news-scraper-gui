@@ -46,6 +46,7 @@ def get_definition_list(url: str, progress_callback: Optional[Callable] = None) 
     options.add_argument("--disable-notifications")
     options.add_argument("--disable-features=WebRtcHideLocalIpsWithMdns")
     options.add_argument("--blink-settings=imagesEnabled=false")
+    options.add_argument("--disable-blink-features=Video")
     options.add_experimental_option('excludeSwitches', ['enable-logging'])
     driver = webdriver.Chrome(options=options, service=chrome_service)
     driver.get(url)
@@ -83,5 +84,5 @@ def get_definition_list(url: str, progress_callback: Optional[Callable] = None) 
 
 
 if __name__ == '__main__':
-    test_url = 'https://www3.nhk.or.jp/news/easy/k10014023731000/k10014023731000.html'
+    test_url = 'https://www3.nhk.or.jp/news/easy/k10014028881000/k10014028881000.html'
     definition_list = get_definition_list(test_url)
