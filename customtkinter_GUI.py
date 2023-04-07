@@ -13,9 +13,8 @@ from typing import Tuple, Callable
 # TODO focus on main window not selenium window
 
 # Initial setup
-VERSION = "v1.6.0"
-button_colors = ['blue', 'green', 'dark-blue']
-ctk.set_default_color_theme(button_colors[1])
+VERSION = "v1.7.0"
+
 PRONOUN_QUIZ_LOCATION = r'./txt_files/pronunciation_quiz.txt'
 DEF_QUIZ_LOCATION = r'./txt_files/definition_quiz.txt'
 LOG_LOCATION = r'./txt_files/push_log.txt'
@@ -35,6 +34,7 @@ def create_default_settings_file() -> None:
     """Create a default settings file if it doesn't exist."""
     default_settings = {
         "theme": "Dark",
+        "button_color": "dark-blue",
         "display_time": "0",
         "default_question_type": "単語意味クイズ",
         "default_number_of_questions": "5",
@@ -136,51 +136,69 @@ class MyTabView(ctk.CTkTabview):
             master=self.settings, text="テーマ:", font=self.font)
         self.label_theme.grid(row=0, column=0, padx=(
             20, 0), pady=20, sticky="nw")
-        self.optionmenu_var = ctk.StringVar(value=master.theme)
-        self.optionmenu_mapping = {
+        self.theme_optionmenu_var = ctk.StringVar(value=master.theme)
+        self.theme_optionmenu_mapping = {
             "Light": "ライト",
             "Dark": "ダーク",
             "System": "システム"
         }
         self.appearance_mode_optionemenu = ctk.CTkOptionMenu(self.settings,
                                                              values=list(
-                                                                 self.optionmenu_mapping.values()),
-                                                             command=self.change_appearance_mode_event,
-                                                             variable=self.optionmenu_var, font=self.font)
+                                                                 self.theme_optionmenu_mapping.values()),
+                                                             command=self.change_appearance_mode_event_theme,
+                                                             variable=self.theme_optionmenu_var, font=self.font)
         self.appearance_mode_optionemenu.grid(
             row=0, column=0, padx=(70, 0), pady=20, sticky="nw")
+
+        # *ボタン色 OptionMenu
+        self.label_button_color = ctk.CTkLabel(
+            master=self.settings, text="ボタン色:", font=self.font)
+        self.label_button_color.grid(
+            row=1, column=0, padx=(20, 0), pady=0, sticky="nw")
+        self.button_color_optionmenu_var = ctk.StringVar(
+            value=master.button_color)
+        self.button_color_optionmenu_mapping = {
+            "blue": "青",
+            "dark-blue": "ダークブルー",
+            "green": "緑",
+        }
+        self.button_color_optionmenu = ctk.CTkOptionMenu(self.settings, values=list(
+            self.button_color_optionmenu_mapping.values()), variable=self.button_color_optionmenu_var, font=self.font, command=lambda _: self.change_appearance_mode_event_button_color(self.button_color_optionmenu_var.get()))
+
+        self.button_color_optionmenu.grid(
+            row=1, column=0, padx=(90, 0), pady=0, sticky="nw")
 
         # *時間表示 Switch
         self.display_datetime_switch = ctk.CTkSwitch(
             master=self.settings, text="時間表示", font=self.font, command=self.toggle_datetime_display)
         self.display_datetime_switch.grid(
-            row=1, column=0, padx=(20, 0), pady=0, sticky="nw")
+            row=2, column=0, padx=(20, 0), pady=20, sticky="nw")
 
         # *デフォルトクイズタイプ OptionMenu
         self.label_default_quiz_type = ctk.CTkLabel(master=self.settings,
                                                     text="デフォルトクイズタイプ:", font=self.font)
-        self.label_default_quiz_type.grid(row=2, column=0, padx=(
-            20, 0), pady=20, sticky="nw")
+        self.label_default_quiz_type.grid(row=3, column=0, padx=(
+            20, 0), pady=0, sticky="nw")
         self.default_quiz_type_dropdown = ctk.CTkOptionMenu(
             master=self.settings, values=["単語意味クイズ", "読み方クイズ"], font=self.font)
-        self.default_quiz_type_dropdown.grid(row=2, column=0, padx=(170, 0),
-                                             pady=20, sticky="nw")
+        self.default_quiz_type_dropdown.grid(row=3, column=0, padx=(170, 0),
+                                             pady=0, sticky="nw")
 
         # *デフォルト問題数 Entry
         self.label_default_number_of_questions = ctk.CTkLabel(master=self.settings,
                                                               text="デフォルト最大問題数:", font=self.font)
         self.label_default_number_of_questions.grid(
-            row=3, column=0, padx=(20, 0), pady=0, sticky="nw")
+            row=4, column=0, padx=(20, 0), pady=20, sticky="nw")
         self.set_default_number_of_questions_entry = ctk.CTkEntry(
             master=self.settings, font=self.font, width=32)
         self.set_default_number_of_questions_entry.grid(
-            row=3, column=0, padx=(170, 0), pady=0, sticky="nw")
+            row=4, column=0, padx=(170, 0), pady=20, sticky="nw")
 
         # *常にすぐLINEに送信 Checkbox
         self.checkbox_always_send_to_line = ctk.CTkCheckBox(master=self.settings,
                                                             text="常にすぐLINEに送信をチェック", font=self.font)
-        self.checkbox_always_send_to_line.grid(row=4, column=0, padx=(20, 0),
-                                               pady=20, sticky="nw")
+        self.checkbox_always_send_to_line.grid(row=5, column=0, padx=(20, 0),
+                                               pady=0, sticky="nw")
 
         # *スケーリング OptionMenu
         self.scaling_label = ctk.CTkLabel(
@@ -255,17 +273,17 @@ class MyTabView(ctk.CTkTabview):
         # *保存 Button
         self.save_settings_button = ctk.CTkButton(
             master=self.settings, text="保存", font=self.font, fg_color="transparent", border_width=2, text_color=("gray10", "#DCE4EE"), command=self.save_settings)
-        self.save_settings_button.grid(row=5, column=0, padx=(
+        self.save_settings_button.grid(row=6, column=0, padx=(
             20, 0), pady=20, sticky="sw")
 
         # *バージョン Label
         self.label_version = ctk.CTkLabel(
             master=self.settings, text="(2023) NHK NEWS WEB EASY クイズ作成: " + VERSION, font=self.font)
-        self.label_version.grid(row=5, column=0, padx=(
+        self.label_version.grid(row=6, column=0, padx=(
             0, 20), pady=20, sticky="se")
 
         # Configure grid system
-        self.settings.grid_rowconfigure(4, weight=1)
+        self.settings.grid_rowconfigure(5, weight=1)
         self.settings.grid_columnconfigure(0, weight=1)
 
     def confirm_delete_past_quizzes(self) -> None:
@@ -306,6 +324,10 @@ class MyTabView(ctk.CTkTabview):
 
         delete_past_quiz_popup.grab_set()
 
+    def restart_app(self) -> None:
+        python = sys.executable
+        os.execl(python, python, *sys.argv)
+
     def delete_past_quizzes(self, popup) -> None:
         """Delete all the past quizzes in the quizzes folder."""
         with open(PAST_QUIZ_LOCATION, "w", encoding="utf-8") as f:
@@ -316,17 +338,42 @@ class MyTabView(ctk.CTkTabview):
                 3000, lambda: self.past_quizzes_deleted_label.configure(text=""))
         popup.destroy()
 
-    def change_appearance_mode_event(self, new_appearance_mode: str) -> None:
+    def change_appearance_mode_event_theme(self, new_appearance_mode: str) -> None:
         """Change the appearance mode when the OptionMenu value is changed"""
-        english_value = {v: k for k, v in self.optionmenu_mapping.items()}[
+        english_value = {v: k for k, v in self.theme_optionmenu_mapping.items()}[
             new_appearance_mode]
         ctk.set_appearance_mode(english_value)
 
-    def update_optionmenu_var(self, english_value: str) -> None:
+    def change_appearance_mode_event_button_color(self, new_appearance_mode: str) -> None:
+        """Change the appearance mode when the OptionMenu value is changed"""
+        english_value = {v: k for k, v in self.button_color_optionmenu_mapping.items()}[
+            new_appearance_mode]
+
+        # Read the JSON file
+        with open(SETTINGS_FILE_LOCATION, "r", encoding="utf-8") as f:
+            settings = json.load(f)
+
+        # Update the value in the dictionary
+        settings["button_color"] = english_value
+
+        # Write the updated dictionary back to the JSON file
+        with open(SETTINGS_FILE_LOCATION, "w", encoding="utf-8") as f:
+            json.dump(settings, f, ensure_ascii=False, indent=4)
+
+        self.restart_app()
+
+    def update_theme_optionmenu_var(self, english_value: str) -> None:
         """Update the value of the OptionMenu variable"""
-        japanese_value = self.optionmenu_mapping.get(english_value)
+        japanese_value = self.theme_optionmenu_mapping.get(english_value)
         if japanese_value:
-            self.optionmenu_var.set(japanese_value)
+            self.theme_optionmenu_var.set(japanese_value)
+
+    def update_button_color_optionmenu_var(self, english_value: str) -> None:
+        """Update the value of the OptionMenu variable"""
+        japanese_value = self.button_color_optionmenu_mapping.get(
+            english_value)
+        if japanese_value:
+            self.button_color_optionmenu_var.set(japanese_value)
 
     def open_txt_files_folder(self) -> None:
         """Open the folder containing the txt files."""
@@ -340,9 +387,13 @@ class MyTabView(ctk.CTkTabview):
 
     def save_settings(self) -> None:
         """Save the current settings to a file without overwriting grade_book_url."""
-        japanese_value = self.optionmenu_var.get()
-        english_value = {v: k for k, v in self.optionmenu_mapping.items()}.get(
-            japanese_value)
+        theme_japanese_value = self.theme_optionmenu_var.get()
+        theme_english_value = {v: k for k, v in self.theme_optionmenu_mapping.items()}.get(
+            theme_japanese_value)
+
+        button_color_japanese_value = self.button_color_optionmenu_var.get()
+        button_color_english_value = {
+            v: k for k, v in self.button_color_optionmenu_mapping.items()}.get(button_color_japanese_value)
 
         # Load existing settings
         with open(SETTINGS_FILE_LOCATION, "r", encoding="utf-8") as file:
@@ -350,7 +401,8 @@ class MyTabView(ctk.CTkTabview):
 
         # Update settings with new values
         settings.update({
-            "theme": english_value,
+            "theme": theme_english_value,
+            "button_color": button_color_english_value,
             "display_time": 1 if self.display_datetime_switch.get() == 1 else 0,
             "default_question_type": self.default_quiz_type_dropdown.get(),
             "default_number_of_questions": self.set_default_number_of_questions_entry.get(),
@@ -372,7 +424,11 @@ class MyTabView(ctk.CTkTabview):
         # Update the OptionMenu value
         theme = settings_file.get("theme")
         if theme:
-            self.update_optionmenu_var(theme)
+            self.update_theme_optionmenu_var(theme)
+
+        button_color = settings_file.get("button_color")
+        if button_color:
+            self.update_button_color_optionmenu_var(button_color)
 
         # Update the display_time switch and toggle the datetime label
         display_time = settings_file.get("display_time")
@@ -594,7 +650,7 @@ class MyTabView(ctk.CTkTabview):
         """Display a 'Saved!' label for 4 seconds."""
         saved_label = ctk.CTkLabel(
             self.settings, text="保存しました！", font=self.font)
-        saved_label.grid(row=5, column=0, padx=(
+        saved_label.grid(row=6, column=0, padx=(
             170, 0), pady=20, sticky="sw")
         self.settings.after(3000, lambda: saved_label.configure(text=""))
 
@@ -608,9 +664,11 @@ class App(ctk.CTk):
 
     def __init__(self) -> None:
         self.theme = self.read_settings()[0]
-        self.scaling = int(self.read_settings()[1].strip("%")) / 100
+        self.button_color = self.read_settings()[1]
+        self.scaling = int(self.read_settings()[2].strip("%")) / 100
         ctk.set_appearance_mode(self.theme)
         ctk.set_widget_scaling(self.scaling)
+        ctk.set_default_color_theme(self.button_color)
 
         super().__init__()
         self.iconbitmap(NHK_ICON_LOCATION)
@@ -670,7 +728,7 @@ class App(ctk.CTk):
             self.after_idle(lambda: self.state("zoomed"))
             self.focus_force()
         else:
-            self.after_idle(lambda: self.geometry("1160x717"))
+            self.after_idle(lambda: self.geometry("1220x754"))
             self.focus_force()
 
         # Create feedback message label
@@ -931,8 +989,9 @@ class App(ctk.CTk):
         with open(SETTINGS_FILE_LOCATION, "r", encoding="utf-8") as file:
             settings = json.load(file)
             theme = settings.get("theme")
+            button_color = settings.get("button_color")
             scaling = settings.get("scaling")
-            return theme, scaling
+            return theme, button_color, scaling
 
     def update_datetime_label(self) -> None:
         """Update the date and time label with the current date and time."""
