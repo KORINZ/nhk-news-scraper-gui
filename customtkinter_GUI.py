@@ -13,7 +13,7 @@ from typing import Tuple, Callable
 # TODO focus on main window not selenium window
 
 # Initial setup
-VERSION = "v1.8.0"
+VERSION = "v1.8.1"
 
 PRONOUN_QUIZ_LOCATION = r'./txt_files/pronunciation_quiz.txt'
 DEF_QUIZ_LOCATION = r'./txt_files/definition_quiz.txt'
@@ -876,7 +876,10 @@ class App(ctk.CTk):
             self.error_handler("インターネット接続を確認してください。")
         finally:
             self.tab_view.set("ファイル表示")
-            self.tab_view.sub_txt_tabs.set("ニュース文章")
+            if bool(self.instant_push_check_box.get()):
+                self.tab_view.sub_txt_tabs.set("ログファイル")
+            else:
+                self.tab_view.sub_txt_tabs.set("ニュース文章")
             self.progressbar.stop()
             self.generate_quiz_button.configure(state="normal")
             self.instant_push_check_box.configure(state="normal")
@@ -924,6 +927,10 @@ class App(ctk.CTk):
         pronoun_quiz = self.tab_view.textboxes["読み方クイズ"].get("1.0", ctk.END)
         with open(PRONOUN_QUIZ_LOCATION, 'w', encoding='utf-8') as f:
             f.write(pronoun_quiz)
+
+        # Switch to the log file tab
+        self.tab_view.set("ファイル表示")
+        self.tab_view.sub_txt_tabs.set("ログファイル")
 
         try:
             if self.quiz_type_dropdown.get() == "読み方クイズ":
