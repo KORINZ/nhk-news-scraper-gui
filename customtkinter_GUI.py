@@ -13,7 +13,7 @@ from typing import Tuple, Callable
 # TODO focus on main window not selenium window
 
 # Initial setup
-VERSION = "v1.4.2"
+VERSION = "v1.5.0"
 button_colors = ['blue', 'green', 'dark-blue']
 ctk.set_default_color_theme(button_colors[1])
 PRONOUN_QUIZ_LOCATION = r'./txt_files/pronunciation_quiz.txt'
