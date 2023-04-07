@@ -14,11 +14,7 @@ from selenium import webdriver
 from selenium.common.exceptions import WebDriverException
 from selenium.webdriver.common.by import By
 from typing import Dict, List, Tuple, Optional, Callable
-from get_definition import get_definition_list, get_number_of_word
-
-if sys.platform.startswith('win32'):
-    from selenium.webdriver.chrome.service import Service as ChromeService
-    from subprocess import CREATE_NO_WINDOW
+from get_definition import get_definition_list, get_number_of_word, setup_selenium
 
 '''
 NEWS WEB EASY
@@ -51,43 +47,36 @@ else:
     locale.setlocale(locale.LC_TIME, 'ja_JP.UTF-8')
 
 
-def get_news_url() -> str:
+def get_news_url() -> str | None:
     """Retrieve up-to-date news url links"""
-    options = webdriver.ChromeOptions()
-    options.add_argument("--headless")
-    options.add_argument("--window-size=1920,1080")
-    options.add_argument("--disable-gpu")
-    options.add_argument("--disable-extensions")
-    options.add_argument("--disable-notifications")
-    options.add_argument("--disable-features=WebRtcHideLocalIpsWithMdns")
-    options.add_argument("--blink-settings=imagesEnabled=false")
-    options.add_argument("--disable-blink-features=Video")
-    options.add_experimental_option('excludeSwitches', ['enable-logging'])
-    chrome_service = ChromeService('chromedriver')
-    chrome_service.creation_flags = CREATE_NO_WINDOW
-    try:
-        driver = webdriver.Chrome(options=options, service=chrome_service)
-        driver.get(PATH)
-    except WebDriverException:
-        raise ConnectionError(
-            'インターネットの接続を確認してください。')
+    max_attempts = 5
+    min_word_count = 3
 
-    links = driver.find_elements(By.XPATH, "//a[@href]")
-    news_links = [link.get_attribute("href")
-                  for link in links if NEWS_ARTICLE_URL_IDENTIFIER in link.get_attribute("href")]
+    for attempt in range(max_attempts):
+        try:
+            driver = setup_selenium()
+            driver.get(PATH)
+        except WebDriverException:
+            raise ConnectionError(
+                'インターネットの接続を確認してください。')
 
-    news_current = list(set(news_links[1:9]))
+        links = driver.find_elements(By.XPATH, "//a[@href]")
+        news_links = [link.get_attribute("href")
+                      for link in links if NEWS_ARTICLE_URL_IDENTIFIER in link.get_attribute("href")]
+        news_current = list(set(news_links[1:9]))
 
-    # Remove links with less than 3 words
-    for link in news_current:
-        if get_number_of_word(link)[0] < 3:
-            news_current.remove(link)
+        # Remove links with less than min_word_count
+        news_current = [link for link in news_current if get_number_of_word(link)[
+            0] >= min_word_count]
 
-    try:
-        new_url = random.choice(news_current)
-    except IndexError:
-        return get_news_url()
-    return new_url
+        # If links are found, return a random link
+        if news_current:
+            new_url = random.choice(news_current)
+            return new_url
+
+    # If no links are found after max_attempts, return None
+    print(f"{max_attempts}回の試行後、{min_word_count}語以上のリンクが見つかりませんでした。")
+    return None
 
 
 def write_text_data(content, action='a', location=NEWS_ARTICLE_TXT_LOCATION, encoder='utf-8') -> None:
@@ -217,6 +206,8 @@ def main(quiz_type: str, push=False, broadcasting=False, questions=5, progress_c
     """Establish request connection and randomly scrap a Japanese news article's content and vocabularies"""
     # Get and encode a random news url; parsing the HTML content
     url = get_news_url()
+    if url is None:
+        sys.exit(1)
     response = requests.get(url)
     encoding = chardet.detect(response.content)['encoding']
     response.encoding = encoding
