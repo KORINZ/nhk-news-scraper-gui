@@ -131,6 +131,7 @@ class MyTabView(ctk.CTkTabview):
 
         # *設定 Tab
         self.add("設定")
+        self.set("設定")
         self.settings = ctk.CTkFrame(master=self.tab("設定"))
         self.settings.pack(fill="both", expand=True)
 
