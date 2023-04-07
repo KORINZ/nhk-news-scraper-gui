@@ -685,20 +685,20 @@ class App(ctk.CTk):
         self.label_progress = ctk.CTkLabel(
             master=self, text="プログレス:", font=self.font)
         self.label_progress.grid(
-            row=0, column=0, padx=(0, 0), pady=10, sticky="n")
+            row=0, column=0, padx=(440, 0), pady=10, sticky="wn")
 
         # Create the progress bar
         self.progressbar = ctk.CTkProgressBar(
             master=self, width=270, height=20)
         self.progressbar.grid(row=0, column=0, padx=(
-            360, 0), pady=15, sticky="n")
+            520, 0), pady=15, sticky="wn")
         self.progressbar.set(0)
 
         # Create progress text label
         self.progress_text_label = ctk.CTkLabel(
             master=self, text="", font=self.font)
         self.progress_text_label.grid(
-            row=1, column=0, padx=(360, 0), pady=0, sticky="n")
+            row=1, column=0, padx=(520, 0), pady=0, sticky="wn")
 
         # Create the reset button
         self.reset_button = ctk.CTkButton(
