@@ -74,7 +74,10 @@ def get_news_url(driver: webdriver.Chrome) -> str | None:
             return new_url
 
     # If no links are found after max_attempts, return None
-    print(f"{max_attempts}回の試行後、{min_word_count}語以上のリンクが見つかりませんでした。")
+    error_message = f"{max_attempts}回の試行後、{min_word_count}語以上のリンクが見つかりませんでした。"
+    print(f"{error_message}")
+    with open(LOG_LOCATION, 'a', encoding='utf-8') as file:
+        file.write(f"{error_message}")
     return None
 
 
@@ -208,6 +211,11 @@ def main(quiz_type: str, push=False, broadcasting=False, questions=5, progress_c
     url = get_news_url(driver)
     if url is None:
         sys.exit(1)
+
+    # Get the article vocabularies and definitions
+    definition_list = get_definition_list(driver, url, progress_callback)
+
+    # Establish a request connection to the url
     response = requests.get(url)
     encoding = chardet.detect(response.content)['encoding']
     response.encoding = encoding
@@ -300,12 +308,12 @@ def main(quiz_type: str, push=False, broadcasting=False, questions=5, progress_c
             f.write(f'\n{word}')
 
     # Printing news title, date, and url
-    if title and date is not None:
-        print(f'{title.text.strip()} {date.text}')
+    if title and date:
+        print(f'\n{title.text.strip()} {date.text}')
         print(f'{url}\n')
 
     # Modify the definition list to include the original word; get current progress
-    definition_list = get_definition_list(driver, url, progress_callback)
+
     definition_list_original_word = []
     for key, meaning in zip(vocabulary_dict.keys(), definition_list):
         try:
