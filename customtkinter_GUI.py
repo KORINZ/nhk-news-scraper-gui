@@ -876,10 +876,10 @@ class App(ctk.CTk):
             self.error_handler("インターネット接続を確認してください。")
         finally:
             self.tab_view.set("ファイル表示")
-            if bool(self.instant_push_check_box.get()):
-                self.tab_view.sub_txt_tabs.set("ログファイル")
+            if self.quiz_type_dropdown.get() == "単語意味クイズ":
+                self.tab_view.sub_txt_tabs.set("単語意味クイズ")
             else:
-                self.tab_view.sub_txt_tabs.set("ニュース文章")
+                self.tab_view.sub_txt_tabs.set("読み方クイズ")
             self.progressbar.stop()
             self.generate_quiz_button.configure(state="normal")
             self.instant_push_check_box.configure(state="normal")
