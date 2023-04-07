@@ -13,7 +13,7 @@ from typing import Tuple, Callable
 # TODO focus on main window not selenium window
 
 # Initial setup
-VERSION = "v1.8.1"
+VERSION = "v1.8.2"
 
 PRONOUN_QUIZ_LOCATION = r'./txt_files/pronunciation_quiz.txt'
 DEF_QUIZ_LOCATION = r'./txt_files/definition_quiz.txt'
