@@ -668,11 +668,9 @@ class App(ctk.CTk):
         # Set initial window size
         if self.tab_view.maximize_screen_check_box.get():
             self.after_idle(lambda: self.state("zoomed"))
-            self.minsize(1160, 717)
             self.focus_force()
         else:
             self.after_idle(lambda: self.geometry("1160x717"))
-            self.minsize(1160, 717)
             self.focus_force()
 
         # Create feedback message label
