@@ -854,7 +854,15 @@ class App(ctk.CTk):
         self.blink_progress_text_label()
 
     def press_push_quiz_button(self) -> None:
-        """Send the quiz to LINE."""
+        """Reload the quiz text and push it to LINE."""
+        def_quiz = self.tab_view.textboxes["単語意味クイズ"].get("1.0", ctk.END)
+        with open(DEF_QUIZ_LOCATION, 'w', encoding='utf-8') as f:
+            f.write(def_quiz)
+
+        pronoun_quiz = self.tab_view.textboxes["読み方クイズ"].get("1.0", ctk.END)
+        with open(PRONOUN_QUIZ_LOCATION, 'w', encoding='utf-8') as f:
+            f.write(pronoun_quiz)
+
         try:
             if self.quiz_type_dropdown.get() == "読み方クイズ":
                 push_quiz(PRONOUN_QUIZ_LOCATION)
