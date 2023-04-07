@@ -14,7 +14,7 @@ from tkinter import TclError
 # TODO focus on main window not selenium window
 
 # Initial setup
-VERSION = "v1.8.3"
+VERSION = "v1.8.6"
 
 PRONOUN_QUIZ_LOCATION = r'./txt_files/pronunciation_quiz.txt'
 DEF_QUIZ_LOCATION = r'./txt_files/definition_quiz.txt'
@@ -679,10 +679,21 @@ class App(ctk.CTk):
         ctk.set_default_color_theme(self.button_color)
 
         super().__init__()
+        # Check if the application is running as a script or a packaged executable
+        if getattr(sys, 'frozen', False):
+            application_path = sys._MEIPASS  # type: ignore
+        else:
+            application_path = os.path.dirname(os.path.abspath(__file__))
+
+        # Get the correct icon path based on the application path
+        icon_path = os.path.join(application_path, NHK_ICON_LOCATION)
+
         try:
-            self.iconbitmap(NHK_ICON_LOCATION)
+            self.iconbitmap(icon_path)
         except TclError:
+            print("Error: Unable to set the window icon.")
             pass
+
         self.title(f'NHK NEWS EASY クイズ作成 CTk GUI {VERSION}')
         self.font = ctk.CTkFont(family="Yu Gothic UI", size=16)
 
