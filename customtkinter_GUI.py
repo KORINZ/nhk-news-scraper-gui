@@ -11,10 +11,8 @@ from datetime import datetime
 from typing import Tuple, Callable
 from tkinter import TclError
 
-# TODO focus on main window not selenium window
-
 # Initial setup
-VERSION = "v1.8.6"
+VERSION = "v1.8.7"
 
 PRONOUN_QUIZ_LOCATION = r'./txt_files/pronunciation_quiz.txt'
 DEF_QUIZ_LOCATION = r'./txt_files/definition_quiz.txt'
@@ -70,7 +68,8 @@ PROJECTION_URL = "https://github.com/KORINZ/nhk_news_web_easy_scraper"
 class MyTabView(ctk.CTkTabview):
     """Custom Tabview class that contains article and settings tab."""
 
-    def __init__(self, master, datetime_label, quiz_type_dropdown, quiz_number_entry, instant_push_check_box, broadcast_on_label, **kwargs) -> None:
+    def __init__(self, master, datetime_label, quiz_type_dropdown, quiz_number_entry, instant_push_check_box,
+                 broadcast_on_label, **kwargs) -> None:
         super().__init__(master, **kwargs)
         self.datetime_label = datetime_label
         self.quiz_type_dropdown = quiz_type_dropdown
@@ -167,7 +166,10 @@ class MyTabView(ctk.CTkTabview):
             "green": "緑",
         }
         self.button_color_optionmenu = ctk.CTkOptionMenu(self.settings, values=list(
-            self.button_color_optionmenu_mapping.values()), variable=self.button_color_optionmenu_var, font=self.font, command=lambda _: self.change_appearance_mode_event_button_color(self.button_color_optionmenu_var.get()))
+            self.button_color_optionmenu_mapping.values()), variable=self.button_color_optionmenu_var, font=self.font,
+            command=lambda
+            _: self.change_appearance_mode_event_button_color(
+            self.button_color_optionmenu_var.get()))
 
         self.button_color_optionmenu.grid(
             row=1, column=0, padx=(170, 0), pady=0, sticky="nw")
@@ -216,19 +218,21 @@ class MyTabView(ctk.CTkTabview):
 
         # *起動時ウィンドウ最大化 Checkbox
         self.maximize_screen_check_box = ctk.CTkCheckBox(
-            master=self.settings, text="起動時ウィンドウ最大化", font=self.font,)
+            master=self.settings, text="起動時ウィンドウ最大化", font=self.font, )
         self.maximize_screen_check_box.grid(
             row=1, column=0, padx=(0, 0), pady=0, sticky="n")
 
         # *成績チェックURL入力 Button
         self.grade_check_url_button = ctk.CTkButton(master=self.settings,
-                                                    text="成績チェックURL入力", command=self.enter_grade_book_url, font=self.font)
+                                                    text="成績チェックURL入力", command=self.enter_grade_book_url,
+                                                    font=self.font)
         self.grade_check_url_button.grid(row=2, column=0, padx=(0, 0),
                                          pady=20, sticky="n")
 
         # *LINE機密情報入力 Button
         self.line_info_button = ctk.CTkButton(master=self.settings,
-                                              text="LINE機密情報入力", command=self.enter_line_confidential, font=self.font)
+                                              text="LINE機密情報入力", command=self.enter_line_confidential,
+                                              font=self.font)
         self.line_info_button.grid(row=3, column=0, padx=(0, 0),
                                    pady=0, sticky="n")
 
@@ -252,7 +256,8 @@ class MyTabView(ctk.CTkTabview):
 
         # *過去のクイズを消除 Button
         self.delete_past_quizzes_button = ctk.CTkButton(master=self.settings,
-                                                        text="過去のクイズを消除", command=self.confirm_delete_past_quizzes, font=self.font, hover_color="#8B0000")
+                                                        text="過去のクイズを消除", command=self.confirm_delete_past_quizzes,
+                                                        font=self.font, hover_color="#8B0000")
         self.delete_past_quizzes_button.grid(row=2, column=0, padx=(0, 20),
                                              pady=20, sticky="ne")
 
@@ -276,13 +281,14 @@ class MyTabView(ctk.CTkTabview):
 
         # *保存 Button
         self.save_settings_button = ctk.CTkButton(
-            master=self.settings, text="保存", font=self.font, fg_color="transparent", border_width=2, text_color=("gray10", "#DCE4EE"), command=self.save_settings)
+            master=self.settings, text="保存", font=self.font, fg_color="transparent", border_width=2,
+            text_color=("gray10", "#DCE4EE"), command=self.save_settings)
         self.save_settings_button.grid(row=6, column=0, padx=(
             20, 0), pady=20, sticky="sw")
 
         # *バージョン Label
         self.label_version = ctk.CTkLabel(
-            master=self.settings, text="(2023) NHK NEWS WEB EASY クイズ作成: " + VERSION, font=self.font)
+            master=self.settings, text="まりな先生 (2023) NHK NEWS WEB EASY 日本語クイズ作成: " + VERSION, font=self.font)
         self.label_version.grid(row=6, column=0, padx=(
             0, 20), pady=20, sticky="se")
 
@@ -320,7 +326,8 @@ class MyTabView(ctk.CTkTabview):
         self.cancel_delete_past_quizzes_button.grid(
             row=2, column=0, padx=(20, 0), pady=20, sticky="w")
         self.confirm_delete_past_quizzes_button = ctk.CTkButton(
-            delete_past_quiz_popup, text="削除", font=self.font, command=lambda: self.delete_past_quizzes(delete_past_quiz_popup) if confirm_entry.get() == "CONFIRM" else None)
+            delete_past_quiz_popup, text="削除", font=self.font, command=lambda: self.delete_past_quizzes(
+                delete_past_quiz_popup) if confirm_entry.get() == "CONFIRM" else None)
         self.confirm_delete_past_quizzes_button.grid(row=2, column=0, padx=(
             0, 20), pady=20, sticky="e")
 
@@ -556,7 +563,8 @@ class MyTabView(ctk.CTkTabview):
         grade_book_url_entry.insert(0, GRADE_BOOK_URL)
 
         self.add_save_cancel_buttons(
-            grade_book_url_popup, 1, 0, command=lambda: self.save_grade_book_url(grade_book_url_entry.get(), grade_book_url_popup))
+            grade_book_url_popup, 1, 0,
+            command=lambda: self.save_grade_book_url(grade_book_url_entry.get(), grade_book_url_popup))
 
         # Configure the rows and columns to have weight for scaling
         grade_book_url_popup.grid_rowconfigure(0, weight=1)
@@ -598,7 +606,9 @@ class MyTabView(ctk.CTkTabview):
         user_id_entry.grid(row=1, column=0, padx=(
             0, 15), pady=10, sticky="se")
         self.add_save_cancel_buttons(
-            line_confidential_popup, 2, 0, command=lambda: self.save_line_confidential(channel_access_token_entry.get(), user_id_entry.get(), line_confidential_popup))
+            line_confidential_popup, 2, 0,
+            command=lambda: self.save_line_confidential(channel_access_token_entry.get(), user_id_entry.get(),
+                                                        line_confidential_popup))
 
         # Configure the rows and columns to have weight for scaling
         line_confidential_popup.grid_rowconfigure(0, weight=1)
@@ -694,7 +704,7 @@ class App(ctk.CTk):
             print("Error: Unable to set the window icon.")
             pass
 
-        self.title(f'NHK NEWS EASY クイズ作成 CTk GUI {VERSION}')
+        self.title(f'NHK NEWS EASY 日本語クイズ作成 GUI {VERSION}')
         self.font = ctk.CTkFont(family="Yu Gothic UI", size=16)
 
         # Create a label to display the date and time
@@ -1026,6 +1036,7 @@ class App(ctk.CTk):
 
     def update_datetime_label(self) -> None:
         """Update the date and time label with the current date and time."""
+
         def weekday_in_jp(weekday: int) -> str:
             japanese_weekdays = ["月", "火", "水", "木", "金", "土", "日"]
             return japanese_weekdays[weekday]

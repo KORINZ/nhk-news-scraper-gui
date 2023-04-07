@@ -36,7 +36,8 @@ def read_secrets() -> Tuple:
     return CHANNEL_ACCESS_TOKEN, USER_ID
 
 
-def send_message(message_type: str, content: Optional[str] = None, broadcasting=False, package_id=None, sticker_id=None) -> None:
+def send_message(message_type: str, content: Optional[str] = None, broadcasting=False, package_id=None,
+                 sticker_id=None) -> None:
     """Login to LINE bot API and send text message"""
     CHANNEL_ACCESS_TOKEN, USER_ID = read_secrets()
     line_bot_api = LineBotApi(CHANNEL_ACCESS_TOKEN)

@@ -204,7 +204,8 @@ def push_quiz(test_type: str, broadcasting=False) -> None:
         send_message('text', questions, broadcasting=broadcasting)
 
 
-def main(quiz_type: str, push=False, broadcasting=False, questions=5, progress_callback: Optional[Callable] = None) -> None:
+def main(quiz_type: str, push=False, broadcasting=False, questions=5,
+         progress_callback: Optional[Callable] = None) -> None:
     """Establish request connection and randomly scrap a Japanese news article's content and vocabularies"""
     # Get and encode a random news url; parsing the HTML content
     driver = setup_selenium()

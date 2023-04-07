@@ -1,6 +1,6 @@
 {
     "theme": "Dark",
-    "button_color": "dark-blue",
+    "button_color": "green",
     "display_time": 1,
     "default_question_type": "\u5358\u8a9e\u610f\u5473\u30af\u30a4\u30ba",
     "default_number_of_questions": "5",
