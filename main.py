@@ -76,7 +76,7 @@ def get_news_url(driver: webdriver.Chrome) -> str | None:
     # If no links are found after max_attempts, return None
     error_message = f"{max_attempts}回の試行後、{min_word_count}語以上のリンクが見つかりませんでした。"
     print(f"{error_message}")
-    with open(LOG_LOCATION, 'a', encoding='utf-8') as file:
+    with open(LOG_LOCATION, 'w', encoding='utf-8') as file:
         file.write(f"{error_message}")
     return None
 

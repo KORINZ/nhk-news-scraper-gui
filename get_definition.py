@@ -69,7 +69,6 @@ def get_definition_list(driver: webdriver.Chrome, url: str, progress_callback: O
         text_content = text_content.replace('1', '： 1', 1)
         print(text_content)
         definition_list.append(text_content)
-
         if progress_callback:
             progress = index / total_ids
             progress_callback(progress, index, total_ids)
@@ -78,6 +77,6 @@ def get_definition_list(driver: webdriver.Chrome, url: str, progress_callback: O
 
 
 if __name__ == '__main__':
-    test_url = 'https://www3.nhk.or.jp/news/easy/k10014023731000/k10014023731000.html'
+    test_url = 'https://www3.nhk.or.jp/news/easy/k10014030681000/k10014030681000.html'
     driver = setup_selenium()
     definition_list = get_definition_list(driver, test_url)
