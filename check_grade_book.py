@@ -41,7 +41,7 @@ def format_quiz_times(quiz_start_time: datetime, now: datetime, quiz_end_time: d
 
 def get_quiz_answer() -> str:
     """Get the quiz answer from the log file"""
-    with open(LOG_LOCATION, 'r') as f:
+    with open(LOG_LOCATION, 'r', encoding='utf-8') as f:
         lines = f.readlines()
         answer = lines[2]
         return answer.strip()
@@ -73,7 +73,7 @@ def parse_quiz_end_time(end_time: str) -> datetime:
 
 def get_quiz_start_time() -> tuple[datetime, datetime]:
     """Get the quiz start time from the log file"""
-    with open(LOG_LOCATION, 'r') as f:
+    with open(LOG_LOCATION, 'r', encoding='utf-8') as f:
         quiz_start_time = f.readline().strip('\n').split('.')[0]
         quiz_start_time = datetime.strptime(
             quiz_start_time, '%Y-%m-%d %H:%M:%S')

@@ -9,7 +9,7 @@ import os
 from bs4 import BeautifulSoup
 from collections import deque
 from datetime import datetime
-from line_message_bot import send_message
+from send_line_message import send_message
 from selenium import webdriver
 from selenium.common.exceptions import WebDriverException
 from selenium.webdriver.common.by import By
@@ -31,8 +31,7 @@ https://sartras.or.jp/seido/
 '''
 
 # Initial settings and website and file paths
-sys.setrecursionlimit(200)
-PATH = 'https://www3.nhk.or.jp/news/easy/'
+NEWS_HOMEPAGE_URL = 'https://www3.nhk.or.jp/news/easy/'
 NEWS_ARTICLE_URL_IDENTIFIER = 'k1001'
 NEWS_ARTICLE_TXT_LOCATION = r'txt_files/news_article.txt'
 PRONOUN_QUIZ_LOCATION = r'txt_files/pronunciation_quiz.txt'
@@ -45,64 +44,6 @@ if sys.platform.startswith('win32'):
     locale.setlocale(locale.LC_CTYPE, "Japanese_Japan.932")
 else:
     locale.setlocale(locale.LC_TIME, 'ja_JP.UTF-8')
-
-
-def get_news_url(driver: webdriver.Chrome) -> str | None:
-    """Retrieve up-to-date news url links"""
-    max_attempts = 5
-    min_word_count = 3
-
-    for attempt in range(max_attempts):
-        try:
-            driver.get(PATH)
-        except WebDriverException:
-            raise ConnectionError(
-                'インターネットの接続を確認してください。')
-
-        links = driver.find_elements(By.XPATH, "//a[@href]")
-        news_links = [link.get_attribute("href")
-                      for link in links if NEWS_ARTICLE_URL_IDENTIFIER in link.get_attribute("href")]
-        news_current = list(set(news_links[1:9]))
-
-        # Remove links with less than min_word_count
-        news_current = [link for link in news_current if get_number_of_word(link)[
-            0] >= min_word_count]
-
-        # If links are found, return a random link
-        if news_current:
-            new_url = random.choice(news_current)
-            return new_url
-
-    # If no links are found after max_attempts, return None
-    error_message = f"{max_attempts}回の試行後、{min_word_count}語以上のリンクが見つかりませんでした。"
-    print(f"{error_message}")
-    with open(LOG_LOCATION, 'w', encoding='utf-8') as file:
-        file.write(f"{error_message}")
-    return None
-
-
-def write_text_data(content, action='a', location=NEWS_ARTICLE_TXT_LOCATION, encoder='utf-8') -> None:
-    """Write text (BeautifulSoup | NavigableString) content to a file"""
-    if content is not None:
-        with open(location, action, encoding=encoder) as file:
-            file.write(content.text.strip() + '\n\n')
-
-
-def is_hiragana_char(character: str) -> bool:
-    """Check if a character is hiragana or not"""
-    return u'\u3040' <= character <= u'\u309F'
-
-
-def get_today_date_jp() -> Tuple:
-    """Return today's date in both datetime and Japanese format"""
-    now = datetime.now()
-    return now, now.strftime(f'%Y年%m月%d日 {get_day_of_week_jp(now)} %H時%M分')
-
-
-def get_day_of_week_jp(date) -> List:
-    """Return day of the week in Japanese"""
-    week_list = ['月曜日', '火曜日', '水曜日', '木曜日', '金曜日', '土曜日', '日曜日']
-    return week_list[date.weekday()]
 
 
 def generate_pronunciation_quiz(url: str, word_dict: Dict[str, str], questions=4) -> None:
@@ -172,11 +113,70 @@ def generate_definition_quiz(article, word_dict: Dict[str, str], word_list: List
             letter = string.ascii_uppercase[i - 1]
             f.write(f'{letter}. {word.split(" ")[1]}\n\n')
 
+        # write sample answer format
         f.write('【返信フォーマット】(英語アルファベットと数字のみ):\n')
         f.write('学生番号: A10001\n')
         f.write('解答: ABCDE')
 
         return answer
+
+
+def get_news_url(driver: webdriver.Chrome) -> str | None:
+    """Retrieve up-to-date news url links"""
+    max_attempts = 5
+    min_word_count = 3
+
+    for _ in range(max_attempts):
+        try:
+            driver.get(NEWS_HOMEPAGE_URL)
+        except WebDriverException:
+            raise ConnectionError(
+                'インターネットの接続を確認してください。')
+
+        links = driver.find_elements(By.XPATH, "//a[@href]")
+        news_links = [link.get_attribute("href")
+                      for link in links if NEWS_ARTICLE_URL_IDENTIFIER in link.get_attribute("href")]
+        news_current = list(set(news_links[1:9]))
+
+        # Remove links with less than min_word_count
+        news_current = [link for link in news_current if get_number_of_word(link)[
+            0] >= min_word_count]
+
+        # If links are found, return a random link
+        if news_current:
+            new_url = random.choice(news_current)
+            return new_url
+
+    # If no links are found after max_attempts, return None
+    error_message = f"{max_attempts}回の試行後、{min_word_count}語以上のリンクが見つかりませんでした。"
+    print(f"{error_message}")
+    with open(LOG_LOCATION, 'w', encoding='utf-8') as file:
+        file.write(f"{error_message}")
+    return None
+
+
+def write_text_data(content, action='a', location=NEWS_ARTICLE_TXT_LOCATION, encoder='utf-8') -> None:
+    """Write text (BeautifulSoup | NavigableString) content to a file"""
+    if content is not None:
+        with open(location, action, encoding=encoder) as file:
+            file.write(content.text.strip() + '\n\n')
+
+
+def is_hiragana_char(character: str) -> bool:
+    """Check if a character is hiragana or not"""
+    return u'\u3040' <= character <= u'\u309F'
+
+
+def get_today_date_jp() -> Tuple:
+    """Return today's date in both datetime and Japanese format"""
+    now = datetime.now()
+    return now, now.strftime(f'%Y年%m月%d日 {get_day_of_week_jp(now)} %H時%M分')
+
+
+def get_day_of_week_jp(date) -> List:
+    """Return day of the week in Japanese"""
+    week_list = ['月曜日', '火曜日', '水曜日', '木曜日', '金曜日', '土曜日', '日曜日']
+    return week_list[date.weekday()]
 
 
 def save_quiz_vocab(news_url: str) -> None:
@@ -219,13 +219,11 @@ def main(quiz_type: str, push=False, broadcasting=False, questions=5, progress_c
     response = requests.get(url)
     encoding = chardet.detect(response.content)['encoding']
     response.encoding = encoding
-
     if response.status_code == 200:
         # HTTP status OK
         html_content = response.text
     else:
         sys.exit('Request failed. Check your Internet connection.')
-
     soup = BeautifulSoup(html_content, 'html.parser')
 
     # Article url (アドレス)

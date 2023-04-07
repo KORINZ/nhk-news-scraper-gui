@@ -11,6 +11,7 @@ PATTERN = re.compile(r'^RSHOK-')
 
 
 def setup_selenium() -> webdriver.Chrome:
+    """Setup selenium webdriver"""
     options = webdriver.ChromeOptions()
     options.add_argument("--headless")
     options.add_argument("--window-size=1920,1080")
@@ -33,6 +34,7 @@ def setup_selenium() -> webdriver.Chrome:
 
 
 def get_number_of_word(url: str) -> Tuple[int, List, BeautifulSoup]:
+    """Get number of words from the given url."""
     try:
         response = requests.get(url)
     except requests.exceptions.ConnectionError:
