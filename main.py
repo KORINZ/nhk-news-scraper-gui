@@ -118,6 +118,7 @@ def generate_definition_quiz(article, word_dict: Dict[str, str], word_list: List
         f.write('学生番号: A10001\n')
         f.write('解答: ABCDE')
 
+        # TODO Fix incorrect answer
         return answer
 
 
