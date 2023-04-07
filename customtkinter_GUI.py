@@ -959,7 +959,7 @@ class App(ctk.CTk):
                 new_text = "初期化中"
 
             self.progress_text_label.configure(text=new_text)
-            self.after(300, self.blink_progress_text_label)
+            self.after(500, self.blink_progress_text_label)
         elif self.generate_quiz_button.cget("state") == "disabled" and "エラー" not in self.feedback_label.cget("text"):
             base_text = f"クイズを作成中({self.current_index}/{self.total_ids})"
             # Get the dot_counter or set it to 0 if not exists

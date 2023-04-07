@@ -10,19 +10,6 @@ import sys
 PATTERN = re.compile(r'^RSHOK-')
 
 
-def get_number_of_word(url: str) -> Tuple[int, List, BeautifulSoup]:
-    try:
-        response = requests.get(url)
-    except requests.exceptions.ConnectionError:
-        sys.exit('Connection error. Please check your internet connection.')
-    response.encoding = response.apparent_encoding
-    html_content = response.text
-    soup = BeautifulSoup(html_content, 'html.parser')
-    matching_ids = list(dict.fromkeys([element['id']
-                                       for element in soup.find_all(id=PATTERN)]))
-    return len(matching_ids), matching_ids, soup
-
-
 def setup_selenium() -> webdriver.Chrome:
     options = webdriver.ChromeOptions()
     options.add_argument("--headless")
@@ -45,19 +32,29 @@ def setup_selenium() -> webdriver.Chrome:
     return driver
 
 
-def get_definition_list(url: str, progress_callback: Optional[Callable] = None) -> List[str]:
+def get_number_of_word(url: str) -> Tuple[int, List, BeautifulSoup]:
+    try:
+        response = requests.get(url)
+    except requests.exceptions.ConnectionError:
+        sys.exit('Connection error. Please check your internet connection.')
+    response.encoding = response.apparent_encoding
+    html_content = response.text
+    soup = BeautifulSoup(html_content, 'html.parser')
+    matching_ids = list(dict.fromkeys([element['id']
+                                       for element in soup.find_all(id=PATTERN)]))
+    return len(matching_ids), matching_ids, soup
+
+
+def get_definition_list(driver: webdriver.Chrome, url: str, progress_callback: Optional[Callable] = None) -> List[str]:
+    """Get definition list from the given url."""
     matching_ids = get_number_of_word(url)[1]
-
-    driver = setup_selenium()
     driver.get(url)
-
     button = driver.find_element(By.CLASS_NAME, "easy-wrapper")
     driver.execute_script(
         "arguments[0].setAttribute('class', 'easy-wrapper is-no-ruby')", button)
     driver.execute_script("document.body.style.transform='scale(0.99)';")
 
     definition_list = []
-
     total_ids = len(matching_ids)
     for index, matching_id in enumerate(matching_ids, start=1):
         element_to_hover_over = driver.find_element(By.ID, matching_id)
@@ -82,4 +79,5 @@ def get_definition_list(url: str, progress_callback: Optional[Callable] = None) 
 
 if __name__ == '__main__':
     test_url = 'https://www3.nhk.or.jp/news/easy/k10014023731000/k10014023731000.html'
-    definition_list = get_definition_list(test_url)
+    driver = setup_selenium()
+    definition_list = get_definition_list(driver, test_url)

@@ -47,14 +47,13 @@ else:
     locale.setlocale(locale.LC_TIME, 'ja_JP.UTF-8')
 
 
-def get_news_url() -> str | None:
+def get_news_url(driver: webdriver.Chrome) -> str | None:
     """Retrieve up-to-date news url links"""
     max_attempts = 5
     min_word_count = 3
 
     for attempt in range(max_attempts):
         try:
-            driver = setup_selenium()
             driver.get(PATH)
         except WebDriverException:
             raise ConnectionError(
@@ -205,7 +204,8 @@ def push_quiz(test_type: str, broadcasting=False) -> None:
 def main(quiz_type: str, push=False, broadcasting=False, questions=5, progress_callback: Optional[Callable] = None) -> None:
     """Establish request connection and randomly scrap a Japanese news article's content and vocabularies"""
     # Get and encode a random news url; parsing the HTML content
-    url = get_news_url()
+    driver = setup_selenium()
+    url = get_news_url(driver)
     if url is None:
         sys.exit(1)
     response = requests.get(url)
@@ -305,7 +305,7 @@ def main(quiz_type: str, push=False, broadcasting=False, questions=5, progress_c
         print(f'{url}\n')
 
     # Modify the definition list to include the original word; get current progress
-    definition_list = get_definition_list(url, progress_callback)
+    definition_list = get_definition_list(driver, url, progress_callback)
     definition_list_original_word = []
     for key, meaning in zip(vocabulary_dict.keys(), definition_list):
         try:
