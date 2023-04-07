@@ -12,7 +12,7 @@ from typing import Tuple, Callable
 from tkinter import TclError
 
 # Initial setup
-VERSION = "v1.8.7"
+VERSION = "v1.8.9"
 
 PRONOUN_QUIZ_LOCATION = r'./txt_files/pronunciation_quiz.txt'
 DEF_QUIZ_LOCATION = r'./txt_files/definition_quiz.txt'
@@ -296,9 +296,9 @@ class MyTabView(ctk.CTkTabview):
         self.settings.grid_rowconfigure(5, weight=1)
         self.settings.grid_columnconfigure(0, weight=1)
 
-    def set_icon(self, window) -> None:
+    def set_icon(self, window: ctk.CTkToplevel, icon: str) -> None:
         try:
-            window.iconbitmap(ALERT_ICON_LOCATION)
+            window.iconbitmap(icon)
         except TclError:
             pass
 
@@ -307,7 +307,8 @@ class MyTabView(ctk.CTkTabview):
         delete_past_quiz_popup = ctk.CTkToplevel(self)
         delete_past_quiz_popup.title("過去のクイズを消除")
         # ?Bug from customtkinter
-        self.after(200, lambda: self.set_icon(delete_past_quiz_popup))
+        self.after(200, lambda: self.set_icon(
+            delete_past_quiz_popup, ALERT_ICON_LOCATION))
 
         pop_width, pop_height, x_position, y_position = self.calculate_window_size(
             popup_width=600, popup_height=200)
@@ -541,7 +542,8 @@ class MyTabView(ctk.CTkTabview):
         grade_book_url_popup = ctk.CTkToplevel(self)
         grade_book_url_popup.title("成績簿URL入力")
         # ?Bug from customtkinter
-        self.after(200, lambda: self.set_icon(grade_book_url_popup))
+        self.after(200, lambda: self.set_icon(
+            grade_book_url_popup, SHEET_ICON_LOCATION))
 
         pop_width, pop_height, x_position, y_position = self.calculate_window_size(
             popup_width=520, popup_height=120)
@@ -580,7 +582,8 @@ class MyTabView(ctk.CTkTabview):
         # line_confidential_popup.resizable(False, False)
 
         # ?Bug from customtkinter
-        self.after(200, lambda: self.set_icon(line_confidential_popup))
+        self.after(200, lambda: self.set_icon(
+            line_confidential_popup, LINE_ICON_LOCATION))
 
         # Calculate the position for the center of the main window
         popup_width, popup_height, x_position, y_position = self.calculate_window_size(
