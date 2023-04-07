@@ -238,7 +238,7 @@ class MyTabView(ctk.CTkTabview):
         self.past_quizzes_deleted_label = ctk.CTkLabel(
             master=self.settings, text="", font=self.font)
         self.past_quizzes_deleted_label.grid(
-            row=3, column=0, padx=(0, 20), pady=0, sticky="ne")
+            row=4, column=0, padx=(0, 20), pady=20, sticky="ne")
 
         # *ヘルプ Button
         self.help_button = ctk.CTkButton(master=self.settings,
