@@ -150,47 +150,11 @@ class MyTabView(ctk.CTkTabview):
         self.appearance_mode_optionemenu.grid(
             row=0, column=0, padx=(70, 0), pady=20, sticky="nw")
 
-        # *テキストファイルフォルダー開く Button
-        self.txt_file_folder_button = ctk.CTkButton(
-            master=self.settings, text="テキストファイルフォルダーを開く", command=self.open_txt_files_folder, font=self.font)
-        self.txt_file_folder_button.grid(
-            row=0, column=0, padx=(0, 20), pady=20, sticky="ne")
-
-        # *成績チェックURL入力 Button
-        self.grade_check_url_button = ctk.CTkButton(master=self.settings,
-                                                    text="成績チェックURL入力", command=self.enter_grade_book_url, font=self.font)
-        self.grade_check_url_button.grid(row=2, column=0, padx=(0, 0),
-                                         pady=20, sticky="n")
-
-        # *LINE機密情報入力 Button
-        self.line_info_button = ctk.CTkButton(master=self.settings,
-                                              text="LINE機密情報入力", command=self.enter_line_confidential, font=self.font)
-        self.line_info_button.grid(row=3, column=0, padx=(0, 0),
-                                   pady=0, sticky="n")
-
-        # *ヘルプ Button
-        self.help_button = ctk.CTkButton(master=self.settings,
-                                         text="ヘルプ", command=self.open_project_page, font=self.font)
-        self.help_button.grid(row=3, column=0, padx=(0, 20),
-                              pady=0, sticky="ne")
-
         # *時間表示 Switch
         self.display_datetime_switch = ctk.CTkSwitch(
             master=self.settings, text="時間表示", font=self.font, command=self.toggle_datetime_display)
         self.display_datetime_switch.grid(
             row=1, column=0, padx=(20, 0), pady=0, sticky="nw")
-
-        # *全員に発信 Switch
-        self.broadcast_switch = ctk.CTkSwitch(
-            master=self.settings, text="全員に発信", font=self.font, command=self.toggle_send_to_all_label)
-        self.broadcast_switch.grid(
-            row=4, column=0, padx=(0, 0), pady=20, sticky="n")
-
-        # *起動時ウィンドウ最大化 Checkbox
-        self.maximize_screen_check_box = ctk.CTkCheckBox(
-            master=self.settings, text="起動時ウィンドウ最大化", font=self.font,)
-        self.maximize_screen_check_box.grid(
-            row=1, column=0, padx=(0, 0), pady=0, sticky="n")
 
         # *デフォルトクイズタイプ OptionMenu
         self.label_default_quiz_type = ctk.CTkLabel(master=self.settings,
@@ -218,30 +182,6 @@ class MyTabView(ctk.CTkTabview):
         self.checkbox_always_send_to_line.grid(row=4, column=0, padx=(20, 0),
                                                pady=20, sticky="nw")
 
-        # *URL・LINE機密情報の保存成功 Label
-        self.url_line_confidential_saved_label = ctk.CTkLabel(master=self.settings,
-                                                              text="", font=self.font)
-        self.url_line_confidential_saved_label.grid(row=4, column=0, padx=(0, 20),
-                                                    pady=20, sticky="ne")
-
-        # *保存 Button
-        self.save_settings_button = ctk.CTkButton(
-            master=self.settings, text="保存", font=self.font, fg_color="transparent", border_width=2, text_color=("gray10", "#DCE4EE"), command=self.save_settings)
-        self.save_settings_button.grid(row=5, column=0, padx=(
-            20, 0), pady=20, sticky="sw")
-
-        # *消除した Label
-        self.past_quizzes_deleted_label = ctk.CTkLabel(
-            master=self.settings, text="", font=self.font)
-        self.past_quizzes_deleted_label.grid(
-            row=3, column=0, padx=(0, 20), pady=0, sticky="ne")
-
-        # *バージョン Label
-        self.label_version = ctk.CTkLabel(
-            master=self.settings, text="(2023) NHK NEWS WEB EASY クイズ作成: " + VERSION, font=self.font)
-        self.label_version.grid(row=5, column=0, padx=(
-            0, 20), pady=20, sticky="se")
-
         # *スケーリング OptionMenu
         self.scaling_label = ctk.CTkLabel(
             self.settings, text="スケーリング:", font=self.font)
@@ -251,6 +191,36 @@ class MyTabView(ctk.CTkTabview):
                                                      command=self.change_scaling_event, font=self.font)
         self.scaling_optionemenu.grid(
             row=0, column=0, padx=(100, 0), pady=20, sticky="n")
+
+        # *起動時ウィンドウ最大化 Checkbox
+        self.maximize_screen_check_box = ctk.CTkCheckBox(
+            master=self.settings, text="起動時ウィンドウ最大化", font=self.font,)
+        self.maximize_screen_check_box.grid(
+            row=1, column=0, padx=(0, 0), pady=0, sticky="n")
+
+        # *成績チェックURL入力 Button
+        self.grade_check_url_button = ctk.CTkButton(master=self.settings,
+                                                    text="成績チェックURL入力", command=self.enter_grade_book_url, font=self.font)
+        self.grade_check_url_button.grid(row=2, column=0, padx=(0, 0),
+                                         pady=20, sticky="n")
+
+        # *LINE機密情報入力 Button
+        self.line_info_button = ctk.CTkButton(master=self.settings,
+                                              text="LINE機密情報入力", command=self.enter_line_confidential, font=self.font)
+        self.line_info_button.grid(row=3, column=0, padx=(0, 0),
+                                   pady=0, sticky="n")
+
+        # *全員に発信 Switch
+        self.broadcast_switch = ctk.CTkSwitch(
+            master=self.settings, text="全員に発信", font=self.font, command=self.toggle_send_to_all_label)
+        self.broadcast_switch.grid(
+            row=4, column=0, padx=(0, 0), pady=20, sticky="n")
+
+        # *テキストファイルフォルダー開く Button
+        self.txt_file_folder_button = ctk.CTkButton(
+            master=self.settings, text="テキストファイルフォルダーを開く", command=self.open_txt_files_folder, font=self.font)
+        self.txt_file_folder_button.grid(
+            row=0, column=0, padx=(0, 20), pady=20, sticky="ne")
 
         # *JSONフォルダーを開く Button
         self.open_json_folder = ctk.CTkButton(master=self.settings,
@@ -263,6 +233,36 @@ class MyTabView(ctk.CTkTabview):
                                                         text="過去のクイズを消除", command=self.confirm_delete_past_quizzes, font=self.font, hover_color="#8B0000")
         self.delete_past_quizzes_button.grid(row=2, column=0, padx=(0, 20),
                                              pady=20, sticky="ne")
+
+        # *消除した Label
+        self.past_quizzes_deleted_label = ctk.CTkLabel(
+            master=self.settings, text="", font=self.font)
+        self.past_quizzes_deleted_label.grid(
+            row=3, column=0, padx=(0, 20), pady=0, sticky="ne")
+
+        # *ヘルプ Button
+        self.help_button = ctk.CTkButton(master=self.settings,
+                                         text="ヘルプ", command=self.open_project_page, font=self.font)
+        self.help_button.grid(row=3, column=0, padx=(0, 20),
+                              pady=0, sticky="ne")
+
+        # *URL・LINE機密情報の保存成功 Label
+        self.url_line_confidential_saved_label = ctk.CTkLabel(master=self.settings,
+                                                              text="", font=self.font)
+        self.url_line_confidential_saved_label.grid(row=4, column=0, padx=(0, 20),
+                                                    pady=20, sticky="ne")
+
+        # *保存 Button
+        self.save_settings_button = ctk.CTkButton(
+            master=self.settings, text="保存", font=self.font, fg_color="transparent", border_width=2, text_color=("gray10", "#DCE4EE"), command=self.save_settings)
+        self.save_settings_button.grid(row=5, column=0, padx=(
+            20, 0), pady=20, sticky="sw")
+
+        # *バージョン Label
+        self.label_version = ctk.CTkLabel(
+            master=self.settings, text="(2023) NHK NEWS WEB EASY クイズ作成: " + VERSION, font=self.font)
+        self.label_version.grid(row=5, column=0, padx=(
+            0, 20), pady=20, sticky="se")
 
         # Configure grid system
         self.settings.grid_rowconfigure(4, weight=1)
