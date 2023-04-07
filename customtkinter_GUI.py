@@ -13,7 +13,7 @@ from typing import Tuple, Callable
 # TODO focus on main window not selenium window
 
 # Initial setup
-VERSION = "v1.7.1"
+VERSION = "v1.8.0"
 
 PRONOUN_QUIZ_LOCATION = r'./txt_files/pronunciation_quiz.txt'
 DEF_QUIZ_LOCATION = r'./txt_files/definition_quiz.txt'
@@ -120,11 +120,14 @@ class MyTabView(ctk.CTkTabview):
             self.textboxes[tab_name] = self.textbox
 
         # add widgets on tabs in nested Tabview
-        create_txt_tab(self, "ログファイル", LOG_LOCATION)
         create_txt_tab(self, "ニュース文章", NEWS_ARTICLE_LOCATION)
         create_txt_tab(self, "単語意味クイズ", DEF_QUIZ_LOCATION)
         create_txt_tab(self, "読み方クイズ", PRONOUN_QUIZ_LOCATION)
         create_txt_tab(self, "過去のクイズ", PAST_QUIZ_LOCATION)
+        create_txt_tab(self, "ログファイル", LOG_LOCATION)
+
+        # Switch to the "ログファイル" tab by default
+        self.sub_txt_tabs.set("ログファイル")
 
         # *設定 Tab
         self.add("設定")
@@ -325,6 +328,7 @@ class MyTabView(ctk.CTkTabview):
         delete_past_quiz_popup.grab_set()
 
     def restart_app(self) -> None:
+        """Restart the app"""
         python = sys.executable
         os.execl(python, python, *sys.argv)
 
@@ -871,6 +875,8 @@ class App(ctk.CTk):
         except ConnectionError:
             self.error_handler("インターネット接続を確認してください。")
         finally:
+            self.tab_view.set("ファイル表示")
+            self.tab_view.sub_txt_tabs.set("ニュース文章")
             self.progressbar.stop()
             self.generate_quiz_button.configure(state="normal")
             self.instant_push_check_box.configure(state="normal")
