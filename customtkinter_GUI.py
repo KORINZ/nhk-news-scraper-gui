@@ -13,7 +13,7 @@ from typing import Tuple, Callable
 # TODO focus on main window not selenium window
 
 # Initial setup
-VERSION = "v1.7.0"
+VERSION = "v1.7.1"
 
 PRONOUN_QUIZ_LOCATION = r'./txt_files/pronunciation_quiz.txt'
 DEF_QUIZ_LOCATION = r'./txt_files/definition_quiz.txt'
@@ -152,7 +152,7 @@ class MyTabView(ctk.CTkTabview):
 
         # *ボタン色 OptionMenu
         self.label_button_color = ctk.CTkLabel(
-            master=self.settings, text="ボタン色:", font=self.font)
+            master=self.settings, text="ボタン色(再起動する):", font=self.font)
         self.label_button_color.grid(
             row=1, column=0, padx=(20, 0), pady=0, sticky="nw")
         self.button_color_optionmenu_var = ctk.StringVar(
@@ -166,7 +166,7 @@ class MyTabView(ctk.CTkTabview):
             self.button_color_optionmenu_mapping.values()), variable=self.button_color_optionmenu_var, font=self.font, command=lambda _: self.change_appearance_mode_event_button_color(self.button_color_optionmenu_var.get()))
 
         self.button_color_optionmenu.grid(
-            row=1, column=0, padx=(90, 0), pady=0, sticky="nw")
+            row=1, column=0, padx=(170, 0), pady=0, sticky="nw")
 
         # *時間表示 Switch
         self.display_datetime_switch = ctk.CTkSwitch(
