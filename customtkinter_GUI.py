@@ -9,6 +9,7 @@ from main import main, push_quiz, save_quiz_vocab
 from webbrowser import open_new_tab
 from datetime import datetime
 from typing import Tuple, Callable
+from tkinter import TclError
 
 # TODO focus on main window not selenium window
 
@@ -289,13 +290,18 @@ class MyTabView(ctk.CTkTabview):
         self.settings.grid_rowconfigure(5, weight=1)
         self.settings.grid_columnconfigure(0, weight=1)
 
+    def set_icon(self, window) -> None:
+        try:
+            window.iconbitmap(ALERT_ICON_LOCATION)
+        except TclError:
+            pass
+
     def confirm_delete_past_quizzes(self) -> None:
         """Confirm delete past quizzes popup window"""
         delete_past_quiz_popup = ctk.CTkToplevel(self)
         delete_past_quiz_popup.title("過去のクイズを消除")
         # ?Bug from customtkinter
-        self.after(200, lambda: delete_past_quiz_popup.iconbitmap(
-            ALERT_ICON_LOCATION))
+        self.after(200, lambda: self.set_icon(delete_past_quiz_popup))
 
         pop_width, pop_height, x_position, y_position = self.calculate_window_size(
             popup_width=600, popup_height=200)
@@ -528,8 +534,7 @@ class MyTabView(ctk.CTkTabview):
         grade_book_url_popup = ctk.CTkToplevel(self)
         grade_book_url_popup.title("成績簿URL入力")
         # ?Bug from customtkinter
-        self.after(200, lambda: grade_book_url_popup.iconbitmap(
-            SHEET_ICON_LOCATION))
+        self.after(200, lambda: self.set_icon(grade_book_url_popup))
 
         pop_width, pop_height, x_position, y_position = self.calculate_window_size(
             popup_width=520, popup_height=120)
@@ -567,8 +572,7 @@ class MyTabView(ctk.CTkTabview):
         # line_confidential_popup.resizable(False, False)
 
         # ?Bug from customtkinter
-        self.after(200, lambda: line_confidential_popup.iconbitmap(
-            LINE_ICON_LOCATION))
+        self.after(200, lambda: self.set_icon(line_confidential_popup))
 
         # Calculate the position for the center of the main window
         popup_width, popup_height, x_position, y_position = self.calculate_window_size(
@@ -675,7 +679,10 @@ class App(ctk.CTk):
         ctk.set_default_color_theme(self.button_color)
 
         super().__init__()
-        self.iconbitmap(NHK_ICON_LOCATION)
+        try:
+            self.iconbitmap(NHK_ICON_LOCATION)
+        except TclError:
+            pass
         self.title(f'NHK NEWS EASY クイズ作成 CTk GUI {VERSION}')
         self.font = ctk.CTkFont(family="Yu Gothic UI", size=16)
 

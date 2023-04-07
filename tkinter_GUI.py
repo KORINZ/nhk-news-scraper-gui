@@ -49,7 +49,10 @@ def enter_line_confidential() -> None:
     """Display a popup to enter LINE confidential information."""
     line_confidential_popup = tk.Toplevel(root)
     line_confidential_popup.title("LINE機密情報入力")
-    line_confidential_popup.iconbitmap(LINE_ICON_LOCATION)
+    try:
+        line_confidential_popup.iconbitmap(LINE_ICON_LOCATION)
+    except tk.TclError:
+        pass
 
     # Calculate the position for the center of the main window
     main_window_width = root.winfo_width()
@@ -228,7 +231,10 @@ root = tk.Tk()
 root.title(f'NHK NEWS EASY クイズ作成 GUI {VERSION}')
 root.geometry("900x556")
 root.option_add("*font", "Gothic, 12")
-root.iconbitmap(NHK_ICON_LOCATION)
+try:
+    root.iconbitmap(NHK_ICON_LOCATION)
+except tk.TclError:
+    pass
 
 # Padding for the labels and the entry widgets
 entry_padding = 5
