@@ -53,13 +53,19 @@ else:
 
 def get_news_url() -> str:
     """Retrieve up-to-date news url links"""
-    opt = webdriver.ChromeOptions()
-    opt.add_argument('headless')
-    opt.add_experimental_option('excludeSwitches', ['enable-logging'])
+    options = webdriver.ChromeOptions()
+    options.add_argument("--headless")
+    options.add_argument("--window-size=1920,1080")
+    options.add_argument("--disable-gpu")
+    options.add_argument("--disable-extensions")
+    options.add_argument("--disable-notifications")
+    options.add_argument("--disable-features=WebRtcHideLocalIpsWithMdns")
+    options.add_argument("--blink-settings=imagesEnabled=false")
+    options.add_experimental_option('excludeSwitches', ['enable-logging'])
     chrome_service = ChromeService('chromedriver')
     chrome_service.creation_flags = CREATE_NO_WINDOW
     try:
-        driver = webdriver.Chrome(options=opt, service=chrome_service)
+        driver = webdriver.Chrome(options=options, service=chrome_service)
         driver.get(PATH)
     except WebDriverException:
         raise ConnectionError(
