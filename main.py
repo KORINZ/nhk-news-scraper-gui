@@ -83,13 +83,13 @@ def generate_definition_quiz(article, word_dict: Dict[str, str], word_list: List
                 new_word_list.append(definition.split('：', 1)[1])
 
     # Shuffle the order of the questions and print the answer key
-    new_word_list = [
-        f'{item}{string.ascii_uppercase[i]}' for i, item in enumerate(new_word_list)]
-    random.shuffle(new_word_list)
-    answer = "".join([item[-1] for item in new_word_list])
+    new_word_list_header = [
+        f'{item}{string.ascii_uppercase[i]}' for i, item in enumerate(new_word_list_header)]
+    random.shuffle(new_word_list_header)
+    answer = "".join([item[-1] for item in new_word_list_header])
     print(f'\n単語意味クイズ解答：{answer}')
-    new_word_list = [
-        f"{item[:-1]} {string.ascii_uppercase[i]}" for i, item in enumerate(new_word_list)]
+    new_word_list_header = [
+        f"{item[:-1]} {string.ascii_uppercase[i]}" for i, item in enumerate(new_word_list_header)]
 
     # write the test to a file
     with open(DEF_QUIZ_LOCATION, 'w', encoding='utf-8') as f:
@@ -105,20 +105,19 @@ def generate_definition_quiz(article, word_dict: Dict[str, str], word_list: List
         f.write('---\n\n')
 
         for i, word in enumerate(new_word_list_header, start=1):
-            f.write(f'({i}) {word} ')
+            f.write(f'({i}) {word.split(" ")[0]} ')
 
         f.write('\n\n')
 
         for i, word in enumerate(new_word_list, start=1):
             letter = string.ascii_uppercase[i - 1]
-            f.write(f'{letter}. {word.split(" ")[1]}\n\n')
+            f.write(f'{letter}. {word}\n\n')
 
         # write sample answer format
         f.write('【返信フォーマット】(英語アルファベットと数字のみ):\n')
         f.write('学生番号: A10001\n')
         f.write('解答: ABCDE')
 
-        # TODO Fix incorrect answer
         return answer
 
 
