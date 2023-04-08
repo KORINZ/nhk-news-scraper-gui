@@ -1005,6 +1005,8 @@ class App(ctk.CTk):
 
     def start_over(self) -> None:
         """Reset the app to its initial state."""
+        self.tab_view.set("ファイル表示")
+        self.tab_view.sub_txt_tabs.set("ログファイル")
         self.quiz_number_entry.delete(0, ctk.END)
         self.generate_quiz_button.configure(state="normal")
         self.send_quiz_button.configure(state="disabled")
