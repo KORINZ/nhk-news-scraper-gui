@@ -1,10 +1,13 @@
+# Standard library imports
+import json
+import threading
+from tkinter import filedialog, messagebox
+
+# Third-party imports
 import tkinter as tk
 import tkinter.ttk as ttk
-import threading
-import json
 
-from tkinter import filedialog
-from tkinter import messagebox
+# Local imports
 from main import main, push_quiz
 
 # Global variables

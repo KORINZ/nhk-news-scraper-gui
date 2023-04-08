@@ -1,11 +1,14 @@
+# Standard library imports
+import sys
+import re
+from typing import List, Tuple, Optional, Callable
+
+# Third-party imports
+import requests
+from bs4 import BeautifulSoup
 from selenium import webdriver
 from selenium.webdriver.common.by import By
 from selenium.webdriver.common.action_chains import ActionChains
-from bs4 import BeautifulSoup
-from typing import List, Tuple, Optional, Callable
-import requests
-import re
-import sys
 
 PATTERN = re.compile(r'^RSHOK-')
 

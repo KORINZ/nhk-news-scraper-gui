@@ -1,20 +1,25 @@
+# Standard library imports
+import os
+import sys
+import random
+import string
+from collections import deque
+from datetime import datetime
+from typing import Dict, List, Tuple, Optional, Callable
+
+# Third-party imports
 import chardet
 import locale
 import requests
-import random
-import string
-import sys
-import os
-
 from bs4 import BeautifulSoup
-from collections import deque
-from datetime import datetime
-from send_line_message import send_message
 from selenium import webdriver
 from selenium.common.exceptions import WebDriverException
 from selenium.webdriver.common.by import By
-from typing import Dict, List, Tuple, Optional, Callable
+
+# Local imports
+from send_line_message import send_message
 from get_definition import get_definition_list, get_number_of_word, setup_selenium
+
 
 '''
 NEWS WEB EASY

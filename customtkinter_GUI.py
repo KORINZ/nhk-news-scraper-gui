@@ -1,16 +1,21 @@
-import customtkinter as ctk
-import threading
+# Standard library imports
 import sys
 import os
 import subprocess
 import json
-
-from main import main, push_quiz, save_quiz_vocab
-from webbrowser import open_new_tab
 from datetime import datetime
 from typing import Tuple, Callable
+from webbrowser import open_new_tab
 from tkinter import TclError
+
+# Third-party imports
+import customtkinter as ctk
+import threading
 from requests.exceptions import ConnectionError
+
+# Local imports
+from main import main, push_quiz, save_quiz_vocab
+
 
 # Initial setup
 VERSION = "v1.9.2"

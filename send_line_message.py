@@ -1,14 +1,17 @@
-import datetime
-import locale
-import requests
+# Standard library imports
 import os
 import sys
 import json
+import datetime
+from typing import Tuple, Optional
 
+# Third-party imports
+import locale
+import requests
 from linebot import LineBotApi
 from linebot.models import TextSendMessage, StickerSendMessage
 from linebot.exceptions import LineBotApiError
-from typing import Tuple, Optional
+
 
 TOKEN_ID_FILE = r'./json_files/secrets.json'
 

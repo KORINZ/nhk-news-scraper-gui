@@ -1,12 +1,14 @@
+# Standard library imports
 import sys
 import os
+from datetime import datetime
+from pathlib import Path
+
+# Third-party imports
 import pandas as pd
 import gspread
 import tkinter as tk
-
 from tkinter import scrolledtext
-from datetime import datetime
-from pathlib import Path
 from tabulate import tabulate
 
 # File names and paths
