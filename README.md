@@ -5,7 +5,7 @@
   <img width="800" alt="1" src="https://user-images.githubusercontent.com/111611023/230731185-6988b3ff-4ddd-456f-81e8-8db396819552.gif">
 </p>
 
-### Tkinter Version GUI v1.1.0 (deprecated)
+### Tkinter Version GUI v1.0.0 (deprecated)
 <p align="center">
   <img width="800" alt="1" src="https://user-images.githubusercontent.com/111611023/228608713-99dcb154-2abb-4f53-93bf-d437506e0d60.gif">
 </p>
@@ -59,7 +59,7 @@ git clone https://github.com/KORINZ/nhk_news_web_easy_scraper.git
 1. To use GUI:
 
 ```bash
-python quiz_generator_gui.py
+python customtkinter_GUI.py
 ```
 
 2. To use on terminal:
