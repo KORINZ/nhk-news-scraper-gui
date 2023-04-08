@@ -3,8 +3,8 @@ import os
 import pandas as pd
 import gspread
 import tkinter as tk
-from tkinter import scrolledtext
 
+from tkinter import scrolledtext
 from datetime import datetime
 from pathlib import Path
 from tabulate import tabulate
@@ -44,6 +44,7 @@ def get_quiz_answer() -> str:
     with open(LOG_LOCATION, 'r', encoding='utf-8') as f:
         lines = f.readlines()
         answer = lines[2]
+        answer = answer.replace('単語意味クイズ解答：', '')
         return answer.strip()
 
 
@@ -216,7 +217,7 @@ if __name__ == '__main__':
         'win32') else os.system('clear')
 
     # Quiz end time in the format 'YYYY-MM-DD HH:mm'
-    main(end_time='2023-04-22 22:00')
+    main(end_time='2023-04-08 22:00')
 
     # TODO: Set up a cron job to run this script every day at 12:00 AM
     # TODO: Add a function to send a message to the students who have not submitted their answers

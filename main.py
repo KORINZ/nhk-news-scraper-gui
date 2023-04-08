@@ -340,7 +340,7 @@ def main(quiz_type: str, push=False, broadcasting=False, questions=5,
     with open(LOG_LOCATION, 'w', encoding='utf-8') as f:
         now = get_today_date_jp()[0]
         now = now.strftime(f'%Y-%m-%d %H:%M:%S')
-        f.write(f'{now}\n{url}\n{def_answer}\n')
+        f.write(f'{now}\n{url}\n単語意味クイズ解答：{def_answer}\n')
 
     # Push quiz to LINE if push is True
     if push:
