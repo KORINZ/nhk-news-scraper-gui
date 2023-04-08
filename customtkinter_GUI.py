@@ -912,6 +912,8 @@ class App(ctk.CTk):
             self.error_handler("最大問題数を指定してください。")
         except ConnectionError:
             self.error_handler("インターネット接続を確認してください。")
+        except PermissionError:
+            self.error_handler("LINEのTOKENを確認してください。")
         finally:
             self.tab_view.set("ファイル表示")
             if self.quiz_type_dropdown.get() == "単語意味クイズ":
