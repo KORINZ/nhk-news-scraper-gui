@@ -1,6 +1,7 @@
 # Standard library imports
 import sys
 import re
+from time import sleep
 from typing import List, Tuple, Optional, Callable
 
 # Third-party imports
@@ -61,6 +62,7 @@ def get_definition_list(driver: webdriver.Chrome, url: str, progress_callback: O
 
     definition_list = []
     total_ids = len(matching_ids)
+    sleep(0.2)
     for index, matching_id in enumerate(matching_ids, start=1):
         element_to_hover_over = driver.find_element(By.ID, matching_id)
         hover = ActionChains(driver).move_to_element(element_to_hover_over)
@@ -85,3 +87,4 @@ if __name__ == '__main__':
     test_url = 'https://www3.nhk.or.jp/news/easy/k10014030681000/k10014030681000.html'
     driver = setup_selenium()
     definition_list = get_definition_list(driver, test_url)
+    driver.close()

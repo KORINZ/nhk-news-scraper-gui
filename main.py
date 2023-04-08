@@ -220,6 +220,7 @@ def main(quiz_type: str, push=False, broadcasting=False, questions=5,
 
     # Get the article vocabularies and definitions
     definition_list = get_definition_list(driver, url, progress_callback)
+    driver.close()
 
     # Establish a request connection to the url
     response = requests.get(url)
