@@ -10,9 +10,10 @@ from webbrowser import open_new_tab
 from datetime import datetime
 from typing import Tuple, Callable
 from tkinter import TclError
+from requests.exceptions import ConnectionError
 
 # Initial setup
-VERSION = "v1.9.1"
+VERSION = "v1.9.2"
 
 PRONOUN_QUIZ_LOCATION = r'./txt_files/pronunciation_quiz.txt'
 DEF_QUIZ_LOCATION = r'./txt_files/definition_quiz.txt'
@@ -969,6 +970,13 @@ class App(ctk.CTk):
                 push_quiz(PRONOUN_QUIZ_LOCATION)
             else:
                 push_quiz(DEF_QUIZ_LOCATION)
+        except PermissionError:
+            self.error_handler("LINEのTOKENを確認してください。")
+        except IndexError:
+            self.error_handler('クイズ中の"---"は削除しないでください。')
+        except ConnectionError:
+            self.error_handler("インターネット接続を確認してください。")
+        else:
             self.feedback_label.configure(text="LINEに送信しました！")
             with open(LOG_LOCATION, 'a+', encoding='utf-8') as f:
                 f.write('送信済み\n')
@@ -976,10 +984,6 @@ class App(ctk.CTk):
                 url = f.readlines()[1]
             save_quiz_vocab(url)
             self.update_textboxes()
-        except PermissionError:
-            self.error_handler("LINEのTOKENを確認してください。")
-            self.send_quiz_button.configure(state="normal")
-        else:
             self.send_quiz_button.configure(state="disabled")
 
     def update_textboxes(self, initial_load: bool = False) -> None:
