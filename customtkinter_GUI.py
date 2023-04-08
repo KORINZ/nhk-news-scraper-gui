@@ -12,7 +12,7 @@ from typing import Tuple, Callable
 from tkinter import TclError
 
 # Initial setup
-VERSION = "v1.8.9"
+VERSION = "v1.9.1"
 
 PRONOUN_QUIZ_LOCATION = r'./txt_files/pronunciation_quiz.txt'
 DEF_QUIZ_LOCATION = r'./txt_files/definition_quiz.txt'
@@ -150,7 +150,7 @@ class MyTabView(ctk.CTkTabview):
                                                              values=list(
                                                                  self.theme_optionmenu_mapping.values()),
                                                              command=self.change_appearance_mode_event_theme,
-                                                             variable=self.theme_optionmenu_var, font=self.font)
+                                                             variable=self.theme_optionmenu_var, font=self.font, width=100)
         self.appearance_mode_optionemenu.grid(
             row=0, column=0, padx=(70, 0), pady=20, sticky="nw")
 
@@ -162,15 +162,15 @@ class MyTabView(ctk.CTkTabview):
         self.button_color_optionmenu_var = ctk.StringVar(
             value=master.button_color)
         self.button_color_optionmenu_mapping = {
-            "blue": "青",
-            "dark-blue": "ダークブルー",
-            "green": "緑",
+            "blue": "ブルー",
+            "dark-blue": "瑠璃色",
+            "green": "若竹色",
         }
         self.button_color_optionmenu = ctk.CTkOptionMenu(self.settings, values=list(
             self.button_color_optionmenu_mapping.values()), variable=self.button_color_optionmenu_var, font=self.font,
             command=lambda
             _: self.change_appearance_mode_event_button_color(
-            self.button_color_optionmenu_var.get()))
+            self.button_color_optionmenu_var.get()), width=100)
 
         self.button_color_optionmenu.grid(
             row=1, column=0, padx=(170, 0), pady=0, sticky="nw")
@@ -213,7 +213,7 @@ class MyTabView(ctk.CTkTabview):
         self.scaling_label.grid(
             row=0, column=0, padx=(0, 145), pady=20, sticky="n")
         self.scaling_optionemenu = ctk.CTkOptionMenu(self.settings, values=["80%", "90%", "100%", "110%", "120%"],
-                                                     command=self.change_scaling_event, font=self.font)
+                                                     command=self.change_scaling_event, font=self.font, width=100)
         self.scaling_optionemenu.grid(
             row=0, column=0, padx=(100, 0), pady=20, sticky="n")
 
