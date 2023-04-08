@@ -261,14 +261,14 @@ class MyTabView(ctk.CTkTabview):
         self.open_json_folder.grid(row=1, column=0, padx=(0, 20),
                                    pady=0, sticky="ne")
 
-        # *過去のクイズを消除 Button
+        # *過去のクイズを削除 Button
         self.delete_past_quizzes_button = ctk.CTkButton(master=self.settings,
-                                                        text="過去のクイズを消除", command=self.confirm_delete_past_quizzes,
+                                                        text="過去のクイズを削除", command=self.confirm_delete_past_quizzes,
                                                         font=self.font, hover_color="#8B0000")
         self.delete_past_quizzes_button.grid(row=2, column=0, padx=(0, 20),
                                              pady=20, sticky="ne")
 
-        # *消除した Label
+        # *削除した Label
         self.past_quizzes_deleted_label = ctk.CTkLabel(
             master=self.settings, text="", font=self.font)
         self.past_quizzes_deleted_label.grid(
@@ -312,7 +312,7 @@ class MyTabView(ctk.CTkTabview):
     def confirm_delete_past_quizzes(self) -> None:
         """Confirm delete past quizzes popup window"""
         delete_past_quiz_popup = ctk.CTkToplevel(self)
-        delete_past_quiz_popup.title("過去のクイズを消除")
+        delete_past_quiz_popup.title("過去のクイズを削除")
         # ?Bug from customtkinter
         self.after(200, lambda: self.set_icon(
             delete_past_quiz_popup, ALERT_ICON_LOCATION))
@@ -358,7 +358,7 @@ class MyTabView(ctk.CTkTabview):
         with open(PAST_QUIZ_LOCATION, "w", encoding="utf-8") as f:
             f.write("")
             self.past_quizzes_deleted_label.configure(
-                text="過去のクイズを消除しました。")
+                text="過去のクイズを削除しました。")
             self.past_quizzes_deleted_label.after(
                 3000, lambda: self.past_quizzes_deleted_label.configure(text=""))
         popup.destroy()
