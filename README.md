@@ -1,13 +1,13 @@
 # NHK News Web Easy Scraper
 
-### Tkinter Version GUI
+### CustomTkinter Version GUI v1.9.3
 <p align="center">
-  <img width="800" alt="1" src="https://user-images.githubusercontent.com/111611023/228608713-99dcb154-2abb-4f53-93bf-d437506e0d60.gif">
+  <img width="800" alt="1" src="https://user-images.githubusercontent.com/111611023/230731185-6988b3ff-4ddd-456f-81e8-8db396819552.gif">
 </p>
 
-### CustomTkinter Version GUI
+### Tkinter Version GUI (deprecated)
 <p align="center">
-  <img width="800" alt="1" src="https://user-images.githubusercontent.com/111611023/229370851-fa2d5dcb-a135-49ae-88c9-7709a678537a.gif">
+  <img width="800" alt="1" src="https://user-images.githubusercontent.com/111611023/228608713-99dcb154-2abb-4f53-93bf-d437506e0d60.gif">
 </p>
 
 This project is a Python script for scraping news articles from [NHK News Web Easy](https://www3.nhk.or.jp/news/easy/),
