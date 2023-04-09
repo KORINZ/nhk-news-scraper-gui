@@ -40,13 +40,13 @@ def create_default_settings_file() -> None:
     default_settings = {
         "theme": "Dark",
         "button_color": "dark-blue",
-        "display_time": "1",
+        "display_time": 1,
         "default_question_type": "単語意味クイズ",
         "default_number_of_questions": "5",
-        "always_send_to_line": "0",
-        "send_to_all": "0",
+        "always_send_to_line": 0,
+        "send_to_all": 0,
         "scaling": "110%",
-        "maximize_screen_check_box": "0",
+        "maximize_screen_check_box": 0,
         "grade_book_url": "http://www.google.com",
     }
     if not os.path.exists(JSON_FOLDER_PATH):
