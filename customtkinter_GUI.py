@@ -52,7 +52,8 @@ def create_default_settings_file() -> None:
     if not os.path.exists(JSON_FOLDER_PATH):
         os.makedirs(JSON_FOLDER_PATH)
     with open(SETTINGS_FILE_LOCATION, "w", encoding="utf-8") as settings_file:
-        json.dump(default_settings, settings_file, indent=4)
+        json.dump(default_settings, settings_file,
+                  indent=4, ensure_ascii=False)
 
 
 def load_grade_book_url() -> str:
