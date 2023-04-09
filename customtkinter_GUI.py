@@ -18,7 +18,7 @@ from main import main, push_quiz, save_quiz_vocab
 
 
 # Initial setup
-VERSION = "v1.9.5"
+VERSION = "v1.10.0"
 
 PRONOUN_QUIZ_LOCATION = r'./txt_files/pronunciation_quiz.txt'
 DEF_QUIZ_LOCATION = r'./txt_files/definition_quiz.txt'
@@ -72,7 +72,39 @@ GRADE_BOOK_URL = load_grade_book_url()
 PROJECTION_URL = "https://github.com/KORINZ/nhk_news_web_easy_scraper"
 
 
-class MyTabView(ctk.CTkTabview):
+class SubTab:
+    def __init__(self, parent, tab_name, txt_file) -> None:
+        self.parent = parent
+        self.tab_name = tab_name
+        self.txt_file = txt_file
+        self.create_tab()
+
+    def create_tab(self) -> None:
+        self.parent.sub_txt_tabs.add(self.tab_name)
+        self.frame = ctk.CTkFrame(
+            master=self.parent.sub_txt_tabs.tab(self.tab_name))
+        self.frame.pack(fill="both", expand=True)
+
+        self.textbox = ctk.CTkTextbox(
+            master=self.frame, wrap=ctk.WORD, font=self.parent.font)
+        self.textbox.pack(fill="both", expand=True)
+
+        directory = os.path.dirname(self.txt_file)
+        if not os.path.exists(directory):
+            os.makedirs(directory)
+
+        if not os.path.isfile(self.txt_file):
+            with open(self.txt_file, 'w', encoding='utf-8') as f:
+                pass
+
+        if self.tab_name == "ログファイル" or self.tab_name == "過去のクイズ":
+            with open(self.txt_file, 'r', encoding='utf-8') as f:
+                self.textbox.insert('insert', f.read())
+
+        self.parent.textboxes[self.tab_name] = self.textbox
+
+
+class MainTab(ctk.CTkTabview):
     """Custom Tabview class that contains article and settings tab."""
 
     def __init__(self, master, datetime_label, quiz_type_dropdown, quiz_number_entry, instant_push_check_box,
@@ -97,41 +129,12 @@ class MyTabView(ctk.CTkTabview):
             font=self.font)
         self.textboxes = {}
 
-        def create_txt_tab(self, tab_name, txt_file) -> None:
-            """Create sub-tabs with textboxes that display the contents of txt files"""
-            self.sub_txt_tabs.add(tab_name)
-            self.frame = ctk.CTkFrame(
-                master=self.sub_txt_tabs.tab(tab_name))
-
-            self.frame.pack(fill="both", expand=True)
-
-            self.textbox = ctk.CTkTextbox(
-                master=self.frame, wrap=ctk.WORD, font=self.font)
-            self.textbox.pack(fill="both", expand=True)
-
-            # Check if the directory exists, and create it if it doesn't
-            directory = os.path.dirname(txt_file)
-            if not os.path.exists(directory):
-                os.makedirs(directory)
-
-            # Create the file if it doesn't exist
-            if not os.path.isfile(txt_file):
-                with open(txt_file, 'w', encoding='utf-8') as f:
-                    pass
-
-            if tab_name == "ログファイル" or tab_name == "過去のクイズ":
-                with open(txt_file, 'r', encoding='utf-8') as f:
-                    self.textbox.insert('insert', f.read())
-
-            # Store the textbox in the dictionary
-            self.textboxes[tab_name] = self.textbox
-
         # add widgets on tabs in nested Tabview
-        create_txt_tab(self, "ニュース文章", NEWS_ARTICLE_LOCATION)
-        create_txt_tab(self, "単語意味クイズ", DEF_QUIZ_LOCATION)
-        create_txt_tab(self, "読み方クイズ", PRONOUN_QUIZ_LOCATION)
-        create_txt_tab(self, "過去のクイズ", PAST_QUIZ_LOCATION)
-        create_txt_tab(self, "ログファイル", LOG_LOCATION)
+        SubTab(self, "ニュース文章", NEWS_ARTICLE_LOCATION)
+        SubTab(self, "単語意味クイズ", DEF_QUIZ_LOCATION)
+        SubTab(self, "読み方クイズ", PRONOUN_QUIZ_LOCATION)
+        SubTab(self, "過去のクイズ", PAST_QUIZ_LOCATION)
+        SubTab(self, "ログファイル", LOG_LOCATION)
 
         # Switch to the "ログファイル" tab by default
         self.sub_txt_tabs.set("ログファイル")
@@ -362,6 +365,9 @@ class MyTabView(ctk.CTkTabview):
                 text="過去のクイズを削除しました。")
             self.past_quizzes_deleted_label.after(
                 3000, lambda: self.past_quizzes_deleted_label.configure(text=""))
+
+        past_quiz = self.textboxes["過去のクイズ"]
+        past_quiz.delete(1.0, ctk.END)
         popup.destroy()
 
     def change_appearance_mode_event_theme(self, new_appearance_mode: str) -> None:
@@ -688,7 +694,7 @@ class MyTabView(ctk.CTkTabview):
         saved_label.grid_remove()
 
 
-class App(ctk.CTk):
+class AppFrame(ctk.CTk):
     """The main application window."""
 
     def __init__(self) -> None:
@@ -759,7 +765,7 @@ class App(ctk.CTk):
             row=2, column=0, padx=20, pady=10, sticky="w")
 
         # *Create the tab view instance
-        self.tab_view = MyTabView(
+        self.tab_view = MainTab(
             master=self, datetime_label=self.datetime_label, quiz_type_dropdown=self.quiz_type_dropdown,
             quiz_number_entry=self.quiz_number_entry, instant_push_check_box=self.instant_push_check_box,
             broadcast_on_label=self.broadcast_on_label, width=860, height=300)
@@ -1110,5 +1116,5 @@ class App(ctk.CTk):
 
 
 if __name__ == "__main__":
-    app = App()
+    app = AppFrame()
     app.mainloop()
