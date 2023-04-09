@@ -18,7 +18,7 @@ from main import main, push_quiz, save_quiz_vocab
 
 
 # Initial setup
-VERSION = "v1.9.4"
+VERSION = "v1.9.5"
 
 PRONOUN_QUIZ_LOCATION = r'./txt_files/pronunciation_quiz.txt'
 DEF_QUIZ_LOCATION = r'./txt_files/definition_quiz.txt'
@@ -323,7 +323,7 @@ class MyTabView(ctk.CTkTabview):
         delete_past_quiz_popup.geometry(
             f"{pop_width}x{pop_height}+{x_position}+{y_position}")
 
-        ctk.CTkLabel(delete_past_quiz_popup, text="過去のクイズを完全に削除しますか？CONFIRMを入力してください。", font=self.font).grid(
+        ctk.CTkLabel(delete_past_quiz_popup, text="過去のクイズを完全に削除しますか？「CONFIRM」を入力してください。", font=self.font).grid(
             row=0, column=0, padx=(0, 0), pady=20, sticky="n")
         confirm_entry = ctk.CTkEntry(
             delete_past_quiz_popup, width=400, font=self.font)
@@ -440,7 +440,7 @@ class MyTabView(ctk.CTkTabview):
 
         try:
             with open(SETTINGS_FILE_LOCATION, "w", encoding="utf-8") as file:
-                json.dump(settings, file, indent=4)
+                json.dump(settings, file, indent=4, ensure_ascii=False)
             self.show_saved_label()  # Call this function when saving is successful
         except FileNotFoundError as e:
             print(f"Error: {e}")
