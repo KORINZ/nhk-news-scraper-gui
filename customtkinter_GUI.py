@@ -17,7 +17,7 @@ from requests.exceptions import ConnectionError
 from main import main, push_quiz, save_quiz_vocab
 
 # Initial setup
-VERSION = "v1.10.3"
+VERSION = "v1.10.4"
 
 PRONOUN_QUIZ_LOCATION = r'./txt_files/pronunciation_quiz.txt'
 DEF_QUIZ_LOCATION = r'./txt_files/definition_quiz.txt'
@@ -190,7 +190,7 @@ class MainTab(ctk.CTkTabview):
             self.button_color_optionmenu_var.get()), width=100)
 
         self.button_color_optionmenu.grid(
-            row=1, column=0, padx=(185, 0), pady=0, sticky="nw")
+            row=1, column=0, padx=(180, 0), pady=0, sticky="nw")
 
         # *時間表示 Switch
         self.display_datetime_switch = ctk.CTkSwitch(
@@ -205,7 +205,7 @@ class MainTab(ctk.CTkTabview):
             20, 0), pady=0, sticky="nw")
         self.default_quiz_type_dropdown = ctk.CTkOptionMenu(
             master=self.settings, values=["単語意味クイズ", "読み方クイズ"], font=self.font)
-        self.default_quiz_type_dropdown.grid(row=3, column=0, padx=(200, 0),
+        self.default_quiz_type_dropdown.grid(row=3, column=0, padx=(180, 0),
                                              pady=0, sticky="nw")
 
         # *デフォルト問題数 Entry
@@ -216,7 +216,7 @@ class MainTab(ctk.CTkTabview):
         self.set_default_number_of_questions_entry = ctk.CTkEntry(
             master=self.settings, font=self.font, width=32)
         self.set_default_number_of_questions_entry.grid(
-            row=4, column=0, padx=(185, 0), pady=20, sticky="nw")
+            row=4, column=0, padx=(180, 0), pady=20, sticky="nw")
 
         # *常にすぐLINEに送信 Checkbox
         self.checkbox_always_send_to_line = ctk.CTkCheckBox(master=self.settings,
@@ -772,7 +772,7 @@ class AppFrame(ctk.CTk):
         self.quiz_number_entry = ctk.CTkEntry(
             master=self, font=self.font, width=32)
         self.quiz_number_entry.grid(
-            row=1, column=0, padx=(115, 0), sticky="nw")
+            row=1, column=0, padx=(130, 0), sticky="nw")
 
         # Create the checkbox for instant LINE push
         self.instant_push_check_box = ctk.CTkCheckBox(
@@ -832,11 +832,11 @@ class AppFrame(ctk.CTk):
         self.increment_button = ctk.CTkButton(
             master=self, text="▲", width=30)
         self.increment_button.grid(
-            row=1, column=0, padx=(160, 0), pady=(0, 0), sticky="w")
+            row=1, column=0, padx=(175, 0), pady=(0, 0), sticky="w")
         self.decrement_button = ctk.CTkButton(
             master=self, text="▼", width=30)
         self.decrement_button.grid(
-            row=1, column=0, padx=(200, 0), pady=(0, 0), sticky="w")
+            row=1, column=0, padx=(215, 0), pady=(0, 0), sticky="w")
         self.increment_button.configure(command=self.increment_questions)
         self.decrement_button.configure(command=self.decrement_questions)
 
