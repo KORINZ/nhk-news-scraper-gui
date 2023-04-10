@@ -182,9 +182,9 @@ class MainTab(ctk.CTkTabview):
         }
         self.button_color_optionmenu = ctk.CTkOptionMenu(self.settings, values=list(
             self.button_color_optionmenu_mapping.values()), variable=self.button_color_optionmenu_var, font=self.font,
-                                                         command=lambda _:
-                                                         self.change_appearance_mode_event_button_color(
-                                                             self.button_color_optionmenu_var.get()), width=100)
+            command=lambda _:
+            self.change_appearance_mode_event_button_color(
+            self.button_color_optionmenu_var.get()), width=100)
 
         self.button_color_optionmenu.grid(
             row=1, column=0, padx=(170, 0), pady=0, sticky="nw")
@@ -540,8 +540,10 @@ class MainTab(ctk.CTkTabview):
         main_window_height = self.master.winfo_height()
         main_window_x = self.master.winfo_x()
         main_window_y = self.master.winfo_y()
-        x_position = main_window_x + (main_window_width // 2) - (popup_width // 2)
-        y_position = main_window_y + (main_window_height // 2) - (popup_height // 2)
+        x_position = main_window_x + \
+            (main_window_width // 2) - (popup_width // 2)
+        y_position = main_window_y + \
+            (main_window_height // 2) - (popup_height // 2)
         return popup_width, popup_height, x_position, y_position
 
     def add_save_cancel_buttons(self, popup: ctk.CTkToplevel, row: int, column: int, command: Callable) -> None:
@@ -705,7 +707,6 @@ class AppFrame(ctk.CTk):
 
     def __init__(self) -> None:
         self.broadcast_bool = None
-        self.dot_counter = None
         self.total_ids = None
         self.current_index = None
         self.quiz_generation_thread = None
