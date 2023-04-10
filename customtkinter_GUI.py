@@ -17,7 +17,7 @@ from requests.exceptions import ConnectionError
 from main import main, push_quiz, save_quiz_vocab
 
 # Initial setup
-VERSION = "v1.10.4"
+VERSION = "v1.10.5"
 
 PRONOUN_QUIZ_LOCATION = r'./txt_files/pronunciation_quiz.txt'
 DEF_QUIZ_LOCATION = r'./txt_files/definition_quiz.txt'
@@ -819,7 +819,7 @@ class AppFrame(ctk.CTk):
         self.progress_text_label = ctk.CTkLabel(
             master=self, text="", font=self.font)
         self.progress_text_label.grid(
-            row=1, column=0, padx=(520, 0), pady=0, sticky="wn")
+            row=1, column=0, padx=(535, 0), pady=0, sticky="wn")
 
         # Create the reset button
         self.reset_button = ctk.CTkButton(
