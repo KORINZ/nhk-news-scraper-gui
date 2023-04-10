@@ -16,7 +16,6 @@ from requests.exceptions import ConnectionError
 # Local imports
 from main import main, push_quiz, save_quiz_vocab
 
-
 # Initial setup
 VERSION = "v1.10.0"
 
@@ -47,7 +46,7 @@ def create_default_settings_file() -> None:
         "send_to_all": 0,
         "scaling": "110%",
         "maximize_screen_check_box": 0,
-        "grade_book_url": "http://www.google.com",
+        "grade_book_url": "https://www.google.com",
     }
     if not os.path.exists(JSON_FOLDER_PATH):
         os.makedirs(JSON_FOLDER_PATH)
@@ -74,6 +73,8 @@ PROJECTION_URL = "https://github.com/KORINZ/nhk_news_web_easy_scraper"
 
 class SubTab:
     def __init__(self, parent, tab_name, txt_file) -> None:
+        self.textbox = None
+        self.frame = None
         self.parent = parent
         self.tab_name = tab_name
         self.txt_file = txt_file
@@ -94,7 +95,7 @@ class SubTab:
             os.makedirs(directory)
 
         if not os.path.isfile(self.txt_file):
-            with open(self.txt_file, 'w', encoding='utf-8') as f:
+            with open(self.txt_file, 'w', encoding='utf-8'):
                 pass
 
         if self.tab_name == "ログファイル" or self.tab_name == "過去のクイズ":
@@ -110,6 +111,8 @@ class MainTab(ctk.CTkTabview):
     def __init__(self, master, datetime_label, quiz_type_dropdown, quiz_number_entry, instant_push_check_box,
                  broadcast_on_label, **kwargs) -> None:
         super().__init__(master, **kwargs)
+        self.confirm_delete_past_quizzes_button = None
+        self.cancel_delete_past_quizzes_button = None
         self.datetime_label = datetime_label
         self.quiz_type_dropdown = quiz_type_dropdown
         self.quiz_number_entry = quiz_number_entry
@@ -160,7 +163,8 @@ class MainTab(ctk.CTkTabview):
                                                              values=list(
                                                                  self.theme_optionmenu_mapping.values()),
                                                              command=self.change_appearance_mode_event_theme,
-                                                             variable=self.theme_optionmenu_var, font=self.font, width=100)
+                                                             variable=self.theme_optionmenu_var, font=self.font,
+                                                             width=100)
         self.appearance_mode_optionemenu.grid(
             row=0, column=0, padx=(70, 0), pady=20, sticky="nw")
 
@@ -178,9 +182,9 @@ class MainTab(ctk.CTkTabview):
         }
         self.button_color_optionmenu = ctk.CTkOptionMenu(self.settings, values=list(
             self.button_color_optionmenu_mapping.values()), variable=self.button_color_optionmenu_var, font=self.font,
-            command=lambda
-            _: self.change_appearance_mode_event_button_color(
-            self.button_color_optionmenu_var.get()), width=100)
+                                                         command=lambda _:
+                                                         self.change_appearance_mode_event_button_color(
+                                                             self.button_color_optionmenu_var.get()), width=100)
 
         self.button_color_optionmenu.grid(
             row=1, column=0, padx=(170, 0), pady=0, sticky="nw")
@@ -307,7 +311,8 @@ class MainTab(ctk.CTkTabview):
         self.settings.grid_rowconfigure(5, weight=1)
         self.settings.grid_columnconfigure(0, weight=1)
 
-    def set_icon(self, window: ctk.CTkToplevel, icon: str) -> None:
+    @staticmethod
+    def set_icon(window: ctk.CTkToplevel, icon: str) -> None:
         try:
             window.iconbitmap(icon)
         except TclError:
@@ -352,7 +357,8 @@ class MainTab(ctk.CTkTabview):
 
         delete_past_quiz_popup.grab_set()
 
-    def restart_app(self) -> None:
+    @staticmethod
+    def restart_app() -> None:
         """Restart the app"""
         python = sys.executable
         os.execl(python, python, *sys.argv)
@@ -510,7 +516,7 @@ class MainTab(ctk.CTkTabview):
         self.scaling_optionemenu.set(scaling)
 
     def toggle_send_to_all_label(self) -> None:
-        """Display the send to all label."""
+        """Display send to all label."""
         if self.broadcast_switch.get() == 0:
             self.broadcast_on_label.grid_remove()
         else:
@@ -523,7 +529,8 @@ class MainTab(ctk.CTkTabview):
         else:
             self.datetime_label.grid()
 
-    def open_project_page(self) -> None:
+    @staticmethod
+    def open_project_page() -> None:
         """Open the project page in the default browser."""
         open_new_tab(PROJECTION_URL)
 
@@ -533,11 +540,9 @@ class MainTab(ctk.CTkTabview):
         main_window_height = self.master.winfo_height()
         main_window_x = self.master.winfo_x()
         main_window_y = self.master.winfo_y()
-        x_position = main_window_x + \
-            (main_window_width // 2) - (popup_width // 2)
-        y_position = main_window_y + \
-            (main_window_height // 2) - (popup_height // 2)
-        return (popup_width, popup_height, x_position, y_position)
+        x_position = main_window_x + (main_window_width // 2) - (popup_width // 2)
+        y_position = main_window_y + (main_window_height // 2) - (popup_height // 2)
+        return popup_width, popup_height, x_position, y_position
 
     def add_save_cancel_buttons(self, popup: ctk.CTkToplevel, row: int, column: int, command: Callable) -> None:
         """Add the save and cancel buttons to the popup."""
@@ -574,9 +579,9 @@ class MainTab(ctk.CTkTabview):
         # Load the grade book URL from the settings file
         with open(SETTINGS_FILE_LOCATION, "r", encoding="utf-8") as settings_file:
             settings_data = json.load(settings_file)
-        GRADE_BOOK_URL = settings_data['grade_book_url']
+        grade_book_url = settings_data['grade_book_url']
 
-        grade_book_url_entry.insert(0, GRADE_BOOK_URL)
+        grade_book_url_entry.insert(0, grade_book_url)
 
         self.add_save_cancel_buttons(
             grade_book_url_popup, 1, 0,
@@ -689,7 +694,8 @@ class MainTab(ctk.CTkTabview):
             170, 0), pady=20, sticky="sw")
         self.settings.after(3000, lambda: saved_label.configure(text=""))
 
-    def remove_saved_label(self, saved_label: ctk.CTkLabel) -> None:
+    @staticmethod
+    def remove_saved_label(saved_label: ctk.CTkLabel) -> None:
         """Remove the 'Saved!' label from the grid."""
         saved_label.grid_remove()
 
@@ -698,6 +704,11 @@ class AppFrame(ctk.CTk):
     """The main application window."""
 
     def __init__(self) -> None:
+        self.broadcast_bool = None
+        self.dot_counter = None
+        self.total_ids = None
+        self.current_index = None
+        self.quiz_generation_thread = None
         self.theme = self.read_settings()[0]
         self.button_color = self.read_settings()[1]
         self.scaling = int(self.read_settings()[2].strip("%")) / 100
@@ -758,7 +769,7 @@ class AppFrame(ctk.CTk):
         self.quiz_number_entry.grid(
             row=1, column=0, padx=(120, 0), sticky="nw")
 
-        # Create the check box for instant LINE push
+        # Create the checkbox for instant LINE push
         self.instant_push_check_box = ctk.CTkCheckBox(
             master=self, text="すぐLINEに発信", font=self.font)
         self.instant_push_check_box.grid(
@@ -849,7 +860,8 @@ class AppFrame(ctk.CTk):
         self.grid_rowconfigure(4, weight=1)
         self.grid_columnconfigure(0, weight=1)
 
-    def open_grade_book(self) -> None:
+    @staticmethod
+    def open_grade_book() -> None:
         """Open the grade book."""
         with open(SETTINGS_FILE_LOCATION, "r", encoding="utf-8") as settings_file:
             settings_data = json.load(settings_file)
@@ -1046,7 +1058,8 @@ class AppFrame(ctk.CTk):
                 saved_settings = json.load(file)
                 self.tab_view.update_settings(saved_settings)
 
-    def read_settings(self) -> Tuple[str, ...]:
+    @staticmethod
+    def read_settings() -> Tuple[str, ...]:
         """Read the settings from a file."""
         if not os.path.exists(SETTINGS_FILE_LOCATION):
             create_default_settings_file()
