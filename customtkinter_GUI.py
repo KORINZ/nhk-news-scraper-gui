@@ -17,7 +17,7 @@ from requests.exceptions import ConnectionError
 from main import main, push_quiz, save_quiz_vocab
 
 # Initial setup
-VERSION = "v1.10.1"
+VERSION = "v1.10.2"
 
 PRONOUN_QUIZ_LOCATION = r'./txt_files/pronunciation_quiz.txt'
 DEF_QUIZ_LOCATION = r'./txt_files/definition_quiz.txt'
@@ -72,6 +72,8 @@ PROJECTION_URL = "https://github.com/KORINZ/nhk_news_web_easy_scraper"
 
 
 class SubTab:
+    """Custom sub-tab class that contains a textbox."""
+
     def __init__(self, parent, tab_name, txt_file) -> None:
         self.textbox = None
         self.frame = None
@@ -81,6 +83,7 @@ class SubTab:
         self.create_tab()
 
     def create_tab(self) -> None:
+        """Create a sub-tab and a textbox in it."""
         self.parent.sub_txt_tabs.add(self.tab_name)
         self.frame = ctk.CTkFrame(
             master=self.parent.sub_txt_tabs.tab(self.tab_name))
@@ -710,6 +713,7 @@ class AppFrame(ctk.CTk):
         self.total_ids = None
         self.current_index = None
         self.quiz_generation_thread = None
+        self.dot_counter = 0
         self.theme = self.read_settings()[0]
         self.button_color = self.read_settings()[1]
         self.scaling = int(self.read_settings()[2].strip("%")) / 100
@@ -1107,15 +1111,13 @@ class AppFrame(ctk.CTk):
             self.after(500, self.blink_progress_text_label)
         elif self.generate_quiz_button.cget("state") == "disabled" and "エラー" not in self.feedback_label.cget("text"):
             base_text = f"クイズを作成中({self.current_index}/{self.total_ids})"
-            # Get the dot_counter or set it to 0 if not exists
-            dot_counter = getattr(self, "dot_counter", 0)
 
-            dots = "・" * dot_counter  # Generate dots based on the dot_counter value
+            dots = "・" * self.dot_counter  # Generate dots based on the dot_counter value
             new_text = base_text + dots
             self.progress_text_label.configure(text=new_text)
 
             # Cycle through 0, 1, 2, 3 for the dot_counter
-            dot_counter = (dot_counter + 1) % 4
+            dot_counter = (self.dot_counter + 1) % 4
             self.dot_counter = dot_counter
             self.after(2000, self.blink_progress_text_label)
         else:
