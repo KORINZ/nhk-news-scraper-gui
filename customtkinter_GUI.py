@@ -169,7 +169,7 @@ class MainTab(ctk.CTkTabview):
                                                              variable=self.theme_optionmenu_var, font=self.font,
                                                              width=100)
         self.appearance_mode_optionemenu.grid(
-            row=0, column=0, padx=(70, 0), pady=20, sticky="nw")
+            row=0, column=0, padx=(80, 0), pady=20, sticky="nw")
 
         # *ボタン色 OptionMenu
         self.label_button_color = ctk.CTkLabel(
@@ -190,7 +190,7 @@ class MainTab(ctk.CTkTabview):
             self.button_color_optionmenu_var.get()), width=100)
 
         self.button_color_optionmenu.grid(
-            row=1, column=0, padx=(170, 0), pady=0, sticky="nw")
+            row=1, column=0, padx=(185, 0), pady=0, sticky="nw")
 
         # *時間表示 Switch
         self.display_datetime_switch = ctk.CTkSwitch(
@@ -205,7 +205,7 @@ class MainTab(ctk.CTkTabview):
             20, 0), pady=0, sticky="nw")
         self.default_quiz_type_dropdown = ctk.CTkOptionMenu(
             master=self.settings, values=["単語意味クイズ", "読み方クイズ"], font=self.font)
-        self.default_quiz_type_dropdown.grid(row=3, column=0, padx=(170, 0),
+        self.default_quiz_type_dropdown.grid(row=3, column=0, padx=(200, 0),
                                              pady=0, sticky="nw")
 
         # *デフォルト問題数 Entry
@@ -216,7 +216,7 @@ class MainTab(ctk.CTkTabview):
         self.set_default_number_of_questions_entry = ctk.CTkEntry(
             master=self.settings, font=self.font, width=32)
         self.set_default_number_of_questions_entry.grid(
-            row=4, column=0, padx=(170, 0), pady=20, sticky="nw")
+            row=4, column=0, padx=(185, 0), pady=20, sticky="nw")
 
         # *常にすぐLINEに送信 Checkbox
         self.checkbox_always_send_to_line = ctk.CTkCheckBox(master=self.settings,
@@ -228,7 +228,7 @@ class MainTab(ctk.CTkTabview):
         self.scaling_label = ctk.CTkLabel(
             self.settings, text="スケーリング:", font=self.font)
         self.scaling_label.grid(
-            row=0, column=0, padx=(0, 145), pady=20, sticky="n")
+            row=0, column=0, padx=(0, 125), pady=20, sticky="n")
         self.scaling_optionemenu = ctk.CTkOptionMenu(self.settings, values=["80%", "90%", "100%", "110%", "120%"],
                                                      command=self.change_scaling_event, font=self.font, width=100)
         self.scaling_optionemenu.grid(
@@ -762,7 +762,7 @@ class AppFrame(ctk.CTk):
         self.quiz_type_dropdown = ctk.CTkOptionMenu(
             master=self, values=["単語意味クイズ", "読み方クイズ"], font=self.font)
         self.quiz_type_dropdown.grid(row=0, column=0, padx=(
-            120, 10), pady=10, sticky="nw")
+            130, 10), pady=10, sticky="nw")
 
         # Create the number of questions entry
         self.label_number = ctk.CTkLabel(
@@ -772,7 +772,7 @@ class AppFrame(ctk.CTk):
         self.quiz_number_entry = ctk.CTkEntry(
             master=self, font=self.font, width=32)
         self.quiz_number_entry.grid(
-            row=1, column=0, padx=(120, 0), sticky="nw")
+            row=1, column=0, padx=(115, 0), sticky="nw")
 
         # Create the checkbox for instant LINE push
         self.instant_push_check_box = ctk.CTkCheckBox(
@@ -812,7 +812,7 @@ class AppFrame(ctk.CTk):
         self.progressbar = ctk.CTkProgressBar(
             master=self, width=270, height=20)
         self.progressbar.grid(row=0, column=0, padx=(
-            520, 0), pady=15, sticky="wn")
+            535, 0), pady=15, sticky="wn")
         self.progressbar.set(0)
 
         # Create progress text label
