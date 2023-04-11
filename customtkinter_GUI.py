@@ -17,7 +17,7 @@ from requests.exceptions import ConnectionError
 from main import main, push_quiz, save_quiz_vocab
 
 # Initial setup
-VERSION = "v1.10.6"
+VERSION = "v1.10.7"
 
 PRONOUN_QUIZ_LOCATION = r'./txt_files/pronunciation_quiz.txt'
 DEF_QUIZ_LOCATION = r'./txt_files/definition_quiz.txt'
@@ -918,7 +918,7 @@ class AppFrame(ctk.CTk):
 
             # Update the progress bar and text label
             if not bool(self.instant_push_check_box.get()):
-                self.show_feedback_label("作成完了！")
+                self.show_feedback_label("作成完了(発信前にクイズの編集は可能)！")
                 self.send_quiz_button.configure(state="normal")
             else:
                 self.show_feedback_label("作成完了！LINEに送信済み！")
