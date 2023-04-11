@@ -44,6 +44,10 @@ DEF_QUIZ_LOCATION = r'txt_files/definition_quiz.txt'
 PAST_QUIZ_DATA_LOCATION = r'txt_files/past_quiz_data.txt'
 LOG_LOCATION = r'txt_files/push_log.txt'
 
+# Selenium checking settings constants
+MAX_URL_CHECKING_ATTEMPTS = 10
+MIN_URL_WORD_COUNT = 3
+
 # Set locale to Japanese
 if sys.platform.startswith('win32'):
     locale.setlocale(locale.LC_CTYPE, "Japanese_Japan.932")
@@ -123,12 +127,9 @@ def generate_definition_quiz(article, word_dict: Dict[str, str], word_list: List
         return answer
 
 
-def get_news_url(driver: webdriver.Chrome) -> str | None:
+def get_news_url(driver: webdriver.Chrome) -> str:
     """Retrieve up-to-date news url links"""
-    max_attempts = 5
-    min_word_count = 3
-
-    for _ in range(max_attempts):
+    for _ in range(MAX_URL_CHECKING_ATTEMPTS):
         try:
             driver.get(NEWS_HOMEPAGE_URL)
         except WebDriverException:
@@ -142,7 +143,7 @@ def get_news_url(driver: webdriver.Chrome) -> str | None:
 
         # Remove links with less than min_word_count
         news_current = [link for link in news_current if get_number_of_word(link)[
-            0] >= min_word_count]
+            0] >= MIN_URL_WORD_COUNT]
 
         # If links are found, return a random link
         if news_current:
@@ -150,11 +151,11 @@ def get_news_url(driver: webdriver.Chrome) -> str | None:
             return new_url
 
     # If no links are found after max_attempts, return None
-    error_message = f"{max_attempts}回の試行後、{min_word_count}語以上のリンクが見つかりませんでした。"
-    print(f"{error_message}")
+    error_message = f"{MAX_URL_CHECKING_ATTEMPTS}回の試行後、{MIN_URL_WORD_COUNT}語以上のリンクが見つかりませんでした。"
     with open(LOG_LOCATION, 'w', encoding='utf-8') as file:
+        file.write(f"{get_today_date_jp()[1]}\n")
         file.write(f"{error_message}")
-    return None
+    raise RuntimeError(error_message)
 
 
 def write_text_data(content, action='a', location=NEWS_ARTICLE_TXT_LOCATION, encoder='utf-8') -> None:
@@ -212,8 +213,6 @@ def main(quiz_type: str, push=False, broadcasting=False, questions=5,
     # Get and encode a random news url; parsing the HTML content
     driver = setup_selenium()
     url = get_news_url(driver)
-    if url is None:
-        sys.exit(1)
 
     # Get the article vocabularies and definitions
     definition_list = get_definition_list(driver, url, progress_callback)

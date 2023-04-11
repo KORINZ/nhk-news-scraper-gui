@@ -938,9 +938,15 @@ class AppFrame(ctk.CTk):
             self.error_handler("インターネット接続を確認してください。")
         except PermissionError:
             self.error_handler("LINEのTOKENを確認してください。")
+        except RuntimeError:
+            with open(LOG_LOCATION, "r", encoding="utf-8") as log_file:
+                link_not_found_error = log_file.readlines()[1]
+            self.error_handler(f"{link_not_found_error}")
         finally:
             self.tab_view.set("ファイル表示")
-            if self.quiz_type_dropdown.get() == "単語意味クイズ":
+            if "エラー" in self.feedback_label.cget("text"):
+                self.tab_view.sub_txt_tabs.set("ログファイル")
+            elif self.quiz_type_dropdown.get() == "単語意味クイズ":
                 self.tab_view.sub_txt_tabs.set("単語意味クイズ")
             else:
                 self.tab_view.sub_txt_tabs.set("読み方クイズ")
