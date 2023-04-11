@@ -11,7 +11,7 @@ import tkinter.ttk as ttk
 from main import main, push_quiz
 
 # Global variables
-VERSION = "v1.1.0 (deprecated)"
+VERSION = "v1.1.1 (deprecated)"
 DEFAULT_NUMBER_OF_QUESTIONS = "4"
 PRONOUN_QUIZ_LOCATION = r'txt_files/pronunciation_quiz.txt'
 DEF_QUIZ_LOCATION = r'txt_files/definition_quiz.txt'
@@ -130,7 +130,6 @@ def run_quiz_generation() -> None:
     """Run the quiz generation function in the background."""
     global is_blinking
     try:
-        start_over()
         main(test_type_var.get(), push=line_push_var.get(),
              questions=int(questions_var.get()))
         # Update the status_label's text to show success
