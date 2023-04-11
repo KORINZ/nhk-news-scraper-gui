@@ -13,20 +13,22 @@ from main import main, push_quiz
 # Global variables
 VERSION = "v1.1.1 (deprecated)"
 DEFAULT_NUMBER_OF_QUESTIONS = "4"
-PRONOUN_QUIZ_LOCATION = r'txt_files/pronunciation_quiz.txt'
-DEF_QUIZ_LOCATION = r'txt_files/definition_quiz.txt'
-LOG_LOCATION = r'txt_files/push_log.txt'
-NEWS_ARTICLE_LOCATION = r'txt_files/news_article.txt'
-LINE_ICON_LOCATION = r'./icons/LINE.ico'
-NHK_ICON_LOCATION = r'./icons/nhk.ico'
-TOKEN_ID_LOCATION = r'./json_files/secrets.json'
+PRONOUN_QUIZ_LOCATION = r"txt_files/pronunciation_quiz.txt"
+DEF_QUIZ_LOCATION = r"txt_files/definition_quiz.txt"
+LOG_LOCATION = r"txt_files/push_log.txt"
+NEWS_ARTICLE_LOCATION = r"txt_files/news_article.txt"
+LINE_ICON_LOCATION = r"./icons/LINE.ico"
+NHK_ICON_LOCATION = r"./icons/nhk.ico"
+TOKEN_ID_LOCATION = r"./json_files/secrets.json"
 is_blinking = False
 
 
 def save_text_to_file() -> None:
     """Save the content of the Text widget to a file."""
-    file_path = filedialog.asksaveasfilename(defaultextension=".txt",
-                                             filetypes=[("Text Files", "*.txt"), ("All Files", "*.*")])
+    file_path = filedialog.asksaveasfilename(
+        defaultextension=".txt",
+        filetypes=[("Text Files", "*.txt"), ("All Files", "*.*")],
+    )
     if not file_path:
         return None
 
@@ -65,42 +67,51 @@ def enter_line_confidential() -> None:
     popup_width = 420
     popup_height = 105
     x_position = main_window_x + (main_window_width // 2) - (popup_width // 2)
-    y_position = main_window_y + \
-        (main_window_height // 2) - (popup_height // 2)
+    y_position = main_window_y + (main_window_height // 2) - (popup_height // 2)
 
     # Set the position and dimensions of the popup
     line_confidential_popup.geometry(
-        f"{popup_width}x{popup_height}+{x_position}+{y_position}")
+        f"{popup_width}x{popup_height}+{x_position}+{y_position}"
+    )
 
     # Add a "Channel Access Token" label and entry
     tk.Label(line_confidential_popup, text="CHANNEL_ACCESS_TOKEN:").grid(
-        row=0, column=0, sticky="w")
+        row=0, column=0, sticky="w"
+    )
     channel_access_token_entry = tk.Entry(line_confidential_popup)
-    channel_access_token_entry.grid(
-        row=0, column=1, padx=5, pady=5, sticky="w")
+    channel_access_token_entry.grid(row=0, column=1, padx=5, pady=5, sticky="w")
 
     # Add a "User ID" label and entry
-    tk.Label(line_confidential_popup, text="USER_ID:").grid(
-        row=1, column=0, sticky="w")
+    tk.Label(line_confidential_popup, text="USER_ID:").grid(row=1, column=0, sticky="w")
     user_id_entry = tk.Entry(line_confidential_popup)
     user_id_entry.grid(row=1, column=1, padx=5, pady=5, sticky="w")
 
     # Add a "Save" button
-    save_button = tk.Button(line_confidential_popup, text="保存", command=lambda: save_line_confidential(
-        channel_access_token_entry.get(), user_id_entry.get(), line_confidential_popup))
+    save_button = tk.Button(
+        line_confidential_popup,
+        text="保存",
+        command=lambda: save_line_confidential(
+            channel_access_token_entry.get(),
+            user_id_entry.get(),
+            line_confidential_popup,
+        ),
+    )
     save_button.grid(row=2, column=1, padx=5, pady=5, sticky="e")
 
     # Add a "Cancel" button
     cancel_button = tk.Button(
-        line_confidential_popup, text="キャンセル", command=line_confidential_popup.destroy)
+        line_confidential_popup, text="キャンセル", command=line_confidential_popup.destroy
+    )
     cancel_button.grid(row=2, column=0, padx=5, pady=5, sticky="w")
 
 
-def save_line_confidential(channel_access_token: str, user_id: str, line_confidential_popup: tk.Toplevel) -> None:
+def save_line_confidential(
+    channel_access_token: str, user_id: str, line_confidential_popup: tk.Toplevel
+) -> None:
     """Save the LINE confidential information to a secrets.json file."""
     confidential_data = {
         "channel_access_token": channel_access_token,
-        "user_id": user_id
+        "user_id": user_id,
     }
 
     with open(TOKEN_ID_LOCATION, "w", encoding="utf-8") as config_file:
@@ -130,8 +141,11 @@ def run_quiz_generation() -> None:
     """Run the quiz generation function in the background."""
     global is_blinking
     try:
-        main(test_type_var.get(), push=line_push_var.get(),
-             questions=int(questions_var.get()))
+        main(
+            test_type_var.get(),
+            push=line_push_var.get(),
+            questions=int(questions_var.get()),
+        )
         # Update the status_label's text to show success
         status_label.config(text="クイズの作成が完了しました！")
         # Automatically update the Text widget after quiz generation
@@ -190,8 +204,8 @@ def press_push_quiz_button() -> None:
         else:
             push_quiz(DEF_QUIZ_LOCATION)
         messagebox.showinfo("成功", "クイズを発信しました！")
-        with open(LOG_LOCATION, 'a', encoding='utf-8') as f:
-            f.write('PUSHED\n')
+        with open(LOG_LOCATION, "a", encoding="utf-8") as f:
+            f.write("PUSHED\n")
     except PermissionError as e:
         messagebox.showerror("エラー", f"クイズの発信に失敗しました: {e}")
 
@@ -230,7 +244,7 @@ def update_status_label_blink() -> None:
 
 # Create the main window
 root = tk.Tk()
-root.title(f'NHK NEWS EASY クイズ作成 GUI {VERSION}')
+root.title(f"NHK NEWS EASY クイズ作成 GUI {VERSION}")
 root.geometry("900x556")
 root.option_add("*font", "Gothic, 12")
 try:
@@ -280,36 +294,44 @@ menu_bar.add_cascade(label="情報", menu=about_menu)
 
 # Add a "Credit" option to the "About" menu
 about_menu.add_command(
-    label=f"NHK NEWS EASY クイズ作成 GUI {VERSION}について", command=show_credit_popup)
+    label=f"NHK NEWS EASY クイズ作成 GUI {VERSION}について", command=show_credit_popup
+)
 
 # Set the default value for test_type_var
 test_type_var.set("単語意味クイズ")
 
 # Create the test type label and combobox
 test_type_label = tk.Label(root, text="クイズタイプ:")
-test_type_label.grid(row=0, column=0, padx=entry_padding,
-                     pady=entry_padding, sticky="w")
-test_type_combobox = ttk.Combobox(root, textvariable=test_type_var, values=[
-    "読み方クイズ", "単語意味クイズ"], state="readonly")
-test_type_combobox.grid(row=0, column=1, padx=entry_padding,
-                        pady=entry_padding, sticky="w")
+test_type_label.grid(
+    row=0, column=0, padx=entry_padding, pady=entry_padding, sticky="w"
+)
+test_type_combobox = ttk.Combobox(
+    root, textvariable=test_type_var, values=["読み方クイズ", "単語意味クイズ"], state="readonly"
+)
+test_type_combobox.grid(
+    row=0, column=1, padx=entry_padding, pady=entry_padding, sticky="w"
+)
 
 # Create the line push label and checkbutton
 line_push_label = tk.Label(root, text="すぐLINEに発信:")
-line_push_label.grid(row=1, column=0, padx=entry_padding,
-                     pady=entry_padding, sticky="w")
+line_push_label.grid(
+    row=1, column=0, padx=entry_padding, pady=entry_padding, sticky="w"
+)
 line_push_check = tk.Checkbutton(root, variable=line_push_var)
-line_push_check.grid(row=1, column=1, padx=entry_padding,
-                     pady=entry_padding, sticky="w")
+line_push_check.grid(
+    row=1, column=1, padx=entry_padding, pady=entry_padding, sticky="w"
+)
 
 # Create the questions label and entry
 questions_label = tk.Label(root, text="最大問題数:")
-questions_label.grid(row=2, column=0, padx=entry_padding,
-                     pady=entry_padding, sticky="w")
+questions_label.grid(
+    row=2, column=0, padx=entry_padding, pady=entry_padding, sticky="w"
+)
 questions_entry = tk.Entry(root, textvariable=questions_var, width=2)
 questions_entry.insert(0, DEFAULT_NUMBER_OF_QUESTIONS)
-questions_entry.grid(row=2, column=1, padx=entry_padding,
-                     pady=entry_padding, sticky="w")
+questions_entry.grid(
+    row=2, column=1, padx=entry_padding, pady=entry_padding, sticky="w"
+)
 
 # Create the increment and decrement buttons
 increment_button = tk.Button(root, text="▲", command=increment_questions)
@@ -318,21 +340,22 @@ decrement_button = tk.Button(root, text="▼", command=decrement_questions)
 decrement_button.grid(row=2, column=1, padx=(80, 0), pady=(0, 0), sticky="w")
 
 # Create the generate and send buttons
-generate_button = tk.Button(
-    root, text="クイズ作成", command=start_quiz_generation_thread)
-generate_button.grid(row=3, column=1, padx=button_padding,
-                     pady=button_padding, sticky="w")
+generate_button = tk.Button(root, text="クイズ作成", command=start_quiz_generation_thread)
+generate_button.grid(
+    row=3, column=1, padx=button_padding, pady=button_padding, sticky="w"
+)
 send_button = tk.Button(
-    root, text="LINEに発信", command=press_push_quiz_button, state="disabled")
-send_button.grid(row=3, column=1, padx=(
-    110 + button_padding, 0), pady=button_padding, sticky="w")
+    root, text="LINEに発信", command=press_push_quiz_button, state="disabled"
+)
+send_button.grid(
+    row=3, column=1, padx=(110 + button_padding, 0), pady=button_padding, sticky="w"
+)
 
 # Create the article label and text widget
 article_label = tk.Label(root, text="ファイル表示:")
 article_label.grid(row=4, column=0, sticky="w")
 article_text = tk.Text(root, wrap=tk.WORD, width=45, height=28)
-article_text.grid(row=5, column=0, columnspan=2,
-                  padx=10, pady=10, sticky="nsew")
+article_text.grid(row=5, column=0, columnspan=2, padx=10, pady=10, sticky="nsew")
 
 # Create a scrollbar for the article text widget
 scrollbar = tk.Scrollbar(root, command=article_text.yview)
@@ -341,19 +364,29 @@ article_text.config(yscrollcommand=scrollbar.set)
 
 # Create the load file buttons
 load_article_button = tk.Button(
-    root, text="ニュース文章", command=lambda: load_file(NEWS_ARTICLE_LOCATION), state="disabled")
+    root,
+    text="ニュース文章",
+    command=lambda: load_file(NEWS_ARTICLE_LOCATION),
+    state="disabled",
+)
 load_article_button.grid(row=4, column=1, sticky="w")
 
 load_def_quiz_button = tk.Button(
-    root, text="単語意味クイズ", command=lambda: load_file(DEF_QUIZ_LOCATION), state="disabled")
+    root, text="単語意味クイズ", command=lambda: load_file(DEF_QUIZ_LOCATION), state="disabled"
+)
 load_def_quiz_button.grid(row=4, column=1, padx=(125, 0), sticky="w")
 
 load_pron_quiz_button = tk.Button(
-    root, text="読み方クイズ", command=lambda: load_file(PRONOUN_QUIZ_LOCATION), state="disabled")
+    root,
+    text="読み方クイズ",
+    command=lambda: load_file(PRONOUN_QUIZ_LOCATION),
+    state="disabled",
+)
 load_pron_quiz_button.grid(row=4, column=1, padx=(265, 0), sticky="w")
 
 load_log_button = tk.Button(
-    root, text="ログファイル", command=lambda: load_file(LOG_LOCATION))
+    root, text="ログファイル", command=lambda: load_file(LOG_LOCATION)
+)
 load_log_button.grid(row=4, column=1, padx=(390, 0), sticky="w")
 
 root.grid_columnconfigure(1, weight=1)
