@@ -227,6 +227,10 @@ def push_quiz(test_type: str, broadcasting=False) -> None:
     send_message("text", questions, broadcasting=broadcasting)
 
 
+def clear_terminal() -> None:
+    os.system("cls" if os.name == "nt" else "clear")
+
+
 def main(
     quiz_type: str,
     push=False,
@@ -390,7 +394,7 @@ def main(
 
 if __name__ == "__main__":
     # Clearing the terminal
-    os.system("cls") if sys.platform.startswith("win32") else os.system("clear")
+    clear_terminal()
 
     # quiz_type: '単語意味クイズ' or '読み方クイズ'
     main(quiz_type="単語意味クイズ", push=False, broadcasting=False, questions=5)
