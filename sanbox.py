@@ -16,7 +16,7 @@ def predict_sentiment_jp(text: str, model_name: str = "koheiduck/bert-japanese-f
     # Get model output
     output = model(**encoded_review)
 
-    # Calculate softmax scores
+    # Get sentiment scores in numpy array and apply softmax function
     scores = output.logits[0].detach().numpy()
     scores = softmax(scores)
 
@@ -38,17 +38,27 @@ def print_input_text(text: str) -> None:
 
 
 def print_sentiment_scores(scores_dict: dict[str, str]) -> None:
-    """Print sentiment scores."""
+    """Print sentiment scores with a bar graph."""
     print("感情スコア:")
+    max_bar_length = 30
     for sentiment, score in scores_dict.items():
-        print(f"{sentiment}: {score}")
+        score_percentage = float(score.strip('%'))
+        if score_percentage >= 1:
+            bar_length = int(score_percentage / 100 * max_bar_length)
+            bar = "#" * bar_length
+        else:
+            bar = ""
+
+        # Adjust the spacing for proper alignment
+        formatted_score = f"{score: <5}"
+        print(f"{sentiment}: {formatted_score} {bar}")
     print()
 
 
 if __name__ == "__main__":
 
-    text = """なんとなく、以前よりも質が悪くなった気がします。ちょっと拭いただけでボロボロボロとカスがたくさん出るため、メイクでは使いにくい。鼻をかんだだけで、鼻、口まわりにカスがついて、いちいち取るのが面倒。これじゃ敏感肌にいい、保湿とか言われても使う気にならない。前はそんなことなかったのに。。残念です。"""
+    input_text = """なんとなく、以前よりも質が悪くなった気がします。ちょっと拭いただけでボロボロボロとカスがたくさん出るため、メイクでは使いにくい。鼻をかんだだけで、鼻、口まわりにカスがついて、いちいち取るのが面倒。これじゃ敏感肌にいい、保湿とか言われても使う気にならない。前はそんなことなかったのに。。残念です。"""
 
-    print_input_text(text)
-    sentiment_scores_dict = predict_sentiment_jp(text)
+    print_input_text(input_text)
+    sentiment_scores_dict = predict_sentiment_jp(input_text)
     print_sentiment_scores(sentiment_scores_dict)
