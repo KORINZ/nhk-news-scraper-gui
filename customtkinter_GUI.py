@@ -16,9 +16,10 @@ from requests.exceptions import ConnectionError
 # Local imports
 from main import main, push_quiz, save_quiz_vocab
 
-# Initial setup
+# Version number
 VERSION = "v1.11.0"
 
+# File locations
 PRONOUN_QUIZ_LOCATION = r"./txt_files/pronunciation_quiz.txt"
 DEF_QUIZ_LOCATION = r"./txt_files/definition_quiz.txt"
 LOG_LOCATION = r"./txt_files/push_log.txt"
