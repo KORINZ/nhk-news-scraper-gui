@@ -923,11 +923,12 @@ class AppFrame(ctk.CTk):
         # Create the number of questions entry
         self.label_number = ctk.CTkLabel(
             master=self, text="最大問題数:", font=self.font)
-        self.label_number.grid(row=1, column=0, padx=(20, 120), sticky="w")
+        self.label_number.grid(row=1, column=0, padx=(
+            20, 120), pady=10, sticky="w")
         self.quiz_number_entry = ctk.CTkEntry(
             master=self, font=self.font, width=32)
         self.quiz_number_entry.grid(
-            row=1, column=0, padx=(130, 0), sticky="nw")
+            row=1, column=0, padx=(130, 0), pady=10, sticky="nw")
 
         # Create the checkbox for instant LINE push
         self.instant_push_check_box = ctk.CTkCheckBox(
@@ -947,7 +948,7 @@ class AppFrame(ctk.CTk):
             width=860,
             height=300,
         )
-        self.tab_view.grid(row=4, column=0, padx=20, pady=20, sticky="nsew")
+        self.tab_view.grid(row=4, column=0, padx=20, pady=5, sticky="nsew")
         self.load_saved_settings()
 
         # Set initial window size
@@ -962,7 +963,7 @@ class AppFrame(ctk.CTk):
         self.feedback_label = ctk.CTkLabel(
             master=self, text="", font=self.font)
         self.feedback_label.grid(
-            row=1, column=0, padx=(0, 20), pady=0, sticky="ne")
+            row=1, column=0, padx=(0, 20), pady=10, sticky="ne")
 
         # Create the progress bar label
         self.label_progress = ctk.CTkLabel(
@@ -974,14 +975,14 @@ class AppFrame(ctk.CTk):
         self.progressbar = ctk.CTkProgressBar(
             master=self, width=270, height=20)
         self.progressbar.grid(row=0, column=0, padx=(
-            535, 0), pady=15, sticky="wn")
+            535, 0), pady=10, sticky="wn")
         self.progressbar.set(0)
 
         # Create progress text label
         self.progress_text_label = ctk.CTkLabel(
             master=self, text="", font=self.font)
         self.progress_text_label.grid(
-            row=1, column=0, padx=(535, 0), pady=0, sticky="wn"
+            row=1, column=0, padx=(535, 0), pady=10, sticky="wn"
         )
 
         # Create the reset button
@@ -995,11 +996,11 @@ class AppFrame(ctk.CTk):
         # Create the increment and decrement buttons
         self.increment_button = ctk.CTkButton(master=self, text="▲", width=30)
         self.increment_button.grid(
-            row=1, column=0, padx=(175, 0), pady=(0, 0), sticky="w"
+            row=1, column=0, padx=(175, 0), pady=10, sticky="w"
         )
         self.decrement_button = ctk.CTkButton(master=self, text="▼", width=30)
         self.decrement_button.grid(
-            row=1, column=0, padx=(215, 0), pady=(0, 0), sticky="w"
+            row=1, column=0, padx=(215, 0), pady=10, sticky="w"
         )
         self.increment_button.configure(command=self.increment_questions)
         self.decrement_button.configure(command=self.decrement_questions)
@@ -1009,7 +1010,7 @@ class AppFrame(ctk.CTk):
             master=self, text="クイズ作成", font=self.font, width=120
         )
         self.generate_quiz_button.grid(
-            row=3, column=0, padx=20, pady=0, sticky="w")
+            row=3, column=0, padx=20, pady=10, sticky="w")
         self.generate_quiz_button.configure(
             command=self.start_quiz_generation_thread)
 
