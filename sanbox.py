@@ -42,7 +42,7 @@ def print_sentiment_scores(scores_dict: dict[str, str]) -> None:
     print("感情スコア:")
     max_bar_length = 30
     for sentiment, score in scores_dict.items():
-        score_percentage = float(score.strip('%'))
+        score_percentage = float(score.strip("%"))
         if score_percentage >= 1:
             bar_length = int(score_percentage / 100 * max_bar_length)
             bar = "#" * bar_length
@@ -56,7 +56,6 @@ def print_sentiment_scores(scores_dict: dict[str, str]) -> None:
 
 
 if __name__ == "__main__":
-
     input_text = """なんとなく、以前よりも質が悪くなった気がします。ちょっと拭いただけでボロボロボロとカスがたくさん出るため、メイクでは使いにくい。鼻をかんだだけで、鼻、口まわりにカスがついて、いちいち取るのが面倒。これじゃ敏感肌にいい、保湿とか言われても使う気にならない。前はそんなことなかったのに。。残念です。"""
 
     print_input_text(input_text)
