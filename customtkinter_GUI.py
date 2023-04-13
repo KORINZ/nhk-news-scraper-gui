@@ -17,7 +17,7 @@ from requests.exceptions import ConnectionError
 from main import main, push_quiz, save_quiz_vocab
 
 # Version number
-VERSION = "v1.12.1"
+VERSION = "v1.12.2"
 
 # File locations
 PRONOUN_QUIZ_LOCATION = r"./txt_files/pronunciation_quiz.txt"
