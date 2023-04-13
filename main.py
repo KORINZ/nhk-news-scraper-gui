@@ -1,4 +1,5 @@
 # Standard library imports
+from typing import Dict, List
 import os
 import sys
 import random
@@ -86,7 +87,7 @@ def generate_definition_quiz(
     """Generate a definition test for students and return the answer key"""
     today = get_today_date_jp()[1]
 
-    # randomly remove questions until the number of questions reach a desired value
+    # Extract and process questions from the word dictionary
     new_word_list_header = []
     new_word_list = []
     for key in word_dict.keys():
@@ -117,7 +118,8 @@ def generate_definition_quiz(
 
         # write the article to a file
         for paragraph in article:
-            f.write(paragraph.text.strip() + "\n\n")
+            for p_tag in paragraph.find_all("p"):
+                f.write(p_tag.text.strip() + "\n\n")
 
         f.write("---\n\n")
 
@@ -176,13 +178,15 @@ def get_news_url(driver: webdriver.Chrome) -> str:
     raise RuntimeError(error_message)
 
 
-def write_text_data(
-    content, action="a", location=NEWS_ARTICLE_TXT_LOCATION, encoder="utf-8"
-) -> None:
+def write_text_data(content, action="a", location=NEWS_ARTICLE_TXT_LOCATION, encoder="utf-8") -> None:
     """Write text (BeautifulSoup | NavigableString) content to a file"""
     if content is not None:
         with open(location, action, encoding=encoder) as file:
-            file.write(content.text.strip() + "\n\n")
+            for p_tag in content.find_all("p"):
+                for line in p_tag.get_text().splitlines():
+                    stripped_line = line.strip()
+                    if stripped_line:
+                        file.write(stripped_line + '\n\n')
 
 
 def is_hiragana_char(character: str) -> bool:
@@ -211,7 +215,7 @@ def save_quiz_vocab(news_url: str) -> None:
         vocab = parts[1].strip()
         vocab_def = parts[2].strip()
     with open(PAST_QUIZ_DATA_LOCATION, "a+", encoding="utf-8") as f:
-        f.write(f"{today}\n{news_url}\n\n{vocab}\n\n{vocab_def}\n\n")
+        f.write(f"{today}\n{news_url}\n{vocab}\n\n{vocab_def}\n\n")
         f.write("---\n\n")
 
 
@@ -351,7 +355,8 @@ def main(
     definition_list_original_word = []
     for key, meaning in zip(vocabulary_dict.keys(), definition_list):
         try:
-            definition_list_original_word.append(key + "：" + meaning.split("：", 1)[1])
+            definition_list_original_word.append(
+                key + "：" + meaning.split("：", 1)[1])
         except IndexError:
             print(
                 f"\nWARNING: definition_list is missing a or some element(s). This is a rare case due to incomplete scrapping of selenium. Consider re-running the program or change the scale for document.body.style.transform in get_definition.py."
