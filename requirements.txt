@@ -7,3 +7,11 @@ pandas
 gspread
 tabulate
 customtkinter
+
+transformers
+scipy
+torch
+torchvision
+torchaudio
+fugashi[unidic]
+ipadic
