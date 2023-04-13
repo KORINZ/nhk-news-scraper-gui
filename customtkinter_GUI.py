@@ -17,7 +17,7 @@ from requests.exceptions import ConnectionError
 from main import main, push_quiz, save_quiz_vocab
 
 # Version number
-VERSION = "v1.12.2"
+VERSION = "v1.12.3"
 
 # File locations
 PRONOUN_QUIZ_LOCATION = r"./txt_files/pronunciation_quiz.txt"
@@ -975,7 +975,7 @@ class AppFrame(ctk.CTk):
         self.progressbar = ctk.CTkProgressBar(
             master=self, width=270, height=20)
         self.progressbar.grid(row=0, column=0, padx=(
-            535, 0), pady=10, sticky="wn")
+            535, 0), pady=15, sticky="wn")
         self.progressbar.set(0)
 
         # Create progress text label
