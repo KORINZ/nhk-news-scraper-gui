@@ -183,15 +183,21 @@ def get_news_url(driver: webdriver.Chrome) -> str:
     raise RuntimeError(error_message)
 
 
-def write_text_data(content, action="a", location=NEWS_ARTICLE_TXT_LOCATION, encoder="utf-8") -> None:
+def write_content_data(content_type, content, action="a", location=NEWS_ARTICLE_TXT_LOCATION, encoder="utf-8") -> None:
     """Write text (BeautifulSoup | NavigableString) content to a file"""
-    if content is not None:
+    if content is not None and content_type == "article":
         with open(location, action, encoding=encoder) as file:
             for p_tag in content.find_all("p"):
                 for line in p_tag.get_text().splitlines():
                     stripped_line = line.strip()
                     if stripped_line:
                         file.write(stripped_line + '\n\n')
+    elif content_type == "title":
+        with open(location, action, encoding=encoder) as file:
+            file.write(f"【{content.text.strip()}】\n\n")
+    else:
+        with open(location, action, encoding=encoder) as file:
+            file.write(f"{content.text.strip()}\n\n")
 
 
 def is_hiragana_char(character: str) -> bool:
@@ -278,18 +284,18 @@ def main(
     with open(NEWS_ARTICLE_TXT_LOCATION, "w") as f:
         f.write(f"{url}\n\n")
 
-    # Article publishing date (掲載日)
-    date = soup.find("p", class_="article-main__date")
-    write_text_data(date)
-
     # Article title (タイトル)
     title = soup.find("h1", class_="article-main__title")
-    write_text_data(title)
+    write_content_data("title", title)
+
+    # Article publishing date (掲載日)
+    date = soup.find("p", class_="article-main__date")
+    write_content_data("date", date)
 
     # Article content (内容)
     article = soup.find_all("div", class_="article-main__body article-body")
     for paragraph in article:
-        write_text_data(paragraph)
+        write_content_data("article", paragraph)
 
     # Important vocabularies (語彙)
     vocabulary_list = soup.find_all("a", class_="dicWin")
