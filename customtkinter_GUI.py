@@ -56,8 +56,7 @@ def create_default_settings_file() -> None:
     if not os.path.exists(JSON_FOLDER_PATH):
         os.makedirs(JSON_FOLDER_PATH)
     with open(SETTINGS_FILE_LOCATION, "w", encoding="utf-8") as settings_file:
-        json.dump(default_settings, settings_file,
-                  indent=4, ensure_ascii=False)
+        json.dump(default_settings, settings_file, indent=4, ensure_ascii=False)
 
 
 def load_grade_book_url() -> str:
@@ -90,8 +89,7 @@ class SubTab:
     def create_tab(self) -> None:
         """Create a sub-tab and a textbox in it."""
         self.parent.sub_txt_tabs.add(self.tab_name)
-        self.frame = ctk.CTkFrame(
-            master=self.parent.sub_txt_tabs.tab(self.tab_name))
+        self.frame = ctk.CTkFrame(master=self.parent.sub_txt_tabs.tab(self.tab_name))
         self.frame.pack(fill="both", expand=True)
 
         self.textbox = ctk.CTkTextbox(
@@ -167,8 +165,7 @@ class MainTab(ctk.CTkTabview):
         self.label_theme = ctk.CTkLabel(
             master=self.settings, text="テーマ:", font=self.font
         )
-        self.label_theme.grid(row=0, column=0, padx=(
-            20, 0), pady=20, sticky="nw")
+        self.label_theme.grid(row=0, column=0, padx=(20, 0), pady=20, sticky="nw")
         self.theme_optionmenu_var = ctk.StringVar(value=master.theme)
         self.theme_optionmenu_mapping = {
             "Light": "ライト",
@@ -191,10 +188,8 @@ class MainTab(ctk.CTkTabview):
         self.label_button_color = ctk.CTkLabel(
             master=self.settings, text="ボタン色(再起動する):", font=self.font
         )
-        self.label_button_color.grid(
-            row=1, column=0, padx=(20, 0), pady=0, sticky="nw")
-        self.button_color_optionmenu_var = ctk.StringVar(
-            value=master.button_color)
+        self.label_button_color.grid(row=1, column=0, padx=(20, 0), pady=0, sticky="nw")
+        self.button_color_optionmenu_var = ctk.StringVar(value=master.button_color)
         self.button_color_optionmenu_mapping = {
             "blue": "ブルー",
             "dark-blue": "瑠璃色",
@@ -263,10 +258,8 @@ class MainTab(ctk.CTkTabview):
         )
 
         # *スケーリング OptionMenu
-        self.scaling_label = ctk.CTkLabel(
-            self.settings, text="スケーリング:", font=self.font)
-        self.scaling_label.grid(
-            row=0, column=0, padx=(0, 125), pady=20, sticky="n")
+        self.scaling_label = ctk.CTkLabel(self.settings, text="スケーリング:", font=self.font)
+        self.scaling_label.grid(row=0, column=0, padx=(0, 125), pady=20, sticky="n")
         self.scaling_optionemenu = ctk.CTkOptionMenu(
             self.settings,
             values=["80%", "90%", "100%", "110%", "120%"],
@@ -306,8 +299,7 @@ class MainTab(ctk.CTkTabview):
             command=self.enter_line_confidential,
             font=self.font,
         )
-        self.line_info_button.grid(
-            row=3, column=0, padx=(0, 0), pady=0, sticky="n")
+        self.line_info_button.grid(row=3, column=0, padx=(0, 0), pady=0, sticky="n")
 
         # *全員に発信 Switch
         self.broadcast_switch = ctk.CTkSwitch(
@@ -316,8 +308,7 @@ class MainTab(ctk.CTkTabview):
             font=self.font,
             command=self.toggle_send_to_all_label,
         )
-        self.broadcast_switch.grid(
-            row=4, column=0, padx=(0, 0), pady=20, sticky="n")
+        self.broadcast_switch.grid(row=4, column=0, padx=(0, 0), pady=20, sticky="n")
 
         # *テキストファイルフォルダー開く Button
         self.txt_file_folder_button = ctk.CTkButton(
@@ -337,8 +328,7 @@ class MainTab(ctk.CTkTabview):
             font=self.font,
             command=self.open_json_files_folder,
         )
-        self.open_json_folder.grid(
-            row=1, column=0, padx=(0, 20), pady=0, sticky="ne")
+        self.open_json_folder.grid(row=1, column=0, padx=(0, 20), pady=0, sticky="ne")
 
         # *過去のクイズを削除 Button
         self.delete_past_quizzes_button = ctk.CTkButton(
@@ -367,8 +357,7 @@ class MainTab(ctk.CTkTabview):
             command=self.open_project_page,
             font=self.font,
         )
-        self.help_button.grid(
-            row=3, column=0, padx=(0, 20), pady=0, sticky="ne")
+        self.help_button.grid(row=3, column=0, padx=(0, 20), pady=0, sticky="ne")
 
         # *URL・LINE機密情報の保存成功 Label
         self.url_line_confidential_saved_label = ctk.CTkLabel(
@@ -398,8 +387,7 @@ class MainTab(ctk.CTkTabview):
             text="まりな先生 (2023) NHK NEWS WEB EASY 日本語クイズ作成: " + VERSION,
             font=self.font,
         )
-        self.label_version.grid(
-            row=6, column=0, padx=(0, 20), pady=20, sticky="se")
+        self.label_version.grid(row=6, column=0, padx=(0, 20), pady=20, sticky="se")
 
         # Configure grid system
         self.settings.grid_rowconfigure(5, weight=1)
@@ -418,8 +406,7 @@ class MainTab(ctk.CTkTabview):
         delete_past_quiz_popup.title("過去のクイズを削除")
         # ?Bug from customtkinter
         self.after(
-            200, lambda: self.set_icon(
-                delete_past_quiz_popup, ALERT_ICON_LOCATION)
+            200, lambda: self.set_icon(delete_past_quiz_popup, ALERT_ICON_LOCATION)
         )
 
         pop_width, pop_height, x_position, y_position = self.calculate_window_size(
@@ -434,8 +421,7 @@ class MainTab(ctk.CTkTabview):
             text="過去のクイズを完全に削除しますか？「CONFIRM」を入力してください。",
             font=self.font,
         ).grid(row=0, column=0, padx=(0, 0), pady=20, sticky="n")
-        confirm_entry = ctk.CTkEntry(
-            delete_past_quiz_popup, width=400, font=self.font)
+        confirm_entry = ctk.CTkEntry(delete_past_quiz_popup, width=400, font=self.font)
         confirm_entry.grid(row=1, column=0, padx=(0, 0), pady=0, sticky="n")
 
         self.cancel_delete_past_quizzes_button = ctk.CTkButton(
@@ -481,8 +467,7 @@ class MainTab(ctk.CTkTabview):
             f.write("")
             self.past_quizzes_deleted_label.configure(text="過去のクイズを削除しました。")
             self.past_quizzes_deleted_label.after(
-                3000, lambda: self.past_quizzes_deleted_label.configure(
-                    text="")
+                3000, lambda: self.past_quizzes_deleted_label.configure(text="")
             )
 
         past_quiz = self.textboxes["過去のクイズ"]
@@ -525,8 +510,7 @@ class MainTab(ctk.CTkTabview):
 
     def update_button_color_optionmenu_var(self, english_value: str) -> None:
         """Update the value of the OptionMenu variable"""
-        japanese_value = self.button_color_optionmenu_mapping.get(
-            english_value)
+        japanese_value = self.button_color_optionmenu_mapping.get(english_value)
         if japanese_value:
             self.button_color_optionmenu_var.set(japanese_value)
 
@@ -665,26 +649,21 @@ class MainTab(ctk.CTkTabview):
         main_window_height = self.master.winfo_height()
         main_window_x = self.master.winfo_x()
         main_window_y = self.master.winfo_y()
-        x_position = main_window_x + \
-            (main_window_width // 2) - (popup_width // 2)
-        y_position = main_window_y + \
-            (main_window_height // 2) - (popup_height // 2)
+        x_position = main_window_x + (main_window_width // 2) - (popup_width // 2)
+        y_position = main_window_y + (main_window_height // 2) - (popup_height // 2)
         return popup_width, popup_height, x_position, y_position
 
     def add_save_cancel_buttons(
         self, popup: ctk.CTkToplevel, row: int, column: int, command: Callable
     ) -> None:
         """Add the save and cancel buttons to the popup."""
-        save_button = ctk.CTkButton(
-            popup, text="保存", command=command, font=self.font)
-        save_button.grid(row=row, column=column,
-                         padx=(0, 15), pady=10, sticky="se")
+        save_button = ctk.CTkButton(popup, text="保存", command=command, font=self.font)
+        save_button.grid(row=row, column=column, padx=(0, 15), pady=10, sticky="se")
 
         cancel_button = ctk.CTkButton(
             popup, text="キャンセル", command=popup.destroy, font=self.font
         )
-        cancel_button.grid(row=row, column=column,
-                           padx=(15, 0), pady=10, sticky="sw")
+        cancel_button.grid(row=row, column=column, padx=(15, 0), pady=10, sticky="sw")
 
     def enter_grade_book_url(self) -> None:
         """Enter the grade book URL popup."""
@@ -692,8 +671,7 @@ class MainTab(ctk.CTkTabview):
         grade_book_url_popup.title("成績表URL入力")
         # ?Bug from customtkinter
         self.after(
-            200, lambda: self.set_icon(
-                grade_book_url_popup, SHEET_ICON_LOCATION)
+            200, lambda: self.set_icon(grade_book_url_popup, SHEET_ICON_LOCATION)
         )
 
         pop_width, pop_height, x_position, y_position = self.calculate_window_size(
@@ -709,8 +687,7 @@ class MainTab(ctk.CTkTabview):
         grade_book_url_entry = ctk.CTkEntry(
             grade_book_url_popup, width=300, font=self.font
         )
-        grade_book_url_entry.grid(
-            row=0, column=0, padx=(0, 20), pady=10, sticky="ne")
+        grade_book_url_entry.grid(row=0, column=0, padx=(0, 20), pady=10, sticky="ne")
 
         # Load the grade book URL from the settings file
         with open(SETTINGS_FILE_LOCATION, "r", encoding="utf-8") as settings_file:
@@ -743,8 +720,7 @@ class MainTab(ctk.CTkTabview):
 
         # ?Bug from customtkinter
         self.after(
-            200, lambda: self.set_icon(
-                line_confidential_popup, LINE_ICON_LOCATION)
+            200, lambda: self.set_icon(line_confidential_popup, LINE_ICON_LOCATION)
         )
 
         # Calculate the position for the center of the main window
@@ -772,8 +748,7 @@ class MainTab(ctk.CTkTabview):
         ctk.CTkLabel(line_confidential_popup, text="USER_ID:", font=self.font).grid(
             row=1, column=0, padx=(15, 0), pady=10, sticky="sw"
         )
-        user_id_entry = ctk.CTkEntry(
-            line_confidential_popup, width=200, font=self.font)
+        user_id_entry = ctk.CTkEntry(line_confidential_popup, width=200, font=self.font)
         user_id_entry.grid(row=1, column=0, padx=(0, 15), pady=10, sticky="se")
         self.add_save_cancel_buttons(
             line_confidential_popup,
@@ -811,8 +786,7 @@ class MainTab(ctk.CTkTabview):
             text="成績表URLの保存は成功しました！", font=self.font
         )
         self.after(
-            4000, lambda: self.url_line_confidential_saved_label.configure(
-                text="")
+            4000, lambda: self.url_line_confidential_saved_label.configure(text="")
         )
 
         grade_book_url_popup.destroy()
@@ -833,8 +807,7 @@ class MainTab(ctk.CTkTabview):
             text="機密情報の保存は成功しました！", font=self.font
         )
         self.after(
-            4000, lambda: self.url_line_confidential_saved_label.configure(
-                text="")
+            4000, lambda: self.url_line_confidential_saved_label.configure(text="")
         )
 
         line_confidential_popup.destroy()
@@ -850,8 +823,7 @@ class MainTab(ctk.CTkTabview):
 
     def show_saved_label(self) -> None:
         """Display a 'Saved!' label for 4 seconds."""
-        saved_label = ctk.CTkLabel(
-            self.settings, text="保存しました！", font=self.font)
+        saved_label = ctk.CTkLabel(self.settings, text="保存しました！", font=self.font)
         saved_label.grid(row=6, column=0, padx=(170, 0), pady=20, sticky="sw")
         self.settings.after(3000, lambda: saved_label.configure(text=""))
 
@@ -869,6 +841,7 @@ class AppFrame(ctk.CTk):
         self.total_ids = None
         self.current_index = None
         self.quiz_generation_thread = None
+        self.blinking_task = None
         self.dot_counter = 0
         self.theme = self.read_settings()[0]
         self.button_color = self.read_settings()[1]
@@ -897,25 +870,19 @@ class AppFrame(ctk.CTk):
         self.font = ctk.CTkFont(family="Yu Gothic UI", size=16)
 
         # Create a label to display the date and time
-        self.datetime_label = ctk.CTkLabel(
-            master=self, text="", font=self.font)
-        self.datetime_label.grid(
-            row=3, column=0, padx=(0, 20), pady=10, sticky="ne")
+        self.datetime_label = ctk.CTkLabel(master=self, text="", font=self.font)
+        self.datetime_label.grid(row=3, column=0, padx=(0, 20), pady=10, sticky="ne")
         self.update_datetime_label()
 
         # *全員に発信ON時のラベル Label
         self.broadcast_on_label = ctk.CTkLabel(
             master=self, text=" ※全員に発信ON ", font=self.font
         )
-        self.broadcast_on_label.grid(
-            row=2, column=0, padx=(0, 20), pady=0, sticky="e"
-        )
+        self.broadcast_on_label.grid(row=2, column=0, padx=(0, 20), pady=0, sticky="e")
 
         # Create the quiz type dropdown
-        self.quiz_type_label = ctk.CTkLabel(
-            master=self, text="クイズタイプ:", font=self.font)
-        self.quiz_type_label.grid(
-            row=0, column=0, padx=(20, 0), pady=10, sticky="nw")
+        self.quiz_type_label = ctk.CTkLabel(master=self, text="クイズタイプ:", font=self.font)
+        self.quiz_type_label.grid(row=0, column=0, padx=(20, 0), pady=10, sticky="nw")
 
         self.quiz_type_dropdown = ctk.CTkOptionMenu(
             master=self, values=["単語意味クイズ", "読み方クイズ"], font=self.font
@@ -925,21 +892,18 @@ class AppFrame(ctk.CTk):
         )
 
         # Create the number of questions entry
-        self.label_number = ctk.CTkLabel(
-            master=self, text="最大問題数:", font=self.font)
-        self.label_number.grid(row=1, column=0, padx=(
-            20, 120), pady=10, sticky="w")
-        self.quiz_number_entry = ctk.CTkEntry(
-            master=self, font=self.font, width=32)
+        self.label_number = ctk.CTkLabel(master=self, text="最大問題数:", font=self.font)
+        self.label_number.grid(row=1, column=0, padx=(20, 120), pady=10, sticky="w")
+        self.quiz_number_entry = ctk.CTkEntry(master=self, font=self.font, width=32)
         self.quiz_number_entry.grid(
-            row=1, column=0, padx=(130, 0), pady=10, sticky="nw")
+            row=1, column=0, padx=(130, 0), pady=10, sticky="nw"
+        )
 
         # Create the checkbox for instant LINE push
         self.instant_push_check_box = ctk.CTkCheckBox(
             master=self, text="すぐLINEに発信", font=self.font
         )
-        self.instant_push_check_box.grid(
-            row=2, column=0, padx=20, pady=10, sticky="w")
+        self.instant_push_check_box.grid(row=2, column=0, padx=20, pady=10, sticky="w")
 
         # *Create the tab view instance
         self.tab_view = MainTab(
@@ -964,27 +928,20 @@ class AppFrame(ctk.CTk):
             self.focus_force()
 
         # Create feedback message label
-        self.feedback_label = ctk.CTkLabel(
-            master=self, text="", font=self.font)
-        self.feedback_label.grid(
-            row=1, column=0, padx=(0, 20), pady=10, sticky="ne")
+        self.feedback_label = ctk.CTkLabel(master=self, text="", font=self.font)
+        self.feedback_label.grid(row=1, column=0, padx=(0, 20), pady=10, sticky="ne")
 
         # Create the progress bar label
-        self.label_progress = ctk.CTkLabel(
-            master=self, text="プログレス:", font=self.font)
-        self.label_progress.grid(
-            row=0, column=0, padx=(440, 0), pady=10, sticky="wn")
+        self.label_progress = ctk.CTkLabel(master=self, text="プログレス:", font=self.font)
+        self.label_progress.grid(row=0, column=0, padx=(440, 0), pady=10, sticky="wn")
 
         # Create the progress bar
-        self.progressbar = ctk.CTkProgressBar(
-            master=self, width=270, height=20)
-        self.progressbar.grid(row=0, column=0, padx=(
-            535, 0), pady=15, sticky="wn")
+        self.progressbar = ctk.CTkProgressBar(master=self, width=270, height=20)
+        self.progressbar.grid(row=0, column=0, padx=(535, 0), pady=15, sticky="wn")
         self.progressbar.set(0)
 
         # Create progress text label
-        self.progress_text_label = ctk.CTkLabel(
-            master=self, text="", font=self.font)
+        self.progress_text_label = ctk.CTkLabel(master=self, text="", font=self.font)
         self.progress_text_label.grid(
             row=1, column=0, padx=(535, 0), pady=10, sticky="wn"
         )
@@ -993,19 +950,14 @@ class AppFrame(ctk.CTk):
         self.reset_button = ctk.CTkButton(
             master=self, text="やり直す", font=self.font, command=self.start_over
         )
-        self.reset_button.grid(
-            row=0, column=0, padx=(0, 20), pady=10, sticky="ne")
+        self.reset_button.grid(row=0, column=0, padx=(0, 20), pady=10, sticky="ne")
         self.reset_button.configure(state="disabled")
 
         # Create the increment and decrement buttons
         self.increment_button = ctk.CTkButton(master=self, text="▲", width=30)
-        self.increment_button.grid(
-            row=1, column=0, padx=(175, 0), pady=10, sticky="w"
-        )
+        self.increment_button.grid(row=1, column=0, padx=(175, 0), pady=10, sticky="w")
         self.decrement_button = ctk.CTkButton(master=self, text="▼", width=30)
-        self.decrement_button.grid(
-            row=1, column=0, padx=(215, 0), pady=10, sticky="w"
-        )
+        self.decrement_button.grid(row=1, column=0, padx=(215, 0), pady=10, sticky="w")
         self.increment_button.configure(command=self.increment_questions)
         self.decrement_button.configure(command=self.decrement_questions)
 
@@ -1013,32 +965,36 @@ class AppFrame(ctk.CTk):
         self.generate_quiz_button = ctk.CTkButton(
             master=self, text="クイズ作成", font=self.font, width=120
         )
-        self.generate_quiz_button.grid(
-            row=3, column=0, padx=20, pady=10, sticky="w")
-        self.generate_quiz_button.configure(
-            command=self.start_quiz_generation_thread)
+        self.generate_quiz_button.grid(row=3, column=0, padx=20, pady=10, sticky="w")
+        self.generate_quiz_button.configure(command=self.start_quiz_generation_thread)
 
         # Create the send quiz button
         self.send_quiz_button = ctk.CTkButton(
             master=self, text="LINEに発信", font=self.font, width=120
         )
-        self.send_quiz_button.grid(
-            row=3, column=0, padx=160, pady=10, sticky="nw")
+        self.send_quiz_button.grid(row=3, column=0, padx=160, pady=10, sticky="nw")
         self.send_quiz_button.configure(command=self.press_push_quiz_button)
         self.send_quiz_button.configure(state="disabled")
 
         # Create the grade book button
         self.button_grade = ctk.CTkButton(
-            master=self, text="成績表URL", command=self.open_grade_book, font=self.font, width=120
+            master=self,
+            text="成績表URL",
+            command=self.open_grade_book,
+            font=self.font,
+            width=120,
         )
         self.button_grade.grid(row=3, column=0, padx=300, pady=10, sticky="nw")
 
         # News URL button
         self.open_news_url_button = ctk.CTkButton(
-            master=self, text="📰ニュースURL", command=self.open_news_url, font=self.font, width=120
+            master=self,
+            text="📰ニュースURL",
+            command=self.open_news_url,
+            font=self.font,
+            width=120,
         )
-        self.open_news_url_button.grid(
-            row=3, column=0, padx=440, pady=10, sticky="nw")
+        self.open_news_url_button.grid(row=3, column=0, padx=440, pady=10, sticky="nw")
         self.open_news_url_button.configure(state="disabled")
 
         # Configure the grid
@@ -1063,8 +1019,7 @@ class AppFrame(ctk.CTk):
 
     def start_quiz_generation_thread(self) -> None:
         """Start a thread to run the quiz generation function in the background."""
-        self.quiz_generation_thread = threading.Thread(
-            target=self.run_quiz_generation)
+        self.quiz_generation_thread = threading.Thread(target=self.run_quiz_generation)
         self.quiz_generation_thread.daemon = True  # Set the daemon attribute to True
         self.quiz_generation_thread.start()
 
@@ -1295,6 +1250,9 @@ class AppFrame(ctk.CTk):
 
     def blink_progress_text_label(self) -> None:
         """Blink the progress text label."""
+        if self.blinking_task:
+            self.after_cancel(self.blinking_task)
+
         if (
             self.current_index == 0
             and self.feedback_label
@@ -1311,7 +1269,7 @@ class AppFrame(ctk.CTk):
                 new_text = "初期化中"
 
             self.progress_text_label.configure(text=new_text)
-            self.after(500, self.blink_progress_text_label)
+            self.blinking_task = self.after(500, self.blink_progress_text_label)
         elif self.generate_quiz_button.cget(
             "state"
         ) == "disabled" and "エラー" not in self.feedback_label.cget("text"):
@@ -1326,7 +1284,7 @@ class AppFrame(ctk.CTk):
             # Cycle through 0, 1, 2, 3 for the dot_counter
             dot_counter = (self.dot_counter + 1) % 4
             self.dot_counter = dot_counter
-            self.after(2000, self.blink_progress_text_label)
+            self.blinking_task = self.after(2000, self.blink_progress_text_label)
         else:
             self.progress_text_label.configure(text="")
 
