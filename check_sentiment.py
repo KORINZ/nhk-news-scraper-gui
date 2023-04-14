@@ -62,7 +62,7 @@ def read_news_article() -> str:
         lines = f.readlines()
         # Filter out empty lines
         non_empty_lines = [line for line in lines if line.strip()]
-        content = "".join(non_empty_lines[1:])  # Exclude the first line (url)
+        content = "".join(non_empty_lines[3:])  # Exclude the first line (url)
         parts = content.split("---")
         article = parts[0]
     return article
