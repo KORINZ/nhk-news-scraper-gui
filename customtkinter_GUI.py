@@ -13,6 +13,10 @@ import customtkinter as ctk
 import threading
 from requests.exceptions import ConnectionError
 
+
+# TODO: Enable sentiment analysis check box
+
+
 # Local imports
 from main import main, push_quiz, save_quiz_vocab
 
