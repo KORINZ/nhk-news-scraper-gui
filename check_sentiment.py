@@ -1,9 +1,9 @@
 from transformers import AutoTokenizer, AutoModelForSequenceClassification
 from scipy.special import softmax
 
-from main import clear_terminal
 
 NEWS_ARTICLE_LOCATION = r"txt_files\news_article.txt"
+LOG_LOCATION = r"./txt_files/push_log.txt"
 
 
 def predict_sentiment_jp(text: str, model_name: str = "koheiduck/bert-japanese-finetuned-sentiment") -> dict[str, str]:
@@ -34,7 +34,6 @@ def predict_sentiment_jp(text: str, model_name: str = "koheiduck/bert-japanese-f
 
 def print_input_text(text: str) -> None:
     """Print input text."""
-    clear_terminal()
     print("入力テキスト:")
     print(f"{text}\n")
 

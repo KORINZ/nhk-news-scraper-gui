@@ -21,6 +21,11 @@ from selenium.webdriver.common.by import By
 from send_line_message import send_message
 from get_definition import get_definition_list, get_number_of_word, setup_selenium
 
+try:
+    from check_sentiment import predict_sentiment_jp, read_news_article
+except ImportError:
+    pass
+
 
 """
 NEWS WEB EASY
@@ -231,6 +236,13 @@ def push_quiz(test_type: str, broadcasting=False) -> None:
     send_message("text", questions, broadcasting=broadcasting)
 
 
+def log_sentiment_score() -> Dict[str, str]:
+    """Get the sentiment score of the text."""
+    article = read_news_article()
+    score_dict = predict_sentiment_jp(article)
+    return score_dict
+
+
 def clear_terminal() -> None:
     os.system("cls" if os.name == "nt" else "clear")
 
@@ -382,6 +394,12 @@ def main(
         now = get_today_date_jp()[0]
         now = now.strftime(f"%Y-%m-%d %H:%M:%S")
         f.write(f"{now}\n{url}\n単語意味クイズ解答：{def_answer}\n")
+        try:
+            scores_dict = log_sentiment_score()
+            for sentiment, score in scores_dict.items():
+                f.write(f"{sentiment}: {score}\n")
+        except NameError:
+            print("Sentiment analysis module failed. Skipping sentiment analysis.")
 
     # Push quiz to LINE if push is True
     if push:
