@@ -3,6 +3,8 @@ from scipy.special import softmax
 
 from main import clear_terminal
 
+NEWS_ARTICLE_LOCATION = r"txt_files\news_article.txt"
+
 
 def predict_sentiment_jp(text: str, model_name: str = "koheiduck/bert-japanese-finetuned-sentiment") -> dict[str, str]:
     """Predict sentiment of input text using a pre-trained model."""
@@ -55,9 +57,22 @@ def print_sentiment_scores(scores_dict: dict[str, str]) -> None:
     print()
 
 
-if __name__ == "__main__":
-    input_text = """なんとなく、以前よりも質が悪くなった気がします。ちょっと拭いただけでボロボロボロとカスがたくさん出るため、メイクでは使いにくい。鼻をかんだだけで、鼻、口まわりにカスがついて、いちいち取るのが面倒。これじゃ敏感肌にいい、保湿とか言われても使う気にならない。前はそんなことなかったのに。。残念です。"""
+def read_news_article() -> str:
+    """Read the news article from the txt file"""
+    with open(NEWS_ARTICLE_LOCATION, "r", encoding="utf-8") as f:
+        lines = f.readlines()
+        # Filter out empty lines
+        non_empty_lines = [line for line in lines if line.strip()]
+        content = "".join(non_empty_lines[1:])  # Exclude the first line (url)
+        parts = content.split("---")
+        article = parts[0]
+    return article
 
+
+if __name__ == "__main__":
+
+    input_text = read_news_article()
     print_input_text(input_text)
+
     sentiment_scores_dict = predict_sentiment_jp(input_text)
     print_sentiment_scores(sentiment_scores_dict)
