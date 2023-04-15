@@ -43,7 +43,7 @@ See the `.txt` file in the repository for an example output.
 ## Installation
 
 1. Sign up for a [LINE official account](https://www.linebiz.com/jp/signup/).
-2. Get your own `CHANNEL_ACCESS_TOKEN` and `USER_ID` from [LINE Developers](https://developers.line.biz/ja/) Messaging API Settings.
+2. Get your own `CHANNEL_ACCESS_TOKEN` (チャネルアクセストークン) and `USER_ID` (あなたのユーザーID) from [LINE Developers](https://developers.line.biz/ja/) Messaging API Settings.
 3. For MacOS, installation of MeCab is required:
 
 ```bash
