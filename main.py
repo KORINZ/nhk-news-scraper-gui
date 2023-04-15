@@ -183,7 +183,13 @@ def get_news_url(driver: webdriver.Chrome) -> str:
     raise RuntimeError(error_message)
 
 
-def write_content_data(content_type, content, action="a", location=NEWS_ARTICLE_TXT_LOCATION, encoder="utf-8") -> None:
+def write_content_data(
+    content_type,
+    content,
+    action="a",
+    location=NEWS_ARTICLE_TXT_LOCATION,
+    encoder="utf-8",
+) -> None:
     """Write text (BeautifulSoup | NavigableString) content to a file"""
     if content is not None and content_type == "article":
         with open(location, action, encoding=encoder) as file:
@@ -191,7 +197,7 @@ def write_content_data(content_type, content, action="a", location=NEWS_ARTICLE_
                 for line in p_tag.get_text().splitlines():
                     stripped_line = line.strip()
                     if stripped_line:
-                        file.write(stripped_line + '\n\n')
+                        file.write(stripped_line + "\n\n")
     elif content_type == "title":
         with open(location, action, encoding=encoder) as file:
             file.write(f"【{content.text.strip()}】\n\n")
@@ -430,5 +436,6 @@ if __name__ == "__main__":
     clear_terminal()
 
     # quiz_type: '単語意味クイズ' or '読み方クイズ'
-    main(quiz_type="単語意味クイズ", push=False,
-         emotion=False, broadcasting=False, questions=5)
+    main(
+        quiz_type="単語意味クイズ", push=False, emotion=False, broadcasting=False, questions=5
+    )

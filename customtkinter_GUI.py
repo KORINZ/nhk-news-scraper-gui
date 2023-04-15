@@ -327,7 +327,8 @@ class MainTab(ctk.CTkTabview):
             font=self.font,
         )
         self.emotion_analysis_switch.grid(
-            row=5, column=0, padx=(0, 0), pady=0, sticky="n")
+            row=5, column=0, padx=(0, 0), pady=0, sticky="n"
+        )
 
         # *テキストファイルフォルダー開く Button
         self.txt_file_folder_button = ctk.CTkButton(
@@ -582,7 +583,9 @@ class MainTab(ctk.CTkTabview):
                 "maximize_screen_check_box": 1
                 if self.maximize_screen_check_box.get() == 1
                 else 0,
-                "emotion_analysis_switch": 1 if self.emotion_analysis_switch.get() == 1 else 0,
+                "emotion_analysis_switch": 1
+                if self.emotion_analysis_switch.get() == 1
+                else 0,
             }
         )
 
@@ -1116,7 +1119,8 @@ class AppFrame(ctk.CTk):
 
             self.broadcast_bool = bool(self.tab_view.broadcast_switch.get())
             self.emotion_analysis_bool = bool(
-                self.tab_view.emotion_analysis_switch.get())
+                self.tab_view.emotion_analysis_switch.get()
+            )
 
             if self.instant_push_check_box.get() == 1:
                 self.quiz_type_dropdown.configure(state="disabled")

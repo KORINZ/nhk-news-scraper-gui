@@ -6,7 +6,9 @@ NEWS_ARTICLE_LOCATION = r"txt_files/news_article.txt"
 LOG_LOCATION = r"./txt_files/push_log.txt"
 
 
-def predict_sentiment_jp(text: str, model_name: str = "koheiduck/bert-japanese-finetuned-sentiment") -> dict[str, str]:
+def predict_sentiment_jp(
+    text: str, model_name: str = "koheiduck/bert-japanese-finetuned-sentiment"
+) -> dict[str, str]:
     """Predict sentiment of input text using a pre-trained model."""
     # Load tokenizer and model
     tokenizer = AutoTokenizer.from_pretrained(model_name)
@@ -69,7 +71,6 @@ def read_news_article() -> str:
 
 
 if __name__ == "__main__":
-
     input_text = read_news_article()
     print_input_text(input_text)
 
