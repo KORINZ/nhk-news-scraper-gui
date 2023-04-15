@@ -15,6 +15,7 @@ from requests.exceptions import ConnectionError
 
 
 # TODO: Add icon for MacOS
+# TODO: Fix import error when using sentiment analysis
 
 
 # Local imports
