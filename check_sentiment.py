@@ -2,7 +2,7 @@ from transformers import AutoTokenizer, AutoModelForSequenceClassification
 from scipy.special import softmax
 
 
-NEWS_ARTICLE_LOCATION = r"txt_files\news_article.txt"
+NEWS_ARTICLE_LOCATION = r"txt_files/news_article.txt"
 LOG_LOCATION = r"./txt_files/push_log.txt"
 
 
