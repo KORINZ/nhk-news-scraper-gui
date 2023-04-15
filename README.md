@@ -1,11 +1,13 @@
 # NHK News Web Easy Scraper
 
 ### CustomTkinter Version GUI v1.9.3
+
 <p align="center">
   <img width="800" alt="1" src="https://user-images.githubusercontent.com/111611023/230731185-6988b3ff-4ddd-456f-81e8-8db396819552.gif">
 </p>
 
 ### Tkinter Version GUI v1.0.0 (deprecated)
+
 <p align="center">
   <img width="800" alt="1" src="https://user-images.githubusercontent.com/111611023/228608713-99dcb154-2abb-4f53-93bf-d437506e0d60.gif">
 </p>
@@ -42,13 +44,19 @@ See the `.txt` file in the repository for an example output.
 
 1. Sign up for a [LINE official account](https://www.linebiz.com/jp/signup/).
 2. Get your own `CHANNEL_ACCESS_TOKEN` and `USER_ID` from [LINE Developers](https://developers.line.biz/ja/) Messaging API Settings.
-3. Install the required packages listed in the dependencies:
+3. For MacOS, installation of MeCab is required:
+
+```bash
+brew install mecab
+```
+
+4. Install the required packages listed in the dependencies:
 
 ```bash
 pip install -r requirements.txt
 ```
 
-4. Clone this repository:
+5. Clone this repository:
 
 ```bash
 git clone https://github.com/KORINZ/nhk_news_web_easy_scraper.git
