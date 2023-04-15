@@ -26,6 +26,7 @@ See the `.txt` file in the repository for an example output.
 - Send customized text or sticker messages from a terminal interface
 - Generate quizzes and send them via LINE with GUI
 - Automatically receive (via Google Apps Script) and evaluate answers and upload them to Google Sheets
+- Get sentiment scores for the news article
 
 ## Dependencies
 
