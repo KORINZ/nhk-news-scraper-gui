@@ -1,11 +1,19 @@
 import deepl
+
 from config import DEEPL_API_KEY
+from check_sentiment import read_news_article
 
 translator = deepl.Translator(DEEPL_API_KEY)
 
-text = """こんにちは。私は日本語が話せます。"""
+text = read_news_article()
+print(text)
 
-result = translator.translate_text(text, target_lang="SV")  # Swedish (SV)
-translated_text = result.text
+results = translator.translate_text(
+    text, target_lang="SV")  # Swedish (SV)
 
-print(translated_text)
+# Ensure that 'results' is always a list
+if not isinstance(results, list):
+    results = [results]
+
+for result in results:
+    print(result.text)
