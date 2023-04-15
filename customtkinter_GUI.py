@@ -14,7 +14,7 @@ import threading
 from requests.exceptions import ConnectionError
 
 
-# TODO: Enable sentiment analysis check box
+# TODO: Add icon for MacOS
 
 
 # Local imports
