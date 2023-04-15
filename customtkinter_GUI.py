@@ -237,7 +237,7 @@ class MainTab(ctk.CTkTabview):
             master=self.settings, values=["単語意味クイズ", "読み方クイズ"], font=self.font
         )
         self.default_quiz_type_dropdown.grid(
-            row=3, column=0, padx=(200, 0), pady=0, sticky="nw"
+            row=3, column=0, padx=(185, 0), pady=0, sticky="nw"
         )
 
         # *デフォルト問題数 Entry
