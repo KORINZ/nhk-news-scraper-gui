@@ -3,6 +3,8 @@ import deepl
 from config import DEEPL_API_KEY
 from check_sentiment import read_news_article
 
+# TODO: translate Japanese vocabularies to Swedish and make a quiz
+
 translator = deepl.Translator(DEEPL_API_KEY)
 
 text = read_news_article()
