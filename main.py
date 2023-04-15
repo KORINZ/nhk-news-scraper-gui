@@ -257,6 +257,7 @@ def main(
     quiz_type: str,
     push=False,
     broadcasting=False,
+    emotion=False,
     questions=5,
     progress_callback: Optional[Callable] = None,
 ) -> None:
@@ -400,12 +401,15 @@ def main(
         now = get_today_date_jp()[0]
         now = now.strftime(f"%Y-%m-%d %H:%M:%S")
         f.write(f"{now}\n{url}\n単語意味クイズ解答：{def_answer}\n")
-        try:
-            scores_dict = log_sentiment_score()
-            for sentiment, score in scores_dict.items():
-                f.write(f"{sentiment}: {score}\n")
-        except NameError:
-            print("Sentiment analysis module failed. Skipping sentiment analysis.")
+
+        # Log sentiment analysis score
+        if emotion:
+            try:
+                scores_dict = log_sentiment_score()
+                for sentiment, score in scores_dict.items():
+                    f.write(f"{sentiment}: {score}\n")
+            except NameError:
+                print("Sentiment analysis module failed. Skipping sentiment analysis.")
 
     # Push quiz to LINE if push is True
     if push:
@@ -426,4 +430,5 @@ if __name__ == "__main__":
     clear_terminal()
 
     # quiz_type: '単語意味クイズ' or '読み方クイズ'
-    main(quiz_type="単語意味クイズ", push=False, broadcasting=False, questions=5)
+    main(quiz_type="単語意味クイズ", push=False,
+         emotion=False, broadcasting=False, questions=5)

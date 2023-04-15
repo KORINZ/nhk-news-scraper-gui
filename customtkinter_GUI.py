@@ -21,7 +21,7 @@ from requests.exceptions import ConnectionError
 from main import main, push_quiz, save_quiz_vocab
 
 # Version number
-VERSION = "v2.0.3"
+VERSION = "v2.1.0"
 
 # File locations
 PRONOUN_QUIZ_LOCATION = r"./txt_files/pronunciation_quiz.txt"
@@ -51,6 +51,7 @@ def create_default_settings_file() -> None:
         "send_to_all": 0,
         "scaling": "110%",
         "maximize_screen_check_box": 0,
+        "emotion_analysis_switch": 0,
         "grade_book_url": "https://www.google.com",
     }
     if not os.path.exists(JSON_FOLDER_PATH):
@@ -319,6 +320,15 @@ class MainTab(ctk.CTkTabview):
         self.broadcast_switch.grid(
             row=4, column=0, padx=(0, 0), pady=20, sticky="n")
 
+        # *感情分析 Switch
+        self.emotion_analysis_switch = ctk.CTkSwitch(
+            master=self.settings,
+            text="ログファイルの感情分析",
+            font=self.font,
+        )
+        self.emotion_analysis_switch.grid(
+            row=5, column=0, padx=(0, 0), pady=0, sticky="n")
+
         # *テキストファイルフォルダー開く Button
         self.txt_file_folder_button = ctk.CTkButton(
             master=self.settings,
@@ -572,6 +582,7 @@ class MainTab(ctk.CTkTabview):
                 "maximize_screen_check_box": 1
                 if self.maximize_screen_check_box.get() == 1
                 else 0,
+                "emotion_analysis_switch": 1 if self.emotion_analysis_switch.get() == 1 else 0,
             }
         )
 
@@ -610,6 +621,13 @@ class MainTab(ctk.CTkTabview):
         else:
             self.broadcast_switch.deselect()
             self.toggle_send_to_all_label()
+
+        # Update the emotion_analysis_switch
+        emotion_analysis = settings_file.get("emotion_analysis_switch")
+        if emotion_analysis == 1:
+            self.emotion_analysis_switch.select()
+        else:
+            self.emotion_analysis_switch.deselect()
 
         # Update the default_question_type dropdown
         quiz_type = str(settings_file.get("default_question_type"))
@@ -1097,6 +1115,8 @@ class AppFrame(ctk.CTk):
                 sys.exit(1)
 
             self.broadcast_bool = bool(self.tab_view.broadcast_switch.get())
+            self.emotion_analysis_bool = bool(
+                self.tab_view.emotion_analysis_switch.get())
 
             if self.instant_push_check_box.get() == 1:
                 self.quiz_type_dropdown.configure(state="disabled")
@@ -1109,6 +1129,7 @@ class AppFrame(ctk.CTk):
                 self.quiz_type_dropdown.get(),
                 push=bool(self.instant_push_check_box.get()),
                 questions=int(self.quiz_number_entry.get()),
+                emotion=self.emotion_analysis_bool,
                 broadcasting=self.broadcast_bool,
                 progress_callback=self.update_progressbar,
             )

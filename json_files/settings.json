@@ -8,5 +8,6 @@
     "send_to_all": 0,
     "scaling": "110%",
     "maximize_screen_check_box": 0,
-    "grade_book_url": "http://www.google.com"
+    "emotion_analysis_switch": 0,
+    "grade_book_url": "https://www.google.com"
 }
