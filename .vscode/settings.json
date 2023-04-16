@@ -24,5 +24,6 @@
         "textvariable",
         "Xday",
         "yscrollcommand"
-    ]
+    ],
+    "terminal.integrated.fontSize": 14,
 }
