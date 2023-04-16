@@ -1,17 +1,14 @@
 import deepl
 import argparse
-import sys
 
 from config import DEEPL_API_KEY
-from check_sentiment import read_news_article
-
-# TODO: translate Japanese vocabularies to Swedish and make a quiz
 
 NEWS_ARTICLE_LOCATION = r"txt_files/news_article.txt"
 translator = deepl.Translator(DEEPL_API_KEY)
 
 
-def get_article() -> str:
+def get_news_article() -> str:
+    """Get main article from the news article"""
     with open(NEWS_ARTICLE_LOCATION, 'r', encoding='utf-8') as file:
         content = file.read()
         parts = content.split("---")
@@ -21,7 +18,8 @@ def get_article() -> str:
         return main_article
 
 
-def get_vocabularies() -> str:
+def get_news_vocabularies() -> str:
+    """Get vocabularies from the news article"""
     with open(NEWS_ARTICLE_LOCATION, 'r', encoding='utf-8') as file:
         content = file.read()
         parts = content.split("---")
@@ -31,15 +29,35 @@ def get_vocabularies() -> str:
         return vocabularies
 
 
+def show_account_usage() -> None:
+    """Show account usage"""
+    usage = translator.get_usage()
+
+    character_count = usage.character.count
+    character_limit = usage.character.limit
+
+    if usage.any_limit_reached:
+        print('Translation limit reached.')
+    if usage.character.valid and character_count is not None and character_limit is not None:
+        print(
+            f"Character usage: {character_count} of {character_limit} ({round(character_count / character_limit * 100, 2)}%)")
+    if usage.document.valid:
+        print(
+            f"Document usage: {usage.document.count} of {usage.document.limit}")
+
+
 def main() -> None:
+
     parser = argparse.ArgumentParser(
-        description="Translate text from one language to another")
-    parser.add_argument("-t", "--text", type=str,
-                        help="text to translate", dest="input_text")
+        description="Translate text/file from one language to another")
     parser.add_argument("target", type=str, default=None, nargs='?',
                         help="target language (optional when using -l)")
+    parser.add_argument("-t", "--text", type=str,
+                        help="text to translate", dest="input_text")
     parser.add_argument("-f", "--file", type=str,
-                        default=None, help="file to translate")
+                        default=None, help="txt file to translate")
+    parser.add_argument("-d", "--document", type=str, default=None,
+                        help="translate document (.pdf, .docx, .pptx)")
     parser.add_argument("-a", "--article", action='store_true',
                         help="use predefined article")
     parser.add_argument("-p", "--pair", action='store_true',
@@ -50,7 +68,10 @@ def main() -> None:
                         help="show account usage")
     parser.add_argument("-l", "--list", action='store_true',
                         help="list all languages abbreviations")
+
     args = parser.parse_args()
+    target_language = args.target
+    source_language = args.source
 
     if args.input_text:
         input_text = args.input_text
@@ -58,33 +79,49 @@ def main() -> None:
         with open(args.file, 'r', encoding='utf-8') as file:
             input_text = file.read()
             print(f"{input_text}\n")
+    elif args.document:
+        input_path = args.document
+        output_path = "./output.docx"
+
+        try:
+            # Using translate_document_from_filepath() with file paths
+            translator.translate_document_from_filepath(
+                input_path,
+                output_path,
+                target_lang=target_language,
+            )
+
+        except deepl.DocumentTranslationException as error:
+            # If an error occurs during document translation after the document was
+            # already uploaded, a DocumentTranslationException is raised.
+            doc_id = error.document_handle.id
+            doc_key = error.document_handle.key
+            print(
+                f"Error after uploading ${error}, id: ${doc_id} key: ${doc_key}")
+        except deepl.DeepLException as error:
+            # Errors during upload raise a DeepLException
+            print(error)
+
+        return None
+
     elif args.article:
-        input_text = get_article()
+        input_text = get_news_article()
     elif args.pair:
         with open(NEWS_ARTICLE_LOCATION, 'r', encoding='utf-8') as file:
-            input_text = get_vocabularies()
+            input_text = get_news_vocabularies()
     elif args.list:
         for language in translator.get_source_languages():
             print(f"{language.name} ({language.code})")
-        sys.exit(0)
+        return None
     elif args.usage:
-        usage = translator.get_usage()
-        if usage.character.valid:
-            print(
-                f"Character usage: {usage.character.count} of {usage.character.limit}")
-        if usage.document.valid:
-            print(
-                f"Document usage: {usage.document.count} of {usage.document.limit}")
-        sys.exit(0)
+        show_account_usage()
+        return None
     else:
         print("Please specify either a text or a file to translate")
-        return
-
-    target_lang = args.target
-    source_lang = args.source
+        return None
 
     results = translator.translate_text(
-        input_text, target_lang=target_lang, source_lang=source_lang)  # Swedish (SV)
+        input_text, target_lang=target_language, source_lang=source_language)
 
     # Ensure that 'results' is always a list
     if not isinstance(results, list):
