@@ -51,7 +51,7 @@ PAST_QUIZ_DATA_LOCATION = r"txt_files/past_quiz_data.txt"
 LOG_LOCATION = r"txt_files/push_log.txt"
 
 # Selenium checking settings constants
-MAX_URL_CHECKING_ATTEMPTS = 10
+MAX_URL_CHECKING_ATTEMPTS = 20
 MIN_URL_WORD_COUNT = 3
 
 # Set locale to Japanese

@@ -27,7 +27,7 @@ def setup_selenium() -> webdriver.Chrome:
 
     if sys.platform.startswith("win32"):
         from selenium.webdriver.chrome.service import Service as ChromeService
-        from subprocess import CREATE_NO_WINDOW
+        from subprocess import CREATE_NO_WINDOW  # type: ignore
 
         chrome_service = ChromeService("chromedriver")
         chrome_service.creation_flags = CREATE_NO_WINDOW
@@ -73,7 +73,8 @@ def get_definition_list(
         hover = ActionChains(driver).move_to_element(element_to_hover_over)
         hover.perform()
 
-        dictionary_box = driver.find_element(By.CSS_SELECTOR, ".dictionary-box")
+        dictionary_box = driver.find_element(
+            By.CSS_SELECTOR, ".dictionary-box")
 
         text_content = dictionary_box.text
         text_content = "".join(text_content.split())
