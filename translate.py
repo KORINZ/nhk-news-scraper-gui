@@ -29,6 +29,28 @@ def get_news_vocabularies() -> str:
         return vocabularies
 
 
+def translate_document(input_path: str, output_path: str, target_lang: str) -> None:
+    """Translate document"""
+    try:
+        # Using translate_document_from_filepath() with file paths
+        translator.translate_document_from_filepath(
+            input_path,
+            output_path,
+            target_lang=target_lang,
+        )
+
+    except deepl.DocumentTranslationException as error:
+        # If an error occurs during document translation after the document was
+        # already uploaded, a DocumentTranslationException is raised.
+        doc_id = error.document_handle.id
+        doc_key = error.document_handle.key
+        print(
+            f"Error after uploading ${error}, id: ${doc_id} key: ${doc_key}")
+    except deepl.DeepLException as error:
+        # Errors during upload raise a DeepLException
+        print(error)
+
+
 def show_account_usage() -> None:
     """Show account usage"""
     usage = translator.get_usage()
@@ -47,7 +69,7 @@ def show_account_usage() -> None:
 
 
 def main() -> None:
-
+    """Main function"""
     parser = argparse.ArgumentParser(
         description="Translate text/file from one language to another")
     parser.add_argument("target", type=str, default=None, nargs='?',
@@ -82,26 +104,7 @@ def main() -> None:
     elif args.document:
         input_path = args.document
         output_path = "./output.docx"
-
-        try:
-            # Using translate_document_from_filepath() with file paths
-            translator.translate_document_from_filepath(
-                input_path,
-                output_path,
-                target_lang=target_language,
-            )
-
-        except deepl.DocumentTranslationException as error:
-            # If an error occurs during document translation after the document was
-            # already uploaded, a DocumentTranslationException is raised.
-            doc_id = error.document_handle.id
-            doc_key = error.document_handle.key
-            print(
-                f"Error after uploading ${error}, id: ${doc_id} key: ${doc_key}")
-        except deepl.DeepLException as error:
-            # Errors during upload raise a DeepLException
-            print(error)
-
+        translate_document(input_path, output_path, target_language)
         return None
 
     elif args.article:
