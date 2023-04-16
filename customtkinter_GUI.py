@@ -214,7 +214,7 @@ class MainTab(ctk.CTkTabview):
         )
 
         self.button_color_optionmenu.grid(
-            row=1, column=0, padx=(170, 0), pady=0, sticky="nw"
+            row=1, column=0, padx=(180, 0), pady=0, sticky="nw"
         )
 
         # *時間表示 Switch
@@ -239,7 +239,7 @@ class MainTab(ctk.CTkTabview):
             master=self.settings, values=["単語意味クイズ", "読み方クイズ"], font=self.font
         )
         self.default_quiz_type_dropdown.grid(
-            row=3, column=0, padx=(185, 0), pady=0, sticky="nw"
+            row=3, column=0, padx=(180, 0), pady=0, sticky="nw"
         )
 
         # *デフォルト問題数 Entry
@@ -954,7 +954,7 @@ class AppFrame(ctk.CTk):
         self.quiz_number_entry = ctk.CTkEntry(
             master=self, font=self.font, width=32)
         self.quiz_number_entry.grid(
-            row=1, column=0, padx=(110, 0), pady=10, sticky="nw"
+            row=1, column=0, padx=(120, 0), pady=10, sticky="nw"
         )
 
         # Create the checkbox for instant LINE push
@@ -1023,10 +1023,10 @@ class AppFrame(ctk.CTk):
         # Create the increment and decrement buttons
         self.increment_button = ctk.CTkButton(master=self, text="▲", width=30)
         self.increment_button.grid(
-            row=1, column=0, padx=(155, 0), pady=10, sticky="w")
+            row=1, column=0, padx=(165, 0), pady=10, sticky="w")
         self.decrement_button = ctk.CTkButton(master=self, text="▼", width=30)
         self.decrement_button.grid(
-            row=1, column=0, padx=(195, 0), pady=10, sticky="w")
+            row=1, column=0, padx=(205, 0), pady=10, sticky="w")
         self.increment_button.configure(command=self.increment_questions)
         self.decrement_button.configure(command=self.decrement_questions)
 
