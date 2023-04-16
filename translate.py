@@ -1,5 +1,6 @@
 import deepl
 import argparse
+import os
 
 from config import DEEPL_API_KEY
 
@@ -103,7 +104,9 @@ def main() -> None:
             print(f"{input_text}\n")
     elif args.document:
         input_path = args.document
-        output_path = "./output.docx"
+        filename, extension = os.path.splitext(input_path)
+
+        output_path = f"{filename}_translated{extension}"
         translate_document(input_path, output_path, target_language)
         return None
 
