@@ -27,6 +27,7 @@ See the `.txt` file in the repository for an example output.
 - Generate quizzes and send them via LINE with GUI
 - Automatically receive (via Google Apps Script) and evaluate answers and upload them to Google Sheets
 - Get sentiment scores for the news article
+- Translate news article/vocabularies to other language vai DeepL API
 
 ## Dependencies
 
