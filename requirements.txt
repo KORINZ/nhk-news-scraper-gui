@@ -15,3 +15,5 @@ torchvision
 torchaudio
 fugashi[unidic]
 ipadic
+
+deepl
