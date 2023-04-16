@@ -957,6 +957,16 @@ class AppFrame(ctk.CTk):
             row=1, column=0, padx=(120, 0), pady=10, sticky="nw"
         )
 
+        # Create the increment and decrement buttons
+        self.increment_button = ctk.CTkButton(master=self, text="▲", width=30)
+        self.increment_button.grid(
+            row=1, column=0, padx=(165, 0), pady=10, sticky="w")
+        self.decrement_button = ctk.CTkButton(master=self, text="▼", width=30)
+        self.decrement_button.grid(
+            row=1, column=0, padx=(205, 0), pady=10, sticky="w")
+        self.increment_button.configure(command=self.increment_questions)
+        self.decrement_button.configure(command=self.decrement_questions)
+
         # Create the checkbox for instant LINE push
         self.instant_push_check_box = ctk.CTkCheckBox(
             master=self, text="すぐLINEに発信", font=self.font
@@ -1019,16 +1029,6 @@ class AppFrame(ctk.CTk):
         self.reset_button.grid(
             row=0, column=0, padx=(0, 20), pady=10, sticky="ne")
         self.reset_button.configure(state="disabled")
-
-        # Create the increment and decrement buttons
-        self.increment_button = ctk.CTkButton(master=self, text="▲", width=30)
-        self.increment_button.grid(
-            row=1, column=0, padx=(165, 0), pady=10, sticky="w")
-        self.decrement_button = ctk.CTkButton(master=self, text="▼", width=30)
-        self.decrement_button.grid(
-            row=1, column=0, padx=(205, 0), pady=10, sticky="w")
-        self.increment_button.configure(command=self.increment_questions)
-        self.decrement_button.configure(command=self.decrement_questions)
 
         # Create the make quiz button
         self.generate_quiz_button = ctk.CTkButton(
