@@ -177,7 +177,7 @@ class MainTab(ctk.CTkTabview):
             "Dark": "ダーク",
             "System": "システム",
         }
-        self.appearance_mode_optionemenu = ctk.CTkOptionMenu(
+        self.appearance_mode_option_menu = ctk.CTkOptionMenu(
             self.settings,
             values=list(self.theme_optionmenu_mapping.values()),
             command=self.change_appearance_mode_event_theme,
@@ -185,7 +185,7 @@ class MainTab(ctk.CTkTabview):
             font=self.font,
             width=100,
         )
-        self.appearance_mode_optionemenu.grid(
+        self.appearance_mode_option_menu.grid(
             row=0, column=0, padx=(80, 0), pady=20, sticky="nw"
         )
 
@@ -269,14 +269,14 @@ class MainTab(ctk.CTkTabview):
             self.settings, text="スケーリング:", font=self.font)
         self.scaling_label.grid(
             row=0, column=0, padx=(0, 125), pady=20, sticky="n")
-        self.scaling_optionemenu = ctk.CTkOptionMenu(
+        self.scaling_option_menu = ctk.CTkOptionMenu(
             self.settings,
             values=["80%", "90%", "100%", "110%", "120%"],
             command=self.change_scaling_event,
             font=self.font,
             width=100,
         )
-        self.scaling_optionemenu.grid(
+        self.scaling_option_menu.grid(
             row=0, column=0, padx=(90, 0), pady=20, sticky="n"
         )
 
@@ -580,7 +580,7 @@ class MainTab(ctk.CTkTabview):
                 if self.checkbox_always_send_to_line.get() == 1
                 else 0,
                 "send_to_all": 1 if self.broadcast_switch.get() == 1 else 0,
-                "scaling": self.scaling_optionemenu.get(),
+                "scaling": self.scaling_option_menu.get(),
                 "maximize_screen_check_box": 1
                 if self.maximize_screen_check_box.get() == 1
                 else 0,
@@ -660,7 +660,7 @@ class MainTab(ctk.CTkTabview):
 
         # Update the scaling optionmenu
         scaling = str(settings_file.get("scaling"))
-        self.scaling_optionemenu.set(scaling)
+        self.scaling_option_menu.set(scaling)
 
     def toggle_send_to_all_label(self) -> None:
         """Display send to all label."""

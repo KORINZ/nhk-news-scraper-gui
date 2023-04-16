@@ -1,9 +1,11 @@
 {
     "cSpell.words": [
         "chardet",
+        "chromedriver",
         "columnspan",
         "customtkinter",
         "dataframe",
+        "deepl",
         "furigana",
         "gspread",
         "iterrows",
@@ -20,7 +22,9 @@
         "setrecursionlimit",
         "softmax",
         "tablefmt",
+        "Tabview",
         "tearoff",
+        "textboxes",
         "textvariable",
         "Xday",
         "yscrollcommand"
