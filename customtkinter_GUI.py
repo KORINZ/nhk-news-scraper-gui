@@ -22,7 +22,7 @@ from requests.exceptions import ConnectionError
 from main import main, push_quiz, save_quiz_vocab
 
 # Version number
-VERSION = "v2.1.0"
+VERSION = "v2.2.0"
 
 # File locations
 PRONOUN_QUIZ_LOCATION = r"./txt_files/pronunciation_quiz.txt"
@@ -137,7 +137,7 @@ class MainTab(ctk.CTkTabview):
         self.quiz_number_entry = quiz_number_entry
         self.instant_push_check_box = instant_push_check_box
         self.broadcast_on_label = broadcast_on_label
-        self.font = ctk.CTkFont(family="Yu Gothic UI", size=16)
+        self.font = ctk.CTkFont(family="Yu Gothic UI", size=15)
         self._segmented_button.configure(font=self.font)
         self.txt_folder_path = TXT_FOLDER_PATH
         self.json_folder_path = JSON_FOLDER_PATH
@@ -214,7 +214,7 @@ class MainTab(ctk.CTkTabview):
         )
 
         self.button_color_optionmenu.grid(
-            row=1, column=0, padx=(185, 0), pady=0, sticky="nw"
+            row=1, column=0, padx=(170, 0), pady=0, sticky="nw"
         )
 
         # *時間表示 Switch
@@ -277,7 +277,7 @@ class MainTab(ctk.CTkTabview):
             width=100,
         )
         self.scaling_optionemenu.grid(
-            row=0, column=0, padx=(100, 0), pady=20, sticky="n"
+            row=0, column=0, padx=(90, 0), pady=20, sticky="n"
         )
 
         # *起動時ウィンドウ最大化 Checkbox
@@ -917,7 +917,7 @@ class AppFrame(ctk.CTk):
             pass
 
         self.title(f"NHK NEWS EASY 日本語クイズ作成 GUI {VERSION}")
-        self.font = ctk.CTkFont(family="Yu Gothic UI", size=16)
+        self.font = ctk.CTkFont(family="Yu Gothic UI", size=15)
 
         # Create a label to display the date and time
         self.datetime_label = ctk.CTkLabel(
@@ -943,18 +943,18 @@ class AppFrame(ctk.CTk):
             master=self, values=["単語意味クイズ", "読み方クイズ"], font=self.font
         )
         self.quiz_type_dropdown.grid(
-            row=0, column=0, padx=(130, 10), pady=10, sticky="nw"
+            row=0, column=0, padx=(120, 10), pady=10, sticky="nw"
         )
 
         # Create the number of questions entry
         self.label_number = ctk.CTkLabel(
             master=self, text="最大問題数:", font=self.font)
         self.label_number.grid(row=1, column=0, padx=(
-            20, 120), pady=10, sticky="w")
+            20, 0), pady=10, sticky="w")
         self.quiz_number_entry = ctk.CTkEntry(
             master=self, font=self.font, width=32)
         self.quiz_number_entry.grid(
-            row=1, column=0, padx=(130, 0), pady=10, sticky="nw"
+            row=1, column=0, padx=(110, 0), pady=10, sticky="nw"
         )
 
         # Create the checkbox for instant LINE push
@@ -1023,10 +1023,10 @@ class AppFrame(ctk.CTk):
         # Create the increment and decrement buttons
         self.increment_button = ctk.CTkButton(master=self, text="▲", width=30)
         self.increment_button.grid(
-            row=1, column=0, padx=(175, 0), pady=10, sticky="w")
+            row=1, column=0, padx=(155, 0), pady=10, sticky="w")
         self.decrement_button = ctk.CTkButton(master=self, text="▼", width=30)
         self.decrement_button.grid(
-            row=1, column=0, padx=(215, 0), pady=10, sticky="w")
+            row=1, column=0, padx=(195, 0), pady=10, sticky="w")
         self.increment_button.configure(command=self.increment_questions)
         self.decrement_button.configure(command=self.decrement_questions)
 
