@@ -20,7 +20,7 @@ from requests.exceptions import ConnectionError
 from main import main, push_quiz, save_quiz_vocab
 
 # Version number
-VERSION = "v2.3.2"
+VERSION = "v2.4.0"
 
 # File locations
 PRONOUN_QUIZ_LOCATION = r"./txt_files/pronunciation_quiz.txt"
@@ -889,6 +889,7 @@ class AppFrame(ctk.CTk):
     """The main application window."""
 
     def __init__(self) -> None:
+        self.emotion_analysis_bool = None
         self.broadcast_bool = None
         self.total_ids = None
         self.current_index = None
@@ -905,7 +906,7 @@ class AppFrame(ctk.CTk):
         super().__init__()
         # Check if the application is running as a script or a packaged executable
         if getattr(sys, "frozen", False):
-            application_path = sys._MEIPASS  # type: ignore
+            application_path = sys._MEIPASS  # noqa
         else:
             application_path = os.path.dirname(os.path.abspath(__file__))
 
@@ -1085,7 +1086,8 @@ class AppFrame(ctk.CTk):
         self.grid_rowconfigure(4, weight=1)
         self.grid_columnconfigure(0, weight=1)
 
-    def open_news_url(self) -> None:
+    @staticmethod
+    def open_news_url() -> None:
         """Open the news URL."""
         with open(LOG_LOCATION, "r", encoding="utf-8") as log_file:
             news_url = log_file.readlines()[1]
@@ -1146,8 +1148,8 @@ class AppFrame(ctk.CTk):
             main(
                 self.quiz_type_dropdown.get(),
                 push=bool(self.instant_push_check_box.get()),
-                questions=int(self.quiz_number_entry.get()),
                 emotion=self.emotion_analysis_bool,
+                questions=int(self.quiz_number_entry.get()),
                 broadcasting=self.broadcast_bool,
                 progress_callback=self.update_progressbar,
             )

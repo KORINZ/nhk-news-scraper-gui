@@ -23,6 +23,7 @@ from get_definition import get_definition_list, get_number_of_word, setup_seleni
 try:
     from check_sentiment import predict_sentiment_jp, read_news_article
 except ImportError:
+    print("Sentiment analysis module not found. Skipping sentiment analysis...")
     pass
 
 """

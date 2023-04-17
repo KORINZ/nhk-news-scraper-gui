@@ -1,14 +1,19 @@
-import deepl
-import argparse
+# Standard library imports
 import os
 import sys
+import argparse
 
+# Third-party imports
+import deepl
+
+# Local imports
 try:
     from config import DEEPL_API_KEY
 except ImportError:
     print("Please create a config.py file in the same directory and have a variable DEEPL_API_KEY")
     sys.exit(1)
 
+# Setup
 NEWS_ARTICLE_LOCATION = r"txt_files/news_article.txt"
 translator = deepl.Translator(DEEPL_API_KEY)
 
