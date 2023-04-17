@@ -35,6 +35,7 @@ See the `.txt` file in the repository for an example output.
 - `chardet`
 - `BeautifulSoup4`
 - `Selenium`
+- `webdriver_manager`
 - `requests`
 - `line-bot-sdk`
 - `pandas`
