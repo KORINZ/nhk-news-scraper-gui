@@ -64,6 +64,19 @@ pip install -r requirements.txt
 git clone https://github.com/KORINZ/nhk_news_web_easy_scraper.git
 ```
 
+## GUI for WSL (Windows Subsystem for Linux)
+
+1. Install Japanese fonts:
+
+```bash
+sudo apt update
+sudo apt install -y fonts-ipafont
+```
+
+2. Install support for Linux GUI apps, see:
+
+<https://learn.microsoft.com/en-us/windows/wsl/tutorials/gui-apps>
+
 ## Usage
 
 1. To use GUI:
