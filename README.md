@@ -57,7 +57,7 @@ Optional:
 
 1. Sign up for a [LINE official account](https://www.linebiz.com/jp/signup/).
 2. Get your own `CHANNEL_ACCESS_TOKEN` (チャネルアクセストークン) and `USER_ID` (あなたのユーザーID) from [LINE Developers](https://developers.line.biz/ja/) Messaging API Settings.
-3. For MacOS, installation of MeCab is required:
+3. For macOS, installation of MeCab is required:
 
 ```bash
 brew install mecab
@@ -75,7 +75,7 @@ git clone https://github.com/KORINZ/nhk_news_web_easy_scraper.git
 pip install -r requirements.txt
 ```
 
-## Terminal Usage (Windows and MacOS)
+## Terminal Usage (Windows and macOS)
 
 1. To run GUI:
 
