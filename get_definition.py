@@ -10,6 +10,8 @@ from bs4 import BeautifulSoup
 from selenium import webdriver
 from selenium.webdriver.common.by import By
 from selenium.webdriver.common.action_chains import ActionChains
+from webdriver_manager.chrome import ChromeDriverManager
+
 
 PATTERN = re.compile(r"^RSHOK-")
 
@@ -29,11 +31,27 @@ def setup_selenium_webdriver() -> webdriver.Chrome:
         from selenium.webdriver.chrome.service import Service as ChromeService
         from subprocess import CREATE_NO_WINDOW  # type: ignore
 
-        chrome_service = ChromeService("chromedriver")
+        chrome_service = ChromeService(ChromeDriverManager().install())
         chrome_service.creation_flags = CREATE_NO_WINDOW
         driver = webdriver.Chrome(options=options, service=chrome_service)
+    elif sys.platform.startswith("linux"):
+        import subprocess
+        chrome_binary_path = None
+
+        subprocess.check_output(
+            "google-chrome-stable --version", shell=True)
+        chrome_binary_path = "/usr/bin/google-chrome-stable"
+
+        if chrome_binary_path is None:
+            raise RuntimeError(
+                "Could not find a valid Google Chrome installation")
+
+        options.binary_location = chrome_binary_path
+        driver = webdriver.Chrome(
+            ChromeDriverManager().install(), options=options)
     else:
-        driver = webdriver.Chrome(options=options)
+        driver = webdriver.Chrome(
+            ChromeDriverManager().install(), options=options)
 
     return driver
 
