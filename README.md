@@ -69,7 +69,7 @@ brew install mecab
 git clone https://github.com/KORINZ/nhk_news_web_easy_scraper.git
 ```
 
-5. Install the required packages listed in the dependencies:
+5. Install the required packages listed in the dependencies (make sure you are inside the cloned repository folder):
 
 ```bash
 pip install -r requirements.txt
