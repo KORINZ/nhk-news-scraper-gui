@@ -14,7 +14,7 @@ from selenium.webdriver.common.action_chains import ActionChains
 PATTERN = re.compile(r"^RSHOK-")
 
 
-def setup_selenium() -> webdriver.Chrome:
+def setup_selenium_webdriver() -> webdriver.Chrome:
     """Setup selenium webdriver"""
     options = webdriver.ChromeOptions()
     options.add_argument("--headless")
@@ -90,6 +90,6 @@ def get_definition_list(
 
 if __name__ == "__main__":
     test_url = "https://www3.nhk.or.jp/news/easy/k10014030681000/k10014030681000.html"
-    driver = setup_selenium()
+    driver = setup_selenium_webdriver()
     definition_list = get_definition_list(driver, test_url)
     driver.close()

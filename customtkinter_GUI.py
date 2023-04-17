@@ -21,7 +21,7 @@ from requests.exceptions import ConnectionError
 from main import main, push_quiz, save_quiz_vocab
 
 # Version number
-VERSION = "v2.3.1"
+VERSION = "v2.3.2"
 
 # File locations
 PRONOUN_QUIZ_LOCATION = r"./txt_files/pronunciation_quiz.txt"
@@ -1125,6 +1125,8 @@ class AppFrame(ctk.CTk):
             self.decrement_button.configure(state="disabled")
             self.generate_quiz_button.configure(state="disabled")
             self.open_news_url_button.configure(state="disabled")
+            self.tab_view.broadcast_switch.configure(state="disabled")
+            self.tab_view.emotion_analysis_switch.configure(state="disabled")
             self.feedback_label.configure(text="")
             if self.quiz_number_entry.get() <= "0":
                 self.show_feedback_label("最大問題数を指定してください。")
@@ -1193,6 +1195,8 @@ class AppFrame(ctk.CTk):
             self.decrement_button.configure(state="normal")
             self.progress_text_label.configure(text="")
             self.open_news_url_button.configure(state="normal")
+            self.tab_view.broadcast_switch.configure(state="normal")
+            self.tab_view.emotion_analysis_switch.configure(state="normal")
 
     def increment_questions(self) -> None:
         """Increase the value of the questions Entry."""

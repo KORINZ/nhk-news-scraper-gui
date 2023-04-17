@@ -19,7 +19,7 @@ from selenium.webdriver.common.by import By
 
 # Local imports
 from send_line_message import send_message
-from get_definition import get_definition_list, get_number_of_word, setup_selenium
+from get_definition import get_definition_list, get_number_of_word, setup_selenium_webdriver
 
 try:
     from check_sentiment import predict_sentiment_jp, read_news_article
@@ -269,7 +269,7 @@ def main(
 ) -> None:
     """Establish request connection and randomly scrap a Japanese news article's content and vocabularies"""
     # Get and encode a random news url; parsing the HTML content
-    driver = setup_selenium()
+    driver = setup_selenium_webdriver()
     url = get_news_url(driver)
 
     # Get the article vocabularies and definitions
