@@ -31,7 +31,6 @@ See the `.txt` file in the repository for an example output.
 
 ## Dependencies
 
-- `Python 3`
 - `chardet`
 - `BeautifulSoup4`
 - `Selenium`
@@ -42,6 +41,17 @@ See the `.txt` file in the repository for an example output.
 - `gspread`
 - `tabulate`
 - `customtkinter`
+
+Optional:
+
+- `transformers`
+- `scipy`
+- `torch`
+- `torchvision`
+- `torchaudio`
+- `fugashi[unidic]`
+- `ipadic`
+- `deepl`
 
 ## Installation
 
