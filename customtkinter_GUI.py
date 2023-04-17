@@ -31,6 +31,7 @@ LOG_LOCATION = r"./txt_files/push_log.txt"
 NEWS_ARTICLE_LOCATION = r"./txt_files/news_article.txt"
 PAST_QUIZ_LOCATION = r"./txt_files/past_quiz_data.txt"
 NHK_ICON_LOCATION = r"./icons/nhk.ico"
+NHK_MACOS_ICON_LOCATION = r"./icons/nhk.icns"
 LINE_ICON_LOCATION = r"./icons/LINE.ico"
 ALERT_ICON_LOCATION = r"./icons/alert.ico"
 SHEET_ICON_LOCATION = r"./icons/sheet.ico"
@@ -908,7 +909,10 @@ class AppFrame(ctk.CTk):
             application_path = os.path.dirname(os.path.abspath(__file__))
 
         # Get the correct icon path based on the application path
-        icon_path = os.path.join(application_path, NHK_ICON_LOCATION)
+        if os.name == "nt":
+            icon_path = os.path.join(application_path, NHK_ICON_LOCATION)
+        elif os.name == "posix":
+            icon_path = os.path.join(application_path, NHK_MACOS_ICON_LOCATION)
 
         try:
             self.iconbitmap(icon_path)
