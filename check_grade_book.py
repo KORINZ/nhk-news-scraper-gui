@@ -17,7 +17,8 @@ GRADE_BOOK_FILENAME = "日本語ニュース成績表"
 SERVICE_ACCOUNT_PATH = r"./json_files/savvy-temple-381905-6e78e62d4ee5.json"
 
 try:
-    SERVICE_ACCOUNT = gspread.service_account(SERVICE_ACCOUNT_PATH)
+    SERVICE_ACCOUNT = gspread.service_account(
+        SERVICE_ACCOUNT_PATH)  # type: ignore
 except FileNotFoundError:
     sys.exit(
         "Service account file not found. Please download the file from Google Cloud Platform."
@@ -85,7 +86,8 @@ def get_quiz_start_time() -> tuple[datetime, datetime]:
     """Get the quiz start time from the log file"""
     with open(LOG_LOCATION, "r", encoding="utf-8") as f:
         quiz_start_time = f.readline().strip("\n").split(".")[0]
-        quiz_start_time = datetime.strptime(quiz_start_time, "%Y-%m-%d %H:%M:%S")
+        quiz_start_time = datetime.strptime(
+            quiz_start_time, "%Y-%m-%d %H:%M:%S")
     now = datetime.now()
     return now, quiz_start_time
 
@@ -118,7 +120,8 @@ def update_grade_book(df_result: pd.DataFrame, quiz_end_time: datetime) -> None:
                     student_id_cell.row, date_col_idx
                 ).value
                 if not existing_points:  # If the cell is empty
-                    grade_sheet.update_cell(student_id_cell.row, date_col_idx, points)
+                    grade_sheet.update_cell(
+                        student_id_cell.row, date_col_idx, points)
             else:
                 # If the student ID doesn't exist, append a new row with the student ID and points
                 new_row = [student_id] + [""] * (date_col_idx - 2) + [points]
@@ -192,7 +195,8 @@ def main(end_time: str) -> None:
 
     # Process the data
     correct_answer = get_quiz_answer()
-    df_message = df_message.query("@quiz_start_time <= `Sent Time` <= @quiz_end_time")
+    df_message = df_message.query(
+        "@quiz_start_time <= `Sent Time` <= @quiz_end_time")
     df_processed = df_message["Message"].apply(
         lambda x: process_data(x, correct_answer)
     )
@@ -223,7 +227,8 @@ def main(end_time: str) -> None:
 
 if __name__ == "__main__":
     # Clearing the terminal
-    os.system("cls") if sys.platform.startswith("win32") else os.system("clear")
+    os.system("cls") if sys.platform.startswith(
+        "win32") else os.system("clear")
 
     # Quiz end time in the format 'YYYY-MM-DD HH:mm'
     main(end_time="2023-04-08 22:00")
