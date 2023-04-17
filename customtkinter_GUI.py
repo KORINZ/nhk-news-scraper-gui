@@ -906,7 +906,7 @@ class AppFrame(ctk.CTk):
         super().__init__()
         # Check if the application is running as a script or a packaged executable
         if getattr(sys, "frozen", False):
-            application_path = sys._MEIPASS  # noqa
+            application_path = sys._MEIPASS  # noqa # type: ignore
         else:
             application_path = os.path.dirname(os.path.abspath(__file__))
 
