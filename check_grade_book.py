@@ -26,7 +26,7 @@ except FileNotFoundError:
 
 
 def format_quiz_times(
-        quiz_start_time: datetime, now: datetime, quiz_end_time: datetime
+    quiz_start_time: datetime, now: datetime, quiz_end_time: datetime
 ) -> str:
     """Format the quiz start time, current time, quiz end time, and quiz duration"""
     duration = quiz_end_time - quiz_start_time

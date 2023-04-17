@@ -49,7 +49,7 @@ def get_number_of_word(url: str) -> Tuple[int, List, BeautifulSoup]:
 
 
 def get_definition_list(
-        driver_: webdriver.Chrome, url: str, progress_callback: Optional[Callable] = None
+    driver_: webdriver.Chrome, url: str, progress_callback: Optional[Callable] = None
 ) -> List[str]:
     """Get definition list from the given url."""
     matching_ids = get_number_of_word(url)[1]

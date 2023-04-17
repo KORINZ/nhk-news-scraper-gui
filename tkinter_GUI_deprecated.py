@@ -67,7 +67,8 @@ def enter_line_confidential() -> None:
     popup_width = 420
     popup_height = 105
     x_position = main_window_x + (main_window_width // 2) - (popup_width // 2)
-    y_position = main_window_y + (main_window_height // 2) - (popup_height // 2)
+    y_position = main_window_y + \
+        (main_window_height // 2) - (popup_height // 2)
 
     # Set the position and dimensions of the popup
     line_confidential_popup.geometry(
@@ -79,10 +80,12 @@ def enter_line_confidential() -> None:
         row=0, column=0, sticky="w"
     )
     channel_access_token_entry = tk.Entry(line_confidential_popup)
-    channel_access_token_entry.grid(row=0, column=1, padx=5, pady=5, sticky="w")
+    channel_access_token_entry.grid(
+        row=0, column=1, padx=5, pady=5, sticky="w")
 
     # Add a "User ID" label and entry
-    tk.Label(line_confidential_popup, text="USER_ID:").grid(row=1, column=0, sticky="w")
+    tk.Label(line_confidential_popup, text="USER_ID:").grid(
+        row=1, column=0, sticky="w")
     user_id_entry = tk.Entry(line_confidential_popup)
     user_id_entry.grid(row=1, column=1, padx=5, pady=5, sticky="w")
 
@@ -106,7 +109,7 @@ def enter_line_confidential() -> None:
 
 
 def save_line_confidential(
-        channel_access_token: str, user_id: str, line_confidential_popup: tk.Toplevel
+    channel_access_token: str, user_id: str, line_confidential_popup: tk.Toplevel
 ) -> None:
     """Save the LINE confidential information to a secrets.json file."""
     confidential_data = {
@@ -340,7 +343,8 @@ decrement_button = tk.Button(root, text="▼", command=decrement_questions)
 decrement_button.grid(row=2, column=1, padx=(80, 0), pady=(0, 0), sticky="w")
 
 # Create the generate and send buttons
-generate_button = tk.Button(root, text="クイズ作成", command=start_quiz_generation_thread)
+generate_button = tk.Button(
+    root, text="クイズ作成", command=start_quiz_generation_thread)
 generate_button.grid(
     row=3, column=1, padx=button_padding, pady=button_padding, sticky="w"
 )
@@ -355,7 +359,8 @@ send_button.grid(
 article_label = tk.Label(root, text="ファイル表示:")
 article_label.grid(row=4, column=0, sticky="w")
 article_text = tk.Text(root, wrap=tk.WORD, width=45, height=28)
-article_text.grid(row=5, column=0, columnspan=2, padx=10, pady=10, sticky="nsew")
+article_text.grid(row=5, column=0, columnspan=2,
+                  padx=10, pady=10, sticky="nsew")
 
 # Create a scrollbar for the article text widget
 scrollbar = tk.Scrollbar(root, command=article_text.yview)

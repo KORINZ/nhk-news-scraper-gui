@@ -18,7 +18,11 @@ from selenium.webdriver.common.by import By
 
 # Local imports
 from send_line_message import send_message
-from get_definition import get_definition_list, get_number_of_word, setup_selenium_webdriver
+from get_definition import (
+    get_definition_list,
+    get_number_of_word,
+    setup_selenium_webdriver,
+)
 
 try:
     from check_sentiment import predict_sentiment_jp, read_news_article
@@ -61,7 +65,7 @@ else:
 
 
 def generate_pronunciation_quiz(
-        url: str, word_dict: Dict[str, str], questions=4
+    url: str, word_dict: Dict[str, str], questions=4
 ) -> None:
     """Generate a pronunciation test for students"""
     today = get_today_date_jp()[1]
@@ -86,7 +90,7 @@ def generate_pronunciation_quiz(
 
 
 def generate_definition_quiz(
-        article, word_dict: Dict[str, str], word_list: List
+    article, word_dict: Dict[str, str], word_list: List
 ) -> str:
     """Generate a definition test for students and return the answer key"""
     today = get_today_date_jp()[1]
@@ -183,11 +187,11 @@ def get_news_url(driver: webdriver.Chrome) -> str:
 
 
 def write_content_data(
-        content_type,
-        content,
-        action="a",
-        location=NEWS_ARTICLE_TXT_LOCATION,
-        encoder="utf-8",
+    content_type,
+    content,
+    action="a",
+    location=NEWS_ARTICLE_TXT_LOCATION,
+    encoder="utf-8",
 ) -> None:
     """Write text (BeautifulSoup | NavigableString) content to a file"""
     if content is not None:
@@ -260,12 +264,12 @@ def clear_terminal() -> None:
 
 
 def main(
-        quiz_type: str,
-        push=False,
-        broadcasting=False,
-        emotion=False,
-        questions=5,
-        progress_callback: Optional[Callable] = None,
+    quiz_type: str,
+    push=False,
+    broadcasting=False,
+    emotion=False,
+    questions=5,
+    progress_callback: Optional[Callable] = None,
 ) -> None:
     """Establish request connection and randomly scrap a Japanese news article's content and vocabularies"""
     # Get and encode a random news url; parsing the HTML content
@@ -343,9 +347,9 @@ def main(
             kana = deque(value.split(" "))
             for i, char in enumerate(key):
                 if (
-                        not is_hiragana_char(char)
-                        and (i + 1 < len(key))
-                        and (is_hiragana_char(key[i + 1]) or " ")
+                    not is_hiragana_char(char)
+                    and (i + 1 < len(key))
+                    and (is_hiragana_char(key[i + 1]) or " ")
                 ):
                     try:
                         word += f"{char}({kana[0]})"

@@ -39,11 +39,11 @@ def read_secrets() -> Tuple:
 
 
 def send_message(
-        message_type: str,
-        content: Optional[str] = None,
-        broadcasting=False,
-        package_id=None,
-        sticker_id=None,
+    message_type: str,
+    content: Optional[str] = None,
+    broadcasting=False,
+    package_id=None,
+    sticker_id=None,
 ) -> None:
     """Login to LINE bot API and send text message"""
     CHANNEL_ACCESS_TOKEN, USER_ID = read_secrets()
@@ -51,18 +51,21 @@ def send_message(
     try:
         if not broadcasting:
             if message_type == "text":
-                line_bot_api.push_message(USER_ID, TextSendMessage(text=content))
+                line_bot_api.push_message(
+                    USER_ID, TextSendMessage(text=content))
             elif message_type == "stamp":
                 line_bot_api.push_message(
                     USER_ID,
-                    StickerSendMessage(package_id=package_id, sticker_id=sticker_id),
+                    StickerSendMessage(package_id=package_id,
+                                       sticker_id=sticker_id),
                 )
         else:
             if message_type == "text":
                 line_bot_api.broadcast(TextSendMessage(text=content))
             elif message_type == "stamp":
                 line_bot_api.broadcast(
-                    StickerSendMessage(package_id=package_id, sticker_id=sticker_id)
+                    StickerSendMessage(package_id=package_id,
+                                       sticker_id=sticker_id)
                 )
     except LineBotApiError:
         raise PermissionError("認証に失敗しました。アクセストークンが有効であることを確認してください。") from None
@@ -99,4 +102,5 @@ if __name__ == "__main__":
     # Sending announcement and sticker
     """See https://developers.line.biz/ja/docs/messaging-api/sticker-list/ for valid sticker IDs"""
     send_message("text", announcement, broadcasting=False)
-    send_message("stamp", broadcasting=False, package_id="6359", sticker_id="11069859")
+    send_message("stamp", broadcasting=False,
+                 package_id="6359", sticker_id="11069859")
