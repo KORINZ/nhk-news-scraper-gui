@@ -106,7 +106,7 @@ def enter_line_confidential() -> None:
 
 
 def save_line_confidential(
-    channel_access_token: str, user_id: str, line_confidential_popup: tk.Toplevel
+        channel_access_token: str, user_id: str, line_confidential_popup: tk.Toplevel
 ) -> None:
     """Save the LINE confidential information to a secrets.json file."""
     confidential_data = {
@@ -391,7 +391,6 @@ load_log_button.grid(row=4, column=1, padx=(390, 0), sticky="w")
 
 root.grid_columnconfigure(1, weight=1)
 root.grid_rowconfigure(5, weight=1)
-
 
 if __name__ == "__main__":
     root.mainloop()

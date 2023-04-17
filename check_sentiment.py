@@ -1,13 +1,12 @@
 from transformers import AutoTokenizer, AutoModelForSequenceClassification
 from scipy.special import softmax
 
-
 NEWS_ARTICLE_LOCATION = r"txt_files/news_article.txt"
 LOG_LOCATION = r"./txt_files/push_log.txt"
 
 
 def predict_sentiment_jp(
-    text: str, model_name: str = "koheiduck/bert-japanese-finetuned-sentiment"
+        text: str, model_name: str = "koheiduck/bert-japanese-finetuned-sentiment"
 ) -> dict[str, str]:
     """Predict sentiment of input text using a pre-trained model."""
     # Load tokenizer and model

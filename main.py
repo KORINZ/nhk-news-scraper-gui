@@ -1,5 +1,4 @@
 # Standard library imports
-from typing import Dict, List
 import os
 import sys
 import random
@@ -26,7 +25,6 @@ try:
 except ImportError:
     pass
 
-
 """
 NEWS WEB EASY
 平日のみ、4つのニュースを更新される
@@ -51,7 +49,7 @@ PAST_QUIZ_DATA_LOCATION = r"txt_files/past_quiz_data.txt"
 LOG_LOCATION = r"txt_files/push_log.txt"
 
 # Selenium checking settings constants
-MAX_URL_CHECKING_ATTEMPTS = 20
+MAX_URL_CHECKING_ATTEMPTS = 30
 MIN_URL_WORD_COUNT = 3
 
 # Set locale to Japanese
@@ -62,7 +60,7 @@ else:
 
 
 def generate_pronunciation_quiz(
-    url: str, word_dict: Dict[str, str], questions=4
+        url: str, word_dict: Dict[str, str], questions=4
 ) -> None:
     """Generate a pronunciation test for students"""
     today = get_today_date_jp()[1]
@@ -87,7 +85,7 @@ def generate_pronunciation_quiz(
 
 
 def generate_definition_quiz(
-    article, word_dict: Dict[str, str], word_list: List
+        article, word_dict: Dict[str, str], word_list: List
 ) -> str:
     """Generate a definition test for students and return the answer key"""
     today = get_today_date_jp()[1]
@@ -184,26 +182,27 @@ def get_news_url(driver: webdriver.Chrome) -> str:
 
 
 def write_content_data(
-    content_type,
-    content,
-    action="a",
-    location=NEWS_ARTICLE_TXT_LOCATION,
-    encoder="utf-8",
+        content_type,
+        content,
+        action="a",
+        location=NEWS_ARTICLE_TXT_LOCATION,
+        encoder="utf-8",
 ) -> None:
     """Write text (BeautifulSoup | NavigableString) content to a file"""
-    if content is not None and content_type == "article":
-        with open(location, action, encoding=encoder) as file:
-            for p_tag in content.find_all("p"):
-                for line in p_tag.get_text().splitlines():
-                    stripped_line = line.strip()
-                    if stripped_line:
-                        file.write(stripped_line + "\n\n")
-    elif content_type == "title":
-        with open(location, action, encoding=encoder) as file:
-            file.write(f"【{content.text.strip()}】\n\n")
-    else:
-        with open(location, action, encoding=encoder) as file:
-            file.write(f"{content.text.strip()}\n\n")
+    if content is not None:
+        if content_type == "article":
+            with open(location, action, encoding=encoder) as file:
+                for p_tag in content.find_all("p"):
+                    for line in p_tag.get_text().splitlines():
+                        stripped_line = line.strip()
+                        if stripped_line:
+                            file.write(stripped_line + "\n\n")
+        elif content_type == "title":
+            with open(location, action, encoding=encoder) as file:
+                file.write(f"【{content.text.strip()}】\n\n")
+        else:
+            with open(location, action, encoding=encoder) as file:
+                file.write(f"{content.text.strip()}\n\n")
 
 
 def is_hiragana_char(character: str) -> bool:
@@ -260,12 +259,12 @@ def clear_terminal() -> None:
 
 
 def main(
-    quiz_type: str,
-    push=False,
-    broadcasting=False,
-    emotion=False,
-    questions=5,
-    progress_callback: Optional[Callable] = None,
+        quiz_type: str,
+        push=False,
+        broadcasting=False,
+        emotion=False,
+        questions=5,
+        progress_callback: Optional[Callable] = None,
 ) -> None:
     """Establish request connection and randomly scrap a Japanese news article's content and vocabularies"""
     # Get and encode a random news url; parsing the HTML content
@@ -343,9 +342,9 @@ def main(
             kana = deque(value.split(" "))
             for i, char in enumerate(key):
                 if (
-                    not is_hiragana_char(char)
-                    and (i + 1 < len(key))
-                    and (is_hiragana_char(key[i + 1]) or " ")
+                        not is_hiragana_char(char)
+                        and (i + 1 < len(key))
+                        and (is_hiragana_char(key[i + 1]) or " ")
                 ):
                     try:
                         word += f"{char}({kana[0]})"
@@ -384,7 +383,10 @@ def main(
                 key + "：" + meaning.split("：", 1)[1])
         except IndexError:
             print(
-                f"\nWARNING: definition_list is missing a or some element(s). This is a rare case due to incomplete scrapping of selenium. Consider re-running the program or change the scale for document.body.style.transform in get_definition.py."
+                f"\nWARNING: definition_list is missing a or some element(s). "
+                f"This is a rare case due to incomplete scrapping of selenium. "
+                f"Consider re-running the program or change the scale for "
+                f"document.body.style.transform in get_definition.py."
             )
             pass
 

@@ -13,7 +13,6 @@ import customtkinter as ctk
 import threading
 from requests.exceptions import ConnectionError
 
-
 # TODO: Fix import error when using sentiment analysis
 
 
@@ -120,14 +119,14 @@ class MainTab(ctk.CTkTabview):
     """Custom Tabview class that contains article and settings tab."""
 
     def __init__(
-        self,
-        master,
-        datetime_label,
-        quiz_type_dropdown,
-        quiz_number_entry,
-        instant_push_check_box,
-        broadcast_on_label,
-        **kwargs,
+            self,
+            master,
+            datetime_label,
+            quiz_type_dropdown,
+            quiz_number_entry,
+            instant_push_check_box,
+            broadcast_on_label,
+            **kwargs,
     ) -> None:
         super().__init__(master, **kwargs)
         self.confirm_delete_past_quizzes_button = None
@@ -510,7 +509,7 @@ class MainTab(ctk.CTkTabview):
         ctk.set_appearance_mode(english_value)
 
     def change_appearance_mode_event_button_color(
-        self, new_appearance_mode: str
+            self, new_appearance_mode: str
     ) -> None:
         """Change the appearance mode when the OptionMenu value is changed"""
         english_value = {v: k for k, v in self.button_color_optionmenu_mapping.items()}[
@@ -689,13 +688,13 @@ class MainTab(ctk.CTkTabview):
         main_window_x = self.master.winfo_x()
         main_window_y = self.master.winfo_y()
         x_position = main_window_x + \
-            (main_window_width // 2) - (popup_width // 2)
+                     (main_window_width // 2) - (popup_width // 2)
         y_position = main_window_y + \
-            (main_window_height // 2) - (popup_height // 2)
+                     (main_window_height // 2) - (popup_height // 2)
         return popup_width, popup_height, x_position, y_position
 
     def add_save_cancel_buttons(
-        self, popup: ctk.CTkToplevel, row: int, column: int, command: Callable
+            self, popup: ctk.CTkToplevel, row: int, column: int, command: Callable
     ) -> None:
         """Add the save and cancel buttons to the popup."""
         save_button = ctk.CTkButton(
@@ -843,7 +842,7 @@ class MainTab(ctk.CTkTabview):
         grade_book_url_popup.destroy()
 
     def save_line_confidential(
-        self, channel_access_token: str, user_id: str, line_confidential_popup
+            self, channel_access_token: str, user_id: str, line_confidential_popup
     ) -> None:
         """Save the LINE confidential information to a file."""
         confidential_data = {
@@ -918,7 +917,7 @@ class AppFrame(ctk.CTk):
                 self.iconbitmap(icon_path)
             elif os.name == "posix":
                 import tkinter as tk
-                # Set the icon for MacOS and Linux
+                # Set the icon for macOS and Linux
                 icon_path = os.path.join(
                     application_path, NHK_MACOS_ICON_LOCATION)
                 img = tk.Image("photo", file=icon_path)
@@ -1348,9 +1347,9 @@ class AppFrame(ctk.CTk):
             self.after_cancel(self.blinking_task)
 
         if (
-            self.current_index == 0
-            and self.feedback_label
-            and "エラー" not in self.feedback_label.cget("text")
+                self.current_index == 0
+                and self.feedback_label
+                and "エラー" not in self.feedback_label.cget("text")
         ):
             current_text = self.progress_text_label.cget("text")
             if current_text == "初期化中":
@@ -1366,12 +1365,12 @@ class AppFrame(ctk.CTk):
             self.blinking_task = self.after(
                 500, self.blink_progress_text_label)
         elif self.generate_quiz_button.cget(
-            "state"
+                "state"
         ) == "disabled" and "エラー" not in self.feedback_label.cget("text"):
             base_text = f"クイズを作成中({self.current_index}/{self.total_ids})"
 
             dots = (
-                "・" * self.dot_counter
+                    "・" * self.dot_counter
             )  # Generate dots based on the dot_counter value
             new_text = base_text + dots
             self.progress_text_label.configure(text=new_text)

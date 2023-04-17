@@ -13,7 +13,6 @@ from selenium.webdriver.common.action_chains import ActionChains
 from selenium.webdriver.chrome.service import Service as ChromeService
 from webdriver_manager.chrome import ChromeDriverManager
 
-
 PATTERN = re.compile(r"^RSHOK-")
 
 
@@ -29,9 +28,9 @@ def setup_selenium_webdriver() -> webdriver.Chrome:
     options.add_experimental_option("excludeSwitches", ["enable-logging"])
 
     chrome_service = ChromeService(ChromeDriverManager().install())
-    driver = webdriver.Chrome(options=options, service=chrome_service)
+    driver_ = webdriver.Chrome(options=options, service=chrome_service)
 
-    return driver
+    return driver_
 
 
 def get_number_of_word(url: str) -> Tuple[int, List, BeautifulSoup]:
@@ -50,38 +49,38 @@ def get_number_of_word(url: str) -> Tuple[int, List, BeautifulSoup]:
 
 
 def get_definition_list(
-    driver: webdriver.Chrome, url: str, progress_callback: Optional[Callable] = None
+        driver_: webdriver.Chrome, url: str, progress_callback: Optional[Callable] = None
 ) -> List[str]:
     """Get definition list from the given url."""
     matching_ids = get_number_of_word(url)[1]
-    driver.get(url)
-    button = driver.find_element(By.CLASS_NAME, "easy-wrapper")
-    driver.execute_script(
+    driver_.get(url)
+    button = driver_.find_element(By.CLASS_NAME, "easy-wrapper")
+    driver_.execute_script(
         "arguments[0].setAttribute('class', 'easy-wrapper is-no-ruby')", button
     )
-    driver.execute_script("document.body.style.transform='scale(0.99)';")
+    driver_.execute_script("document.body.style.transform='scale(0.99)';")
 
-    definition_list = []
+    definition_list_ = []
     total_ids = len(matching_ids)
     sleep(0.2)
     for index, matching_id in enumerate(matching_ids, start=1):
-        element_to_hover_over = driver.find_element(By.ID, matching_id)
-        hover = ActionChains(driver).move_to_element(element_to_hover_over)
+        element_to_hover_over = driver_.find_element(By.ID, matching_id)
+        hover = ActionChains(driver_).move_to_element(element_to_hover_over)
         hover.perform()
 
-        dictionary_box = driver.find_element(
+        dictionary_box = driver_.find_element(
             By.CSS_SELECTOR, ".dictionary-box")
 
         text_content = dictionary_box.text
         text_content = "".join(text_content.split())
         text_content = text_content.replace("1", "： 1", 1)
         print(text_content)
-        definition_list.append(text_content)
+        definition_list_.append(text_content)
         if progress_callback:
             progress = index / total_ids
             progress_callback(progress, index, total_ids)
 
-    return definition_list
+    return definition_list_
 
 
 if __name__ == "__main__":

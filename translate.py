@@ -68,7 +68,8 @@ def show_account_usage() -> None:
         print('Translation limit reached.')
     if usage.character.valid and character_count is not None and character_limit is not None:
         print(
-            f"Character usage: {character_count} of {character_limit} ({round(character_count / character_limit * 100, 2)}%)")
+            f"Character usage: {character_count} of {character_limit} "
+            f"({round(character_count / character_limit * 100, 2)}%)")
     if usage.document.valid:
         print(
             f"Document usage: {usage.document.count} of {usage.document.limit}")
@@ -118,7 +119,7 @@ def main() -> None:
     elif args.article:
         input_text = get_news_article()
     elif args.vocab:
-        with open(NEWS_ARTICLE_LOCATION, 'r', encoding='utf-8') as file:
+        with open(NEWS_ARTICLE_LOCATION, 'r', encoding='utf-8'):
             input_text = get_news_vocabularies()
     elif args.list:
         for language in translator.get_source_languages():

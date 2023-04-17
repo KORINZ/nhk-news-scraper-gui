@@ -26,7 +26,7 @@ except FileNotFoundError:
 
 
 def format_quiz_times(
-    quiz_start_time: datetime, now: datetime, quiz_end_time: datetime
+        quiz_start_time: datetime, now: datetime, quiz_end_time: datetime
 ) -> str:
     """Format the quiz start time, current time, quiz end time, and quiz duration"""
     duration = quiz_end_time - quiz_start_time
@@ -140,10 +140,10 @@ def pretty_print_dataframe(df: pd.DataFrame) -> None:
 def display_table_in_popup(df, quiz_info) -> None:
     """Display the quiz results in a popup window"""
 
-    def tabulate_dataframe(df) -> str:
+    def tabulate_dataframe(df_) -> str:
         """Format a dataframe as a table"""
-        header = ["Index"] + df.columns.tolist()
-        data = df.reset_index().values.tolist()
+        header = ["Index"] + df_.columns.tolist()
+        data = df_.reset_index().values.tolist()
         for row in data:
             row[0] += 2
         formatted_table = tabulate(data, headers=header, tablefmt="grid")
