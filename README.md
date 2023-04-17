@@ -115,6 +115,9 @@ sudo apt-get install python3.xx-tk
 ## GUI User Guide (ユーザーガイド)
 
 - Click on `クイズ作成` to scrap the news website and generate quizzes.
+- Click on `LINE機密情報入力` to fill in your `CHANNEL_ACCESS_TOKEN` (チャネルアクセストークン) and `USER_ID` (あなたのユーザーID).
+- Click on `LINEに発信` to send the quiz.
+- pending
 
 ## Grade Book User Guide
 
