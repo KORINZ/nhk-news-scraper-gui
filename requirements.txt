@@ -1,6 +1,7 @@
 chardet
 beautifulsoup4
 selenium
+webdriver_manager
 requests
 line-bot-sdk
 pandas
