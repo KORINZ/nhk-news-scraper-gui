@@ -1,8 +1,13 @@
 import deepl
 import argparse
 import os
+import sys
 
-from config import DEEPL_API_KEY
+try:
+    from config import DEEPL_API_KEY
+except ImportError:
+    print("Please create a config.py file in the same directory and have a variable DEEPL_API_KEY")
+    sys.exit(1)
 
 NEWS_ARTICLE_LOCATION = r"txt_files/news_article.txt"
 translator = deepl.Translator(DEEPL_API_KEY)
@@ -83,7 +88,7 @@ def main() -> None:
                         help="translate document (.pdf, .docx, .pptx)")
     parser.add_argument("-a", "--article", action='store_true',
                         help="use predefined article")
-    parser.add_argument("-p", "--pair", action='store_true',
+    parser.add_argument("-v", "--vocab", action='store_true',
                         help="use predefined article and vocabularies")
     parser.add_argument("-s", "--source", type=str, default=None,
                         help="source language (optional)")
@@ -112,7 +117,7 @@ def main() -> None:
 
     elif args.article:
         input_text = get_news_article()
-    elif args.pair:
+    elif args.vocab:
         with open(NEWS_ARTICLE_LOCATION, 'r', encoding='utf-8') as file:
             input_text = get_news_vocabularies()
     elif args.list:
@@ -133,7 +138,7 @@ def main() -> None:
     if not isinstance(results, list):
         results = [results]
 
-    if args.pair:
+    if args.vocab:
         input_text = input_text.split('\n')
         results = [result.text for result in results][0].split('\n')
         for source, result in zip(input_text, results):
