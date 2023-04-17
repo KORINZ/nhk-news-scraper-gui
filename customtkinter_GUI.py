@@ -910,7 +910,7 @@ class AppFrame(ctk.CTk):
         else:
             application_path = os.path.dirname(os.path.abspath(__file__))
 
-        # Get the correct icon path based on the application path
+        # Get the correct icon path based on the application path and OS
         try:
             if os.name == "nt":
                 # Set the icon for Windows
@@ -918,7 +918,7 @@ class AppFrame(ctk.CTk):
                 self.iconbitmap(icon_path)
             elif os.name == "posix":
                 import tkinter as tk
-                # Set the icon for MacOS
+                # Set the icon for MacOS and Linux
                 icon_path = os.path.join(
                     application_path, NHK_MACOS_ICON_LOCATION)
                 img = tk.Image("photo", file=icon_path)
