@@ -31,7 +31,6 @@ See the `.txt` file in the repository for an example output.
 
 ## Dependencies
 
-- `Python 3`
 - `chardet`
 - `BeautifulSoup4`
 - `Selenium`
@@ -43,6 +42,17 @@ See the `.txt` file in the repository for an example output.
 - `tabulate`
 - `customtkinter`
 
+Optional:
+
+- `transformers`
+- `scipy`
+- `torch`
+- `torchvision`
+- `torchaudio`
+- `fugashi[unidic]`
+- `ipadic`
+- `deepl`
+
 ## Installation
 
 1. Sign up for a [LINE official account](https://www.linebiz.com/jp/signup/).
@@ -53,16 +63,16 @@ See the `.txt` file in the repository for an example output.
 brew install mecab
 ```
 
-4. Install the required packages listed in the dependencies:
-
-```bash
-pip install -r requirements.txt
-```
-
-5. Clone this repository:
+4. Clone this repository:
 
 ```bash
 git clone https://github.com/KORINZ/nhk_news_web_easy_scraper.git
+```
+
+5. Install the required packages listed in the dependencies (make sure you are inside the cloned repository folder):
+
+```bash
+pip install -r requirements.txt
 ```
 
 ## Terminal Usage (Windows and MacOS)
@@ -104,13 +114,24 @@ sudo apt-get install python3.xx-tk
 
 ## GUI User Guide (ユーザーガイド)
 
-- Click on `クイズ作成` to scrap the news website and generate quizzes.
+- Click on `クイズ作成` to scrap a random news article and generate quizzes.
+- Click on `LINE機密情報入力` to fill in your `CHANNEL_ACCESS_TOKEN` (チャネルアクセストークン) and `USER_ID` (あなたのユーザーID).
+- Click on `LINEに発信` to send the quiz.
+- pending
+
+## Grade Book User Guide
+
+- pending
+
+## Translation User Guide
+
+- pending
 
 ## Future Work
 
 - Create a database to store all past news articles, vocabularies, and quizzes
 - Improve the formatting of the output text file
-- Add more customization options, such as selecting specific news categories or timeframes
+- Add translation to quiz vocabulary
 
 ## Disclaimer
 
