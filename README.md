@@ -23,10 +23,9 @@ See the `.txt` file in the repository for an example output.
 - Extract a random news article from NHK News Web Easy
 - Save article details (URL, date, title, content) and featured vocabularies (with furigana) in a text file
 - Generate a daily quiz for students based on the scraped article
-- Send customized text or sticker messages from a terminal interface
-- Generate quizzes and send them via LINE with GUI
-- Automatically receive (via Google Apps Script) and evaluate answers and upload them to Google Sheets
-- Get sentiment scores for the news article
+- Send customized quizzes, messages or stickers to LINE with Python GUI
+- Automatically receive (via Google Apps Script) and evaluate answers and upload them to Google Sheets (via Python)
+- Check sentiment scores for the news article
 - Translate news articles/vocabularies to other languages via DeepL API with command line interface
 
 ## Dependencies
