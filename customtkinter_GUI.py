@@ -7,7 +7,6 @@ from datetime import datetime
 from typing import Tuple, Callable
 from webbrowser import open_new_tab
 from tkinter import TclError
-import tkinter as tk
 
 # Third-party imports
 import customtkinter as ctk
@@ -15,7 +14,6 @@ import threading
 from requests.exceptions import ConnectionError
 
 
-# TODO: Add icon for MacOS
 # TODO: Fix import error when using sentiment analysis
 
 
@@ -915,9 +913,12 @@ class AppFrame(ctk.CTk):
         # Get the correct icon path based on the application path
         try:
             if os.name == "nt":
+                # Set the icon for Windows
                 icon_path = os.path.join(application_path, NHK_ICON_LOCATION)
                 self.iconbitmap(icon_path)
             elif os.name == "posix":
+                import tkinter as tk
+                # Set the icon for MacOS
                 icon_path = os.path.join(
                     application_path, NHK_MACOS_ICON_LOCATION)
                 img = tk.Image("photo", file=icon_path)
