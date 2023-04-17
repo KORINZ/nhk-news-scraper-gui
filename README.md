@@ -28,7 +28,7 @@ See the `.txt` file in the repository for an example output.
 - Check sentiment scores for the news article
 - Translate news articles/vocabularies to other languages via DeepL API with command line interface
 
-## Dependencies
+## Dependencies (Tested on Python 3.11)
 
 - `chardet`
 - `BeautifulSoup4`
@@ -56,7 +56,7 @@ Optional:
 
 1. Sign up for a [LINE official account](https://www.linebiz.com/jp/signup/).
 2. Get your own `CHANNEL_ACCESS_TOKEN` (チャネルアクセストークン) and `USER_ID` (あなたのユーザーID) from [LINE Developers](https://developers.line.biz/ja/) Messaging API Settings.
-3. For macOS, installation of MeCab is required:
+3. For macOS, installation of MeCab is required if you want to use sentiment analysis:
 
 ```bash
 brew install mecab
@@ -100,7 +100,7 @@ and essential vocabulary (with furigana) for a random news article.
 sudo apt update
 sudo apt install -y fonts-ipafont
 ```
-2. Install tkinter; replace `xx` with the current Python version:
+2. Install tkinter; replace `xx` with your Python version:
 
 ```bash
 sudo apt-get install python3.xx-tk
