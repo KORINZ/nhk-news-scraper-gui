@@ -72,8 +72,13 @@ git clone https://github.com/KORINZ/nhk_news_web_easy_scraper.git
 sudo apt update
 sudo apt install -y fonts-ipafont
 ```
+2. Install tkinter; replace `xx` with the current Python version:
 
-2. Install support for Linux GUI apps, see:
+```bash
+sudo apt-get install python3.xx-tk
+```
+
+3. Install support for Linux GUI apps, see:
 
 <https://learn.microsoft.com/en-us/windows/wsl/tutorials/gui-apps>
 
