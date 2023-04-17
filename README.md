@@ -64,6 +64,24 @@ pip install -r requirements.txt
 git clone https://github.com/KORINZ/nhk_news_web_easy_scraper.git
 ```
 
+## Usage (Windows and MacOS)
+
+1. To use GUI:
+
+```bash
+python customtkinter_GUI.py
+```
+
+2. To use on terminal:
+
+```bash
+python main.py
+```
+
+3. The script will generate a text file news_article.txt containing the article's URL, date, title, content,
+and important vocabularies (with furigana) for a random news article.
+
+
 ## GUI for WSL (Windows Subsystem for Linux)
 
 1. Install Japanese fonts:
@@ -82,22 +100,6 @@ sudo apt-get install python3.xx-tk
 
 <https://learn.microsoft.com/en-us/windows/wsl/tutorials/gui-apps>
 
-## Usage
-
-1. To use GUI:
-
-```bash
-python customtkinter_GUI.py
-```
-
-2. To use on terminal:
-
-```bash
-python main.py
-```
-
-3. The script will generate a text file news_article.txt containing the article's URL, date, title, content,
-and important vocabularies (with furigana) for a random news article.
 
 ## GUI User Guide (ユーザーガイド)
 
