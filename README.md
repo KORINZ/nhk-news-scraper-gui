@@ -106,11 +106,19 @@ sudo apt-get install python3.xx-tk
 
 - Click on `クイズ作成` to scrap the news website and generate quizzes.
 
+## Grade Book User Guide
+
+- pending
+
+## Translation User Guide
+
+- pending
+
 ## Future Work
 
 - Create a database to store all past news articles, vocabularies, and quizzes
 - Improve the formatting of the output text file
-- Add more customization options, such as selecting specific news categories or timeframes
+- Add translation to quiz vocabulary
 
 ## Disclaimer
 
