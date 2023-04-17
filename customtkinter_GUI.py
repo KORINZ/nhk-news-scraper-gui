@@ -14,7 +14,6 @@ import threading
 from requests.exceptions import ConnectionError
 
 
-# TODO: Add icon for MacOS
 # TODO: Fix import error when using sentiment analysis
 
 
@@ -22,7 +21,7 @@ from requests.exceptions import ConnectionError
 from main import main, push_quiz, save_quiz_vocab
 
 # Version number
-VERSION = "v2.2.0"
+VERSION = "v2.3.1"
 
 # File locations
 PRONOUN_QUIZ_LOCATION = r"./txt_files/pronunciation_quiz.txt"
@@ -31,6 +30,7 @@ LOG_LOCATION = r"./txt_files/push_log.txt"
 NEWS_ARTICLE_LOCATION = r"./txt_files/news_article.txt"
 PAST_QUIZ_LOCATION = r"./txt_files/past_quiz_data.txt"
 NHK_ICON_LOCATION = r"./icons/nhk.ico"
+NHK_MACOS_ICON_LOCATION = r"./icons/nhk.gif"
 LINE_ICON_LOCATION = r"./icons/LINE.ico"
 ALERT_ICON_LOCATION = r"./icons/alert.ico"
 SHEET_ICON_LOCATION = r"./icons/sheet.ico"
@@ -429,10 +429,11 @@ class MainTab(ctk.CTkTabview):
         delete_past_quiz_popup = ctk.CTkToplevel(self)
         delete_past_quiz_popup.title("過去のクイズを削除")
         # ?Bug from customtkinter
-        self.after(
-            200, lambda: self.set_icon(
-                delete_past_quiz_popup, ALERT_ICON_LOCATION)
-        )
+        if os.name == "nt":
+            self.after(
+                200, lambda: self.set_icon(
+                    delete_past_quiz_popup, ALERT_ICON_LOCATION)
+            )
 
         pop_width, pop_height, x_position, y_position = self.calculate_window_size(
             popup_width=600, popup_height=200
@@ -713,10 +714,11 @@ class MainTab(ctk.CTkTabview):
         grade_book_url_popup = ctk.CTkToplevel(self)
         grade_book_url_popup.title("成績表URL入力")
         # ?Bug from customtkinter
-        self.after(
-            200, lambda: self.set_icon(
-                grade_book_url_popup, SHEET_ICON_LOCATION)
-        )
+        if os.name == "nt":
+            self.after(
+                200, lambda: self.set_icon(
+                    grade_book_url_popup, SHEET_ICON_LOCATION)
+            )
 
         pop_width, pop_height, x_position, y_position = self.calculate_window_size(
             popup_width=520, popup_height=120
@@ -764,10 +766,11 @@ class MainTab(ctk.CTkTabview):
         # line_confidential_popup.resizable(False, False)
 
         # ?Bug from customtkinter
-        self.after(
-            200, lambda: self.set_icon(
-                line_confidential_popup, LINE_ICON_LOCATION)
-        )
+        if os.name == "nt":
+            self.after(
+                200, lambda: self.set_icon(
+                    line_confidential_popup, LINE_ICON_LOCATION)
+            )
 
         # Calculate the position for the center of the main window
         popup_width, popup_height, x_position, y_position = self.calculate_window_size(
@@ -908,10 +911,19 @@ class AppFrame(ctk.CTk):
             application_path = os.path.dirname(os.path.abspath(__file__))
 
         # Get the correct icon path based on the application path
-        icon_path = os.path.join(application_path, NHK_ICON_LOCATION)
-
         try:
-            self.iconbitmap(icon_path)
+            if os.name == "nt":
+                # Set the icon for Windows
+                icon_path = os.path.join(application_path, NHK_ICON_LOCATION)
+                self.iconbitmap(icon_path)
+            elif os.name == "posix":
+                import tkinter as tk
+                # Set the icon for MacOS
+                icon_path = os.path.join(
+                    application_path, NHK_MACOS_ICON_LOCATION)
+                img = tk.Image("photo", file=icon_path)
+                self.tk.call("wm", "iconphoto", self._w, img)  # type: ignore
+
         except TclError:
             print("Error: Unable to set the window icon.")
             pass
@@ -949,8 +961,8 @@ class AppFrame(ctk.CTk):
         # Create the number of questions entry
         self.label_number = ctk.CTkLabel(
             master=self, text="最大問題数:", font=self.font)
-        self.label_number.grid(row=1, column=0, padx=(
-            20, 0), pady=10, sticky="w")
+        self.label_number.grid(
+            row=1, column=0, padx=(20, 0), pady=10, sticky="w")
         self.quiz_number_entry = ctk.CTkEntry(
             master=self, font=self.font, width=32)
         self.quiz_number_entry.grid(
