@@ -63,16 +63,16 @@ Optional:
 brew install mecab
 ```
 
-4. Install the required packages listed in the dependencies:
-
-```bash
-pip install -r requirements.txt
-```
-
-5. Clone this repository:
+4. Clone this repository:
 
 ```bash
 git clone https://github.com/KORINZ/nhk_news_web_easy_scraper.git
+```
+
+5. Install the required packages listed in the dependencies:
+
+```bash
+pip install -r requirements.txt
 ```
 
 ## Terminal Usage (Windows and MacOS)
