@@ -54,7 +54,7 @@ Optional:
 - `ipadic`
 - `deepl`
 
-Note: Currently, `fugashi` will not work on Python downloaded from Microsoft Store. You will need to install Python from the official website if you wan to use sentiment analysis.
+Note: currently, `fugashi` will not work on Python downloaded from Microsoft Store. You will need to install Python from the official website if you want to use sentiment analysis.
 
 ## Installation
 
@@ -117,7 +117,7 @@ sudo apt-get install python3.xx-tk
 ## GUI User Guide (ユーザーガイド)
 
 - Click on `クイズ作成` to scrap a random news article and generate quizzes.
-- Click on `LINE機密情報入力` to fill in your `CHANNEL_ACCESS_TOKEN` (チャネルアクセストークン) and `USER_ID` (あなたのユーザーID).
+- Click on `LINE機密情報入力` inside `設定` tab to fill in your `CHANNEL_ACCESS_TOKEN` (チャネルアクセストークン) and `USER_ID` (あなたのユーザーID).
 - Click on `LINEに発信` to send the quiz.
 - pending
 
