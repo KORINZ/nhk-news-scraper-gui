@@ -32,6 +32,8 @@ See the `.txt` file in the repository for an example output.
 
 Tested on Python 3.11 with Windows 11, WSL (Ubuntu 20.04), and macOS Ventura.
 
+Required:
+
 - `chardet`
 - `BeautifulSoup4`
 - `Selenium`
