@@ -32,18 +32,23 @@ See the `.txt` file in the repository for an example output.
 
 Tested on Python 3.11 with Windows 11, WSL (Ubuntu 20.04), and macOS Ventura.
 
+**Required**:
+
 - `chardet`
 - `BeautifulSoup4`
 - `Selenium`
 - `webdriver_manager`
 - `requests`
 - `line-bot-sdk`
+- `customtkinter`
+
+Optional (check_grade_book.py):
+
 - `pandas`
 - `gspread`
 - `tabulate`
-- `customtkinter`
 
-Optional:
+Optional (check_sentiment.py):
 
 - `transformers`
 - `scipy`
@@ -52,15 +57,17 @@ Optional:
 - `torchaudio`
 - `fugashi[unidic]`
 - `ipadic`
+
+Optional (translate.py):
 - `deepl`
 
-Note: Currently, `fugashi` will not work on Python downloaded from Microsoft Store. You will need to install Python from the official website if you wan to use sentiment analysis.
+Note: currently, `fugashi` will not work on Python downloaded from Microsoft Store. You will need to install Python from the official website if you want to use sentiment analysis.
 
 ## Installation
 
 1. Sign up for a [LINE official account](https://www.linebiz.com/jp/signup/).
 2. Get your own `CHANNEL_ACCESS_TOKEN` (チャネルアクセストークン) and `USER_ID` (あなたのユーザーID) from [LINE Developers](https://developers.line.biz/ja/) Messaging API Settings.
-3. For macOS, installation of MeCab is required if you want to use sentiment analysis:
+3. For macOS users, installation of MeCab is required if you want to use sentiment analysis:
 
 ```bash
 brew install mecab
@@ -92,8 +99,10 @@ python customtkinter_GUI.py
 python main.py
 ```
 
-3. The script will generate a text file news_article.txt containing the article's URL, date, title, content,
-and essential vocabulary (with furigana) for a random news article.
+3. The script will generate a text file `news_article.txt` containing the article's URL, date, title, content,
+and essential vocabulary (with furigana and defintions) from a random news article.
+
+4. text files for quizzes and logging will also be generated.
 
 ## GUI for WSL (Windows Subsystem for Linux)
 
@@ -114,18 +123,19 @@ sudo apt-get install python3.xx-tk
 
 <https://learn.microsoft.com/en-us/windows/wsl/tutorials/gui-apps>
 
-## GUI User Guide (ユーザーガイド)
+## GUI User Guide (GUI ユーザーガイド)
 
 - Click on `クイズ作成` to scrap a random news article and generate quizzes.
-- Click on `LINE機密情報入力` to fill in your `CHANNEL_ACCESS_TOKEN` (チャネルアクセストークン) and `USER_ID` (あなたのユーザーID).
+- Click on `LINE機密情報入力` inside `設定` tab to fill in your `CHANNEL_ACCESS_TOKEN` (チャネルアクセストークン) and `USER_ID` (あなたのユーザーID).
 - Click on `LINEに発信` to send the quiz.
 - pending
 
-## Grade Book User Guide
+## Grade Book User Guide (check_grade_book.py)
 
+- Set up a Google Cloud Platform account is required (https://console.cloud.google.com/).
 - pending
 
-## Translation User Guide
+## Translation User Guide (translate.py)
 
 - pending
 
