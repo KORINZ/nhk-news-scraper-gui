@@ -67,7 +67,7 @@ Note: currently, `fugashi` will not work on Python downloaded from Microsoft Sto
 
 1. Sign up for a [LINE official account](https://www.linebiz.com/jp/signup/).
 2. Get your own `CHANNEL_ACCESS_TOKEN` (チャネルアクセストークン) and `USER_ID` (あなたのユーザーID) from [LINE Developers](https://developers.line.biz/ja/) Messaging API Settings.
-3. For macOS, installation of MeCab is required if you want to use sentiment analysis:
+3. For macOS users, installation of MeCab is required if you want to use sentiment analysis:
 
 ```bash
 brew install mecab
