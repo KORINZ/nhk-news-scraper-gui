@@ -43,7 +43,7 @@ Tested on Python 3.11 with Windows 11, WSL (Ubuntu 20.04), and macOS Ventura.
 - `tabulate`
 - `customtkinter`
 
-Optional:
+Optional (check_sentiment.py):
 
 - `transformers`
 - `scipy`
@@ -52,6 +52,8 @@ Optional:
 - `torchaudio`
 - `fugashi[unidic]`
 - `ipadic`
+
+Optional (translate.py):
 - `deepl`
 
 Note: currently, `fugashi` will not work on Python downloaded from Microsoft Store. You will need to install Python from the official website if you want to use sentiment analysis.
