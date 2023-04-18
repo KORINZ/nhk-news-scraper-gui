@@ -99,8 +99,10 @@ python customtkinter_GUI.py
 python main.py
 ```
 
-3. The script will generate a text file news_article.txt containing the article's URL, date, title, content,
-and essential vocabulary (with furigana) for a random news article.
+3. The script will generate a text file `news_article.txt` containing the article's URL, date, title, content,
+and essential vocabulary (with furigana and defintions) from a random news article.
+
+4. text files for quizzes and logging will also be generated.
 
 ## GUI for WSL (Windows Subsystem for Linux)
 
