@@ -28,7 +28,9 @@ See the `.txt` file in the repository for an example output.
 - Check sentiment scores for the news article
 - Translate news articles/vocabularies to other languages via DeepL API with command line interface
 
-## Dependencies (Tested on Python 3.11)
+## Dependencies
+
+Tested on Python 3.11 with Windows 11, WSL (Ubuntu 20.04), and macOS Ventura.
 
 - `chardet`
 - `BeautifulSoup4`
@@ -51,6 +53,8 @@ Optional:
 - `fugashi[unidic]`
 - `ipadic`
 - `deepl`
+
+Note: Currently, `fugashi` will not work on Python downloaded from Microsoft Store. You will need to install Python from the official website if you wan to use sentiment analysis.
 
 ## Installation
 
@@ -91,7 +95,6 @@ python main.py
 3. The script will generate a text file news_article.txt containing the article's URL, date, title, content,
 and essential vocabulary (with furigana) for a random news article.
 
-
 ## GUI for WSL (Windows Subsystem for Linux)
 
 1. Install Japanese fonts:
@@ -100,6 +103,7 @@ and essential vocabulary (with furigana) for a random news article.
 sudo apt update
 sudo apt install -y fonts-ipafont
 ```
+
 2. Install tkinter; replace `xx` with your Python version:
 
 ```bash
@@ -109,7 +113,6 @@ sudo apt-get install python3.xx-tk
 3. Install support for Linux GUI apps, see:
 
 <https://learn.microsoft.com/en-us/windows/wsl/tutorials/gui-apps>
-
 
 ## GUI User Guide (ユーザーガイド)
 
