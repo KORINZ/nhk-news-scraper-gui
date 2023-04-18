@@ -40,10 +40,13 @@ Required:
 - `webdriver_manager`
 - `requests`
 - `line-bot-sdk`
+- `customtkinter`
+
+Optional (check_grade_book.py):
+
 - `pandas`
 - `gspread`
 - `tabulate`
-- `customtkinter`
 
 Optional (check_sentiment.py):
 
@@ -118,18 +121,19 @@ sudo apt-get install python3.xx-tk
 
 <https://learn.microsoft.com/en-us/windows/wsl/tutorials/gui-apps>
 
-## GUI User Guide (ユーザーガイド)
+## GUI User Guide (GUI ユーザーガイド)
 
 - Click on `クイズ作成` to scrap a random news article and generate quizzes.
 - Click on `LINE機密情報入力` inside `設定` tab to fill in your `CHANNEL_ACCESS_TOKEN` (チャネルアクセストークン) and `USER_ID` (あなたのユーザーID).
 - Click on `LINEに発信` to send the quiz.
 - pending
 
-## Grade Book User Guide
+## Grade Book User Guide (check_grade_book.py)
 
+- Set up a Google Cloud Platform account is required (https://console.cloud.google.com/).
 - pending
 
-## Translation User Guide
+## Translation User Guide (translate.py)
 
 - pending
 
