@@ -22,6 +22,8 @@ logging.basicConfig(level=logging.INFO)
 
 # TODO: press esc to exit the program, press c or enter to confirm the selection
 
+# TODO: add pyclip to copy the text to clipboard
+
 
 def set_tesseract_path() -> None:
     """Set the path to the Tesseract executable."""
