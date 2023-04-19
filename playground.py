@@ -13,7 +13,10 @@ from PIL import Image, ImageEnhance, ImageFilter
 logging.basicConfig(level=logging.INFO)
 
 # Set the path to the Tesseract executable
-pytesseract.pytesseract.tesseract_cmd = r"C:/Program Files/Tesseract-OCR/tesseract.exe"
+if os.name == "nt":
+    pytesseract.pytesseract.tesseract_cmd = r"C:/Program Files/Tesseract-OCR/tesseract.exe"
+elif os.name == "posix":
+    pytesseract.pytesseract.tesseract_cmd = r"/opt/homebrew/bin/tesseract"
 
 
 def preprocess_image(
