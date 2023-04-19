@@ -3,6 +3,7 @@
 # Standard library imports
 import logging
 import os
+import sys
 from typing import Tuple, Optional
 
 # Third-party imports
@@ -12,11 +13,21 @@ from PIL import Image, ImageEnhance, ImageFilter
 # Set the logging level
 logging.basicConfig(level=logging.INFO)
 
-# Set the path to the Tesseract executable
-if os.name == "nt":
-    pytesseract.pytesseract.tesseract_cmd = r"C:/Program Files/Tesseract-OCR/tesseract.exe"
-elif os.name == "posix":
-    pytesseract.pytesseract.tesseract_cmd = r"/opt/homebrew/bin/tesseract"
+
+def set_tesseract_path() -> None:
+    """Set the path to the Tesseract executable."""
+    if os.name == "nt":
+        path = r"C:/Program Files/Tesseract-OCR/tesseract.exe"
+    elif os.name == "posix":
+        path = r"/opt/homebrew/bin/tesseract"
+    else:
+        raise RuntimeError(f"Unsupported operating system: {os.name}")
+
+    if not os.path.exists(path):
+        raise FileNotFoundError(
+            f"Tesseract executable not found. Please check the path: {path}")
+
+    pytesseract.pytesseract.tesseract_cmd = path
 
 
 def preprocess_image(
@@ -83,6 +94,12 @@ if __name__ == "__main__":
     """
     The main script that performs OCR on a specified image and prints the result.
     """
+    try:
+        set_tesseract_path()
+    except (RuntimeError, FileNotFoundError) as e:
+        print(e)
+        sys.exit(1)
+
     image_path = r"./ocr_images/2.png"
     try:
         with Image.open(image_path) as image:
