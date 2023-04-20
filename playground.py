@@ -107,7 +107,10 @@ def ocr_image(
             image = preprocess_image(image, **preprocess_params)
         else:
             image = preprocess_image(image)
-
+        
+        # Save the preprocessed image
+        image.save("./ocr_images/preprocessed.png")
+        
         # Display the preprocessed image
         image.show()
 
