@@ -1,20 +1,21 @@
 """A playground for testing out OCR on images of Japanese text."""
+"""Does not work on Mac OS"""
 
 # Standard library imports
+
+# Third-party imports
+
+# Set the logging level
 import logging
 import os
 import sys
 from typing import Tuple, Optional
-
-# Third-party imports
 import pytesseract
 from PIL import Image, ImageEnhance, ImageFilter
 import cv2
 import numpy as np
 import pyautogui
 import pyperclip
-
-# Set the logging level
 logging.basicConfig(level=logging.INFO)
 
 # TODO: filter non-text characters (e.g. emojis, symbols, etc.) and background pictures
@@ -136,7 +137,8 @@ def select_region_and_capture(coords: dict) -> Image.Image:
 
     # Create a window to select the region in fullscreen mode
     cv2.namedWindow("Select ROI", cv2.WINDOW_NORMAL)
-    cv2.setWindowProperty("Select ROI", cv2.WND_PROP_FULLSCREEN, cv2.WINDOW_FULLSCREEN)
+    cv2.setWindowProperty(
+        "Select ROI", cv2.WND_PROP_FULLSCREEN, cv2.WINDOW_FULLSCREEN)
     cv2.setMouseCallback("Select ROI", draw_rectangle, param=coords)
 
     while True:
