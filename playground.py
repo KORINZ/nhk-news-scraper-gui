@@ -188,6 +188,7 @@ def select_region_and_capture(coords: dict) -> Image.Image:
 
 
 def compare_result_answer(result, answer) -> None:
+    """Compare the OCR result with the correct answer."""
     import difflib
     match = difflib.SequenceMatcher(None, result, answer)
     similarity = match.ratio()
