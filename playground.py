@@ -18,12 +18,6 @@ logging.basicConfig(level=logging.INFO)
 
 # TODO: filter non-text characters (e.g. emojis, symbols, etc.) and background pictures
 
-# TODO: fix green box blinking when first time selecting the region
-
-# TODO: press esc to exit the program, press c or enter to confirm the selection
-
-# TODO: add pyclip to copy the text to clipboard
-
 
 def set_tesseract_path() -> None:
     """Set the path to the Tesseract executable."""
@@ -68,7 +62,7 @@ def preprocess_image(
     contrast: float = 2.0,
     sharpness: float = 2.0,
     denoise_kernel_size: int = 3,
-    threshold: int = 135,
+    threshold: int = 145,
 ) -> Image.Image:
     """Preprocess an image to improve OCR accuracy."""
     if size is not None:
@@ -114,7 +108,10 @@ def ocr_image(
     # psm 6: Assume a single uniform block of text. oem 3: Use LSTM neural network.
     config = "--psm 6 --oem 3 -c preserve_interword_spaces=1"
     text = pytesseract.image_to_string(image, lang=lang, config=config)
-    return text.strip().replace(" ", "")
+    text = text.strip().replace(" ", "").replace("\n", "")
+    if lang == "jpn":
+        text = text.replace("?", "？").replace("!", "！").replace(".", "。")
+    return text
 
 
 def take_screenshot_and_save(file_name: str) -> None:
@@ -190,6 +187,23 @@ def select_region_and_capture(coords: dict) -> Image.Image:
     return screenshot_region
 
 
+def compare_result_answer(result, answer) -> None:
+    import difflib
+    match = difflib.SequenceMatcher(None, result, answer)
+    similarity = match.ratio()
+    print(f"Similarity ratio: {similarity:.2%}")
+
+    for tag, i1, i2, j1, j2 in match.get_opcodes():
+        if tag == "replace":
+            print(
+                f"Mismatched parts: OCR result - '{result[i1:i2]}', Correct answer - '{answer[j1:j2]}'")
+        elif tag == "delete":
+            print(f"Extra parts: OCR result - '{result[i1:i2]}'")
+        elif tag == "insert":
+            print(f"Missing parts: Correct answer - '{answer[j1:j2]}'")
+
+
+
 if __name__ == "__main__":
     try:
         set_tesseract_path()
@@ -209,6 +223,11 @@ if __name__ == "__main__":
     )
 
     print(result)
+
+    answer = """"""
+
+    if answer:
+        compare_result_answer(result, answer)
 
     # Copy the OCR result to the clipboard
     pyperclip.copy(result)
