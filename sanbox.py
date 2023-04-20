@@ -8,6 +8,7 @@ from playground import set_tesseract_path, select_region_and_capture, ocr_image
 
 
 # TODO: main frame: take screenshot, import image, settings (language, parameters, shortcuts, etc.)
+# TODO: screenshot on release checkbox
 # TODO: tab1: screenshot and ocr image with scroll bar
 # TODO: tab2: imported image and ocr image with scroll bar
 # TODO: tab3: text result box
