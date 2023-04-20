@@ -43,6 +43,7 @@ def set_tesseract_path() -> None:
 
 
 def draw_rectangle(event, x, y, flags, param) -> None:
+    """Draw a rectangle on the image when the mouse is clicked and dragged"""
     coords = param  # Get the coordinates dictionary from the 'param' argument
 
     if event == cv2.EVENT_LBUTTONDOWN:
@@ -99,6 +100,7 @@ def ocr_image(
     preprocess: bool = True,
     preprocess_params: Optional[dict] = None,
 ) -> str:
+    """Perform OCR on an image."""
     if preprocess:
         if preprocess_params is not None:
             logging.info("Preprocessing image...\n")
@@ -122,6 +124,7 @@ def take_screenshot_and_save(file_name: str) -> None:
 
 
 def get_roi_coordinates(coords: dict) -> Tuple[int, int, int, int]:
+    """Get the coordinates of the region of interest (ROI)"""
     # Ensure that the coordinates are ordered correctly
     x_start, x_end = min(coords["ix"], coords["x_end"]), max(
         coords["ix"], coords["x_end"]
