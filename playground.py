@@ -10,8 +10,8 @@ from typing import Tuple, Optional
 import pytesseract
 from PIL import Image, ImageEnhance, ImageFilter
 import cv2
-import numpy as np
 import pyautogui
+import pyperclip
 
 # Set the logging level
 logging.basicConfig(level=logging.INFO)
@@ -49,6 +49,8 @@ def draw_rectangle(event, x, y, flags, param) -> None:
         if not coords["drawing"]:
             coords["drawing"] = True
             coords["ix"], coords["iy"] = x, y
+            # Set initial coords when first clicked
+            coords["x_end"], coords["y_end"] = x, y
 
     elif event == cv2.EVENT_MOUSEMOVE:
         if coords["drawing"]:
@@ -122,8 +124,7 @@ if __name__ == "__main__":
 
     # Take a screenshot and select the region
     screenshot = pyautogui.screenshot()
-    screenshot = cv2.cvtColor(np.array(screenshot), cv2.COLOR_RGB2BGR)
-    cv2.imwrite("temp_screenshot.png", screenshot)
+    screenshot.save('temp_screenshot.png')
     img = cv2.imread("temp_screenshot.png")
 
     coords = {"ix": -1, "iy": -1, "x_end": -1, "y_end": -1, "drawing": False}
@@ -155,7 +156,10 @@ if __name__ == "__main__":
         cv2.imshow("Select ROI", img_copy)
         key = cv2.waitKey(1) & 0xFF
 
-        if key == ord("c"):  # Press 'c' to confirm the selection
+        if key == 27:  # Press 'Esc' to exit the program
+            cv2.destroyAllWindows()
+            sys.exit(0)
+        elif key == ord("c") or key == 13:  # Press 'c' or 'Enter' to confirm the selection
             if (
                 coords["ix"] != -1
                 and coords["iy"] != -1
@@ -186,4 +190,8 @@ if __name__ == "__main__":
             "size": (screenshot_region.width * 4, screenshot_region.height * 4)
         },
     )
+
     print(result)
+
+    # Copy the OCR result to the clipboard
+    pyperclip.copy(result)
