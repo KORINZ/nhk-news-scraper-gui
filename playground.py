@@ -1,24 +1,28 @@
-"""A playground for testing out OCR on images of Japanese text."""
-"""Does not work on Mac OS"""
-
 # Standard library imports
-
-# Third-party imports
-
-# Set the logging level
 import logging
 import os
 import sys
 from typing import Tuple, Optional
+
+# Third-party imports
 import pytesseract
 from PIL import Image, ImageEnhance, ImageFilter
 import cv2
 import numpy as np
 import pyautogui
 import pyperclip
+
+# Set the logging level
 logging.basicConfig(level=logging.INFO)
 
+"""A playground for testing out OCR on images of Japanese text."""
+"""Does not work on Mac OS"""
+
 # TODO: filter non-text characters (e.g. emojis, symbols, etc.) and background pictures
+
+# TODO: create a GUI to select the region of interest (ROI) and perform OCR on the selected region
+
+# TODO: change macos implementation to read image instead of screenshot
 
 
 def set_tesseract_path() -> None:
