@@ -115,19 +115,28 @@ def ocr_image(
     return text.strip().replace(" ", "")
 
 
-if __name__ == "__main__":
-    try:
-        set_tesseract_path()
-    except (RuntimeError, FileNotFoundError) as e:
-        print(e)
-        sys.exit(1)
-
-    # Take a screenshot and select the region
+def take_screenshot_and_save(file_name: str) -> None:
+    """Take a screenshot using pyautogui and save it as a file."""
     screenshot = pyautogui.screenshot()
-    screenshot.save('temp_screenshot.png')
-    img = cv2.imread("temp_screenshot.png")
+    screenshot.save(file_name)
 
-    coords = {"ix": -1, "iy": -1, "x_end": -1, "y_end": -1, "drawing": False}
+
+def get_roi_coordinates(coords: dict) -> Tuple[int, int, int, int]:
+    # Ensure that the coordinates are ordered correctly
+    x_start, x_end = min(coords["ix"], coords["x_end"]), max(
+        coords["ix"], coords["x_end"]
+    )
+    y_start, y_end = min(coords["iy"], coords["y_end"]), max(
+        coords["iy"], coords["y_end"]
+    )
+
+    return x_start, y_start, x_end - x_start, y_end - y_start
+
+
+def select_region_and_capture(coords: dict) -> Image.Image:
+    """Display a window to select the region, and capture the selected region."""
+    take_screenshot_and_save("temp_screenshot.png")
+    img = cv2.imread("temp_screenshot.png")
 
     # Create a window to select the region in fullscreen mode
     cv2.namedWindow("Select ROI", cv2.WINDOW_NORMAL)
@@ -159,7 +168,9 @@ if __name__ == "__main__":
         if key == 27:  # Press 'Esc' to exit the program
             cv2.destroyAllWindows()
             sys.exit(0)
-        elif key == ord("c") or key == 13:  # Press 'c' or 'Enter' to confirm the selection
+        elif (
+            key == ord("c") or key == 13
+        ):  # Press 'c' or 'Enter' to confirm the selection
             if (
                 coords["ix"] != -1
                 and coords["iy"] != -1
@@ -169,19 +180,22 @@ if __name__ == "__main__":
                 break
 
     cv2.destroyAllWindows()
-
-    # Ensure that the coordinates are ordered correctly
-    x_start, x_end = min(coords["ix"], coords["x_end"]), max(
-        coords["ix"], coords["x_end"]
-    )
-    y_start, y_end = min(coords["iy"], coords["y_end"]), max(
-        coords["iy"], coords["y_end"]
-    )
-
-    region = (x_start, y_start, x_end - x_start, y_end - y_start)
+    region = get_roi_coordinates(coords)
 
     # Use pyautogui.screenshot to capture the region based on the given coordinates
     screenshot_region = pyautogui.screenshot(region=region)
+    return screenshot_region
+
+
+if __name__ == "__main__":
+    try:
+        set_tesseract_path()
+    except (RuntimeError, FileNotFoundError) as e:
+        print(e)
+        sys.exit(1)
+
+    coords = {"ix": -1, "iy": -1, "x_end": -1, "y_end": -1, "drawing": False}
+    screenshot_region = select_region_and_capture(coords)
 
     # Perform OCR on the selected region
     result = ocr_image(
