@@ -136,8 +136,7 @@ def select_region_and_capture(coords: dict) -> Image.Image:
 
     # Create a window to select the region in fullscreen mode
     cv2.namedWindow("Select ROI", cv2.WINDOW_NORMAL)
-    cv2.setWindowProperty(
-        "Select ROI", cv2.WND_PROP_FULLSCREEN, cv2.WINDOW_FULLSCREEN)
+    cv2.setWindowProperty("Select ROI", cv2.WND_PROP_FULLSCREEN, cv2.WINDOW_FULLSCREEN)
     cv2.setMouseCallback("Select ROI", draw_rectangle, param=coords)
 
     while True:
@@ -183,7 +182,9 @@ def select_region_and_capture(coords: dict) -> Image.Image:
 
     # Convert the region screenshot to a PIL Image object
     screenshot_region = Image.frombytes(
-        "RGB", (screenshot_region.width, screenshot_region.height), screenshot_region.tobytes()
+        "RGB",
+        (screenshot_region.width, screenshot_region.height),
+        screenshot_region.tobytes(),
     )
 
     return screenshot_region
@@ -192,6 +193,7 @@ def select_region_and_capture(coords: dict) -> Image.Image:
 def compare_result_answer(result, answer) -> None:
     """Compare the OCR result with the correct answer."""
     import difflib
+
     match = difflib.SequenceMatcher(None, result, answer)
     similarity = match.ratio()
     print(f"Similarity ratio: {similarity:.2%}")
@@ -199,12 +201,12 @@ def compare_result_answer(result, answer) -> None:
     for tag, i1, i2, j1, j2 in match.get_opcodes():
         if tag == "replace":
             print(
-                f"Mismatched parts: OCR result - '{result[i1:i2]}', Correct answer - '{answer[j1:j2]}'")
+                f"Mismatched parts: OCR result - '{result[i1:i2]}', Correct answer - '{answer[j1:j2]}'"
+            )
         elif tag == "delete":
             print(f"Extra parts: OCR result - '{result[i1:i2]}'")
         elif tag == "insert":
             print(f"Missing parts: Correct answer - '{answer[j1:j2]}'")
-
 
 
 if __name__ == "__main__":
