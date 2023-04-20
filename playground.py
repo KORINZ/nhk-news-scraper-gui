@@ -10,6 +10,7 @@ from typing import Tuple, Optional
 import pytesseract
 from PIL import Image, ImageEnhance, ImageFilter
 import cv2
+import numpy as np
 import pyautogui
 import pyperclip
 
@@ -114,12 +115,6 @@ def ocr_image(
     return text
 
 
-def take_screenshot_and_save(file_name: str) -> None:
-    """Take a screenshot using pyautogui and save it as a file."""
-    screenshot = pyautogui.screenshot()
-    screenshot.save(file_name)
-
-
 def get_roi_coordinates(coords: dict) -> Tuple[int, int, int, int]:
     """Get the coordinates of the region of interest (ROI)"""
     # Ensure that the coordinates are ordered correctly
@@ -135,8 +130,9 @@ def get_roi_coordinates(coords: dict) -> Tuple[int, int, int, int]:
 
 def select_region_and_capture(coords: dict) -> Image.Image:
     """Display a window to select the region, and capture the selected region."""
-    take_screenshot_and_save("temp_screenshot.png")
-    img = cv2.imread("temp_screenshot.png")
+    screenshot = pyautogui.screenshot()
+    img = np.array(screenshot)
+    img = cv2.cvtColor(img, cv2.COLOR_RGB2BGR)
 
     # Create a window to select the region in fullscreen mode
     cv2.namedWindow("Select ROI", cv2.WINDOW_NORMAL)
@@ -184,6 +180,12 @@ def select_region_and_capture(coords: dict) -> Image.Image:
 
     # Use pyautogui.screenshot to capture the region based on the given coordinates
     screenshot_region = pyautogui.screenshot(region=region)
+
+    # Convert the region screenshot to a PIL Image object
+    screenshot_region = Image.frombytes(
+        "RGB", (screenshot_region.width, screenshot_region.height), screenshot_region.tobytes()
+    )
+
     return screenshot_region
 
 
