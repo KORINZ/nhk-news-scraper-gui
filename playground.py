@@ -166,6 +166,21 @@ def select_region_and_capture(coords: dict) -> Image.Image:
                 (0, 255, 0),
                 2,
             )
+
+        # Create a mask around the selected region
+        mask = np.zeros(img_copy.shape, dtype=np.uint8)
+        roi_corners = np.array([[(coords["ix"], coords["iy"]), (coords["x_end"], coords["iy"]), (coords["x_end"], coords["y_end"]), (coords["ix"], coords["y_end"])]], dtype=np.int32)
+        channel_count = img_copy.shape[2]
+        ignore_mask_color = (255,)*channel_count
+        cv2.fillPoly(mask, roi_corners, ignore_mask_color)
+
+        # Create an inverse mask of the selected region
+        inverse_mask = cv2.bitwise_not(mask)
+
+        # Apply the mask (set the mask's opacity)
+        opacity = -0.1
+        img_copy = cv2.addWeighted(inverse_mask, opacity, img_copy, 1, 0)
+
         cv2.imshow("Select ROI", img_copy)
         key = cv2.waitKey(1) & 0xFF
 
@@ -197,6 +212,7 @@ def select_region_and_capture(coords: dict) -> Image.Image:
     )
 
     return screenshot_region
+
 
 
 def compare_result_answer(result, answer) -> None:
