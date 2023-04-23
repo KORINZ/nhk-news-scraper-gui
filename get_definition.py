@@ -73,7 +73,7 @@ def get_definition_list(
 
         text_content = dictionary_box.text
         text_content = "".join(text_content.split())
-        text_content = text_content.replace("1", "： 1", 1)
+        text_content = text_content.replace("1", "：1", 1)
         print(text_content)
         definition_list_.append(text_content)
         if progress_callback:
