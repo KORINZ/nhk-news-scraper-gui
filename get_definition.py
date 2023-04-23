@@ -84,7 +84,7 @@ def get_definition_list(
 
 
 if __name__ == "__main__":
-    test_url = "https://www3.nhk.or.jp/news/easy/k10014030681000/k10014030681000.html"
+    test_url = "https://www3.nhk.or.jp/news/easy/k10014038221000/k10014038221000.html"
     driver = setup_selenium_webdriver()
     definition_list = get_definition_list(driver, test_url)
     driver.close()
