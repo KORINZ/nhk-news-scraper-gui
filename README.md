@@ -18,6 +18,10 @@ The script extracts the article's URL, title, content, and essential vocabulary 
 
 See the `.txt` file in the repository for an example output.
 
+本プロジェクトは、語学学習者に適したより簡単な日本語で書かれたニュース記事を提供するサイト[「NHKニュースウェブイージー」](https://www3.nhk.or.jp/news/easy/)からニュース記事をスクレイピングするためのPythonスクリプトです。記事のURL、タイトル、内容、必須語彙をふりがなとともに抽出し、スクレイピングされた記事をもとに学生向けのクイズを生成するスクリプトです。
+
+出力例については、リポジトリにある`.txt`ファイルを参照してください。
+
 ## Features
 
 - Extract a random news article from NHK News Web Easy
