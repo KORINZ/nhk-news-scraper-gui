@@ -13,7 +13,7 @@ from selenium.webdriver.common.action_chains import ActionChains
 from selenium.webdriver.chrome.service import Service as ChromeService
 from webdriver_manager.chrome import ChromeDriverManager
 
-PATTERN = re.compile(r"^RSHOK-")
+PATTERN = re.compile(r"^RSHOK")
 
 
 def setup_selenium_webdriver() -> webdriver.Chrome:
