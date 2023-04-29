@@ -68,8 +68,7 @@ def get_definition_list(
         hover = ActionChains(driver_).move_to_element(element_to_hover_over)
         hover.perform()
 
-        dictionary_box = driver_.find_element(
-            By.CSS_SELECTOR, ".dictionary-box")
+        dictionary_box = driver_.find_element(By.CSS_SELECTOR, ".dictionary-box")
 
         text_content = dictionary_box.text
         text_content = "".join(text_content.split())
