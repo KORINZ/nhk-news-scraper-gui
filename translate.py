@@ -3,6 +3,7 @@ import os
 import sys
 import argparse
 from contextlib import contextmanager
+from typing import Generator
 import io
 
 # Third-party imports
@@ -21,12 +22,15 @@ except ImportError:
 NEWS_ARTICLE_LOCATION = r"txt_files/news_article.txt"
 translator = deepl.Translator(DEEPL_API_KEY)
 
+
 @contextmanager
-def redirect_stdout(encoding):
+def redirect_stdout(encoding) -> Generator[None, None, None]:
     old_stdout = sys.stdout
-    sys.stdout = io.TextIOWrapper(sys.stdout.buffer, encoding=encoding, newline='')
+    sys.stdout = io.TextIOWrapper(
+        sys.stdout.buffer, encoding=encoding, newline='')
     yield
     sys.stdout = old_stdout
+
 
 def get_news_article() -> str:
     """Get main article from the news article"""
@@ -168,7 +172,8 @@ def main() -> None:
         show_account_usage()
         return None
     else:
-        print("Please specify either a text or a file to translate")
+        print("Please specify either a text or a file to translate\n")
+        parser.print_help()
         return None
 
     results = translator.translate_text(
