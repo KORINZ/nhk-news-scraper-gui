@@ -13,7 +13,7 @@ from tabulate import tabulate
 # File names and paths
 LINE_INCOMING_MESSAGE_FILENAME = "quiz_response"
 LOG_LOCATION = r"txt_files/push_log.txt"
-GRADE_BOOK_FILENAME = "日本語ニュース成績表"
+GRADE_BOOK_FILENAME = "quiz_grade_book"
 SERVICE_ACCOUNT_PATH = r"./json_files/savvy-temple-381905-6e78e62d4ee5.json"
 
 try:
