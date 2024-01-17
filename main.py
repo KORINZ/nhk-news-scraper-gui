@@ -25,11 +25,8 @@ from get_definition import (
     setup_selenium_webdriver,
 )
 
-try:
-    from check_sentiment import predict_sentiment_jp, read_news_article
-except ImportError:
-    print("Sentiment analysis module not found. Skipping sentiment analysis...")
-    pass
+from check_sentiment import predict_sentiment_jp, read_news_article
+
 
 """
 NEWS WEB EASY
