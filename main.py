@@ -1,6 +1,7 @@
 # Standard library imports
 import os
 import sys
+import time
 import random
 import string
 from collections import deque
@@ -153,6 +154,7 @@ def get_news_url(driver: webdriver.Chrome) -> str:
     for _ in range(MAX_URL_CHECKING_ATTEMPTS):
         try:
             driver.get(NEWS_HOMEPAGE_URL)
+            time.sleep(0.5)
         except WebDriverException:
             raise ConnectionError("インターネットの接続を確認してください。")
 
@@ -160,7 +162,7 @@ def get_news_url(driver: webdriver.Chrome) -> str:
         news_links = [
             link.get_attribute("href")
             for link in links
-            if NEWS_ARTICLE_URL_IDENTIFIER in link.get_attribute("href")
+            if NEWS_ARTICLE_URL_IDENTIFIER in str(link.get_attribute("href"))
         ]
         news_current = list(set(news_links[1:9]))
 
@@ -173,10 +175,9 @@ def get_news_url(driver: webdriver.Chrome) -> str:
 
         # If links are found, return a random link
         if news_current:
-            new_url = random.choice(news_current)
-            return new_url
+            return random.choice(news_current)
 
-    # If no links are found after max_attempts, return None
+    # If no links are found after max_attempts, handle the case
     error_message = (
         f"{MAX_URL_CHECKING_ATTEMPTS}回の試行後、{MIN_URL_WORD_COUNT}語以上のリンクが見つかりませんでした。"
     )
