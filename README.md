@@ -1,5 +1,7 @@
 # NHK News Web Easy Scraper
 
+Node.js version: https://github.com/KORINZ/nhk-news-scraper-js
+
 ### CustomTkinter Version GUI v1.9.3
 
 <p align="center">
