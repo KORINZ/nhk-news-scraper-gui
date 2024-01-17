@@ -20,7 +20,7 @@ from requests.exceptions import ConnectionError
 from main import main, push_quiz, save_quiz_vocab
 
 # Version number
-VERSION = "v2.4.0"
+VERSION = "v2.4.2"
 
 # File locations
 PRONOUN_QUIZ_LOCATION = r"./txt_files/pronunciation_quiz.txt"
