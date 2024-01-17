@@ -1091,7 +1091,8 @@ class AppFrame(ctk.CTk):
     def open_news_url() -> None:
         """Open the news URL."""
         with open(LOG_LOCATION, "r", encoding="utf-8") as log_file:
-            news_url = log_file.readlines()[1]
+            # Strip newline characters
+            news_url = log_file.readlines()[1].strip()
         open_new_tab(news_url)
 
     @staticmethod
