@@ -119,7 +119,8 @@ def generate_definition_quiz(
     with open(DEF_QUIZ_LOCATION, "w", encoding="utf-8") as f:
         f.write(f"【単語意味クイズ】{today}\n\n")
         f.write(
-            f"今日のNHK EASYニュース📰です。(1) から正しい単語の意味を順番に並べてください。({len(new_word_list)}ポイント)\n\n"
+            f"今日のNHK EASYニュース📰です。(1) から正しい単語の意味を順番に並べてください。({
+                len(new_word_list)}ポイント)\n\n"
         )
 
         # write the article to a file
@@ -170,13 +171,17 @@ def get_news_url(driver: webdriver.Chrome) -> str:
             if get_number_of_word(link)[0] >= MIN_URL_WORD_COUNT
         ]
 
+        # Filter out None values
+        news_current = [link for link in news_current if link is not None]
+
         # If links are found, return a random link
         if news_current:
             return random.choice(news_current)
 
     # If no links are found after max_attempts, handle the case
     error_message = (
-        f"{MAX_URL_CHECKING_ATTEMPTS}回の試行後、{MIN_URL_WORD_COUNT}語以上のリンクが見つかりませんでした。"
+        f"{MAX_URL_CHECKING_ATTEMPTS}回の試行後、{
+            MIN_URL_WORD_COUNT}語以上のリンクが見つかりませんでした。"
     )
     with open(LOG_LOCATION, "w", encoding="utf-8") as file:
         file.write(f"{get_today_date_jp()[1]}\n")
@@ -294,15 +299,15 @@ def main(
         f.write(f"{url}\n\n")
 
     # Article title (タイトル)
-    title = soup.find("h1", class_="article-main__title")
+    title = soup.find("h1", class_="article-title")
     write_content_data("title", title)
 
     # Article publishing date (掲載日)
-    date = soup.find("p", class_="article-main__date")
+    date = soup.find("p", class_="article-date")
     write_content_data("date", date)
 
     # Article content (内容)
-    article = soup.find_all("div", class_="article-main__body article-body")
+    article = soup.find_all("div", class_="article-body")
     for paragraph in article:
         write_content_data("article", paragraph)
 

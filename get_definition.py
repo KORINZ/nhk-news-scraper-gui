@@ -33,7 +33,7 @@ def setup_selenium_webdriver() -> webdriver.Chrome:
     return driver_
 
 
-def get_number_of_word(url: str) -> Tuple[int, List, BeautifulSoup]:
+def get_number_of_word(url) -> Tuple[int, List, BeautifulSoup]:
     """Get number of words from the given url."""
     try:
         response = requests.get(url)
