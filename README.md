@@ -1,4 +1,4 @@
-# NHK News Web Easy Scraper
+# NHK News Web Easy Scraper (deprecated due to NHK ONE update)
 
 Node.js version: https://github.com/KORINZ/nhk-news-scraper-js
 
